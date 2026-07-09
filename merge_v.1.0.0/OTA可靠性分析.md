@@ -1,7 +1,9 @@
 # OTA 可靠性分析
 
 > 基于对 `Bootloader_App.c`、`uds_diagnostic.c`、`flash_download.c`、`main.c`、`Timer0_Unit2.c` 等源码的完整阅读。
-> 分析日期：2026-07-06
+> 分析日期：2026-07-06 | 更新日期：2026-07-10（CAN 驱动修复后复核）
+>
+> **相关文档:** [CAN适配层修改.md](CAN适配层修改.md) — CAN 驱动架构与缓冲区修复
 
 ---
 
@@ -149,7 +151,7 @@ APP1 main():
 | # | 问题 | 严重度 | 代码位置 | 说明 |
 |---|------|:---:|------|------|
 | B9 | **OTA 后始终启动 APP1（硬编码）** | 🟡 P1 | `Bootloader_App.h:31` | `UDS_POST_FLASH_BOOT_ADDR = APP1_START_ADDR`。新固件在 APP2，但系统启动旧固件 APP1。代码注释已承认这是开发期硬编码 |
-| B10 | **51 01 ACK 用 RAW CAN 无重发机制** | 🟡 P1 | `App_CheckPendingUdsAck:736-749` | 手动构造 ISOTP 单帧，不经过 ISOTP 层。若 CAN 总线繁忙导致仲裁丢失，TBOX 永远收不到 ACK |
+| B10 | **51 01 ACK 用 RAW CAN 无重发机制** | 🟡 P1 | `App_CheckPendingUdsAck:743-757` | 手动构造 ISOTP 单帧，不经过 ISOTP 层。若 CAN 总线繁忙导致仲裁丢失，TBOX 永远收不到 ACK。注：依赖的 `CanIf_Send` 在 `Hardware_Init` → `CanIf_Init` 之后已就绪（CAN 硬件层正常工作，参见 [CAN适配层修改.md](CAN适配层修改.md)） |
 | B11 | **UdsShared_Clear 在 ACK 发出后立即执行** | 🟢 P2 | `App_CheckPendingUdsAck:753` | CAN 帧可能还在 TX mailbox 中，此时复位会导致 ACK 丢失。实际风险低（数据已拷贝到 CAN 控制器），但建议加延时 |
 
 ---
@@ -348,3 +350,23 @@ static void UpdateAppState(stc_app_info_t *pstcApp) {
 8. UDS Shared 双份冗余存储
 9. 增加固件整体 CRC 校验（非仅 OTA 过程的传输 CRC）
 10. RAM buffer 增加分块软件 CRC
+
+---
+
+## 七、CAN 驱动修复补充说明 (2026-07-10)
+
+本可靠性分析文档撰写时（2026-07-06），三个固件工程（app1/boot/app2）的 CAN 适配层存在以下问题：
+
+| 工程 | 问题 | 影响 |
+|------|------|------|
+| app1, boot | RX 缓冲区错位：ISR 写入 `m_stcCanHandle.can_rx`，Poll 读取空的 `m_stcRxCache`，所有接收帧被丢弃 | CAN 通信完全中断，UDS/OTA 流程无法测试 |
+| app2 | 使用独立的 `Can_LLD` 驱动层，架构与 app1/boot 不一致 | 维护困难，代码无法复用 |
+
+**修复后（2026-07-10）：**
+- 三个工程的 CAN 驱动统一为 `can_module` + `Adapter_Can` 两层架构
+- RX 缓冲区统一为 `m_stcCanHandle.can_rx`（ISR 和 Poll 操作同一缓冲区）
+- CAN 硬件通信已验证可用
+
+> 详见 [CAN适配层修改.md](CAN适配层修改.md)
+
+**对本分析的影响：** 本文档中的所有 UDS/OTA 流程（会话切换、安全访问、0x34/36/37 下载、延迟 ACK 等）依赖 CAN 通信正常。修复后的 CAN 驱动使这些流程能够在硬件层面正常运行，不影响本文档中分析的所有可靠性问题——这些问题属于协议/逻辑层面，与 CAN 硬件驱动无关。
