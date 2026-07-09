@@ -719,14 +719,14 @@
               <FilePath>..\..\Adp\Adapter_Can.c</FilePath>
             </File>
             <File>
-              <FileName>Can_LLD.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Adp\Can_LLD.c</FilePath>
-            </File>
-            <File>
               <FileName>flash_advanced.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Adp\flash_advanced.c</FilePath>
+            </File>
+            <File>
+              <FileName>can_module.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Adp\can_module.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1635,14 +1635,14 @@
               <FilePath>..\..\Adp\Adapter_Can.c</FilePath>
             </File>
             <File>
-              <FileName>Can_LLD.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Adp\Can_LLD.c</FilePath>
-            </File>
-            <File>
               <FileName>flash_advanced.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Adp\flash_advanced.c</FilePath>
+            </File>
+            <File>
+              <FileName>can_module.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Adp\can_module.c</FilePath>
             </File>
           </Files>
         </Group>

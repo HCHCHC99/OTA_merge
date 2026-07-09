@@ -1100,7 +1100,7 @@
 
   <Group>
     <GroupName>Adp</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1315,8 +1315,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\Adp\Can_LLD.c</PathWithFileName>
-      <FilenameWithoutPath>Can_LLD.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\Adp\flash_advanced.c</PathWithFileName>
+      <FilenameWithoutPath>flash_advanced.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1327,8 +1327,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\Adp\flash_advanced.c</PathWithFileName>
-      <FilenameWithoutPath>flash_advanced.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\Adp\can_module.c</PathWithFileName>
+      <FilenameWithoutPath>can_module.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

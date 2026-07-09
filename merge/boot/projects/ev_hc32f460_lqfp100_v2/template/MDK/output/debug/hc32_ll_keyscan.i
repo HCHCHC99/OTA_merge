@@ -97,7 +97,7 @@
 
 
  
-#line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
  
 
 
@@ -121,7 +121,7 @@
 
 
 
-#line 34 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+#line 34 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
 
 
 
@@ -135,7 +135,7 @@
 
 
     typedef unsigned int size_t;    
-#line 57 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+#line 57 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
 
 
 
@@ -144,7 +144,7 @@
 
 
       typedef unsigned short wchar_t;  
-#line 82 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+#line 82 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
 
 
 
@@ -168,14 +168,14 @@
 
 
 
-#line 114 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+#line 114 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
 
 
 
  
 
 #line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
-#line 1 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
+#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
  
  
 
@@ -194,7 +194,7 @@
 
 
      
-#line 27 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
+#line 27 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
      
 
 
@@ -207,7 +207,7 @@
 
 
 
-#line 46 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
+#line 46 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
 
 
 
@@ -371,7 +371,7 @@ typedef unsigned     long long uintmax_t;
      
 
      
-#line 216 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
+#line 216 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
 
      
 
@@ -390,7 +390,7 @@ typedef unsigned     long long uintmax_t;
 
 
 
-#line 241 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
+#line 241 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
 
      
 
@@ -423,7 +423,7 @@ typedef unsigned     long long uintmax_t;
 
 
 
-#line 305 "C:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
+#line 305 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
 
 
 

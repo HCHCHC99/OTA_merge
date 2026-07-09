@@ -58,7 +58,6 @@ static void (*m_pfnDefaultRxCallback)(const CanMsg_t *pMsg) = NULL;
 
 /* ---------- can_module 句柄和缓存 ---------- */
 static can_handle_t m_stcCanHandle;
-static can_rx_cache_t m_stcRxCache;
 
 /* ---------- Bus-Off状态 ---------- */
 static NonBlockingDelay_t m_stcBusOffTimer;
@@ -325,7 +324,6 @@ void CanIf_Init(void)
     CANIF_D("TX callback registered");
     
     /* ---------- 4. 初始化RX缓存 ---------- */
-    memset(&m_stcRxCache, 0, sizeof(m_stcRxCache));
     
     /* ---------- 5. 初始化TX队列 ---------- */
     memset(m_astcTxQueue, 0, sizeof(m_astcTxQueue));
@@ -422,8 +420,8 @@ void CanIf_Poll(void)
         return;
     }
     
-    /* ========== 1. 处理接收帧 ========== */
-    while (can_read(&m_stcRxCache, &stcRxFrame) == CAN_RET_OK) {
+    /* ========== 1. ========== */
+    while (can_read(&m_stcCanHandle.can_rx, &stcRxFrame) == CAN_RET_OK) {
         CanIf_ConvertFromCanFrame(&stcRxFrame, &stcMsg);
         CanIf_DispatchRx(&stcMsg);
     }
