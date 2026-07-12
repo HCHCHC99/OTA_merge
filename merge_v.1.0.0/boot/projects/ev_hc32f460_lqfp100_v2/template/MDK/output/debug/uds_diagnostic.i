@@ -25992,7 +25992,14 @@ static void uds_handle_routine_control(uint8_t* data, uint8_t len, uint8_t* resp
                 tickTimer_DelayMs(100);
             }
         }
-        UdsShared_SetPhase(UDS_PHASE_ENTER_BOOTLOADER, 0);
+        {
+            stc_uds_shared_t _st;
+            memset(&(_st), 0, sizeof(_st));
+            _st.magic = 0x55445300UL;
+            _st.phase = UDS_PHASE_ENTER_BOOTLOADER;
+            _st.pending_sid = 0x31;
+            UdsShared_Write(&_st);
+        }
         *resp_len = 0;
         (void)0;
         g_delayed_reset_ms = (100U);

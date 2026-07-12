@@ -21,7 +21,7 @@
 // ###########################################################################
 
 // ==================== ����ȫ�ֱ����������ã� ====================
-volatile uint32_t g_u32Debug_ClearAppState = 3;
+volatile uint32_t g_u32Debug_ClearAppState = 0;
 
 // ==================== �ڲ���̬�������� ====================
 static en_wdt_reset_type_t GetWdtResetType(void);
@@ -37,9 +37,6 @@ static void ShowBootStatus(en_boot_status_t eStatus);
 static void RunBootloaderForever(void);
 static void CheckAndClearAppState(void);
 
-// ###########################################################################
-//                          �������ߺ���
-// ###########################################################################
 uint32_t READ_FLASH_DIRECT(uint32_t addr)
 {
     uint32_t value;
@@ -54,7 +51,6 @@ uint32_t READ_FLASH_DIRECT(uint32_t addr)
 
     return value;
 }
-
 void Bootloader_Delay(uint32_t u32Count)
 {
     while (u32Count-- > 0) { __nop(); }
@@ -521,15 +517,11 @@ static void ShowBootStatus(en_boot_status_t eStatus) {
 }
 
 static void RunBootloaderForever(void) {
-    stc_gpio_init_t stcPortInit;
-    MEM_ZERO_STRUCT(stcPortInit);
-    stcPortInit.u16PinDir = PIN_DIR_OUT;
-    LL_PERIPH_WE(LL_PERIPH_GPIO);
-    GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
-    LL_PERIPH_WP(LL_PERIPH_GPIO);
-    while(1) { GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_06); Bootloader_Delay(200000); }
+    MAIN_D("  Both APPs disabled, entering UDS programming mode for recovery\r\n");
+    UdsOta_Bootloader_Enter();
+    /* UdsOta_Bootloader_Enter never returns */
+    while(1) { __nop(); }
 }
-
 static void CheckAndClearAppState(void) {
     if (g_u32Debug_ClearAppState == 1) ClearAppStateBySlot(SLOT_APP1);
     else if (g_u32Debug_ClearAppState == 2) ClearAppStateBySlot(SLOT_APP2);
@@ -658,11 +650,19 @@ void Bootloader_UdsMain(void)
         }
     }
 
-    /* ==== 1. 发送 31 服务的肯定响应 (71 01 FF 00) ==== */
+    /* ==== 1. 检查是否需要发送 31 服务的肯定响应 ==== */
     {
-        uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
-        isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
-        MAIN_D("  Sent 31 ACK (71 01 FF 00) via ISOTP\r\n");
+        stc_uds_shared_t _st;
+        UdsShared_Read(&_st);
+        if (_st.magic == UDS_SHARED_MAGIC && _st.pending_sid == 0x31) {
+            uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
+            isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
+            MAIN_D("  Sent deferred 31 ACK (71 01 FF 00) via ISOTP\r\n");
+            _st.pending_sid = 0;
+            UdsShared_Write(&_st);
+        } else {
+            MAIN_D("  No pending 31 ACK (pending_sid=0x%02X), skip\r\n", (unsigned int)_st.pending_sid);
+        }
     }
 
     /* ==== 2. 初始化固件下载模块 ==== */

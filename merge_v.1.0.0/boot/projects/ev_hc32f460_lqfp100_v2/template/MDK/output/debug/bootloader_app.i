@@ -25410,7 +25410,7 @@ void UdsOta_Bootloader_Enter(void);
 
 
 
-volatile uint32_t g_u32Debug_ClearAppState = 3;
+volatile uint32_t g_u32Debug_ClearAppState = 0;
 
 
 static en_wdt_reset_type_t GetWdtResetType(void);
@@ -25426,9 +25426,6 @@ static void ShowBootStatus(en_boot_status_t eStatus);
 static void RunBootloaderForever(void);
 static void CheckAndClearAppState(void);
 
-
-
-
 uint32_t READ_FLASH_DIRECT(uint32_t addr)
 {
     uint32_t value;
@@ -25443,7 +25440,6 @@ uint32_t READ_FLASH_DIRECT(uint32_t addr)
 
     return value;
 }
-
 void Bootloader_Delay(uint32_t u32Count)
 {
     while (u32Count-- > 0) { __nop(); }
@@ -25910,15 +25906,11 @@ static void ShowBootStatus(en_boot_status_t eStatus) {
 }
 
 static void RunBootloaderForever(void) {
-    stc_gpio_init_t stcPortInit;
-    memset(&(stcPortInit), 0, sizeof(stcPortInit));
-    stcPortInit.u16PinDir = ((0x0002U));
-    LL_PERIPH_WE((1UL << 2U));
-    GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-    LL_PERIPH_WP((1UL << 2U));
-    while(1) { GPIO_TogglePins((0x01U), (0x0040U)); Bootloader_Delay(200000); }
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Both APPs disabled, entering UDS programming mode for recovery\r\n" "\033[0m" "\r\n", "MAIN");
+    UdsOta_Bootloader_Enter();
+     
+    while(1) { __nop(); }
 }
-
 static void CheckAndClearAppState(void) {
     if (g_u32Debug_ClearAppState == 1) ClearAppStateBySlot(((en_slot_type_t)0x5A5A5A5Au));
     else if (g_u32Debug_ClearAppState == 2) ClearAppStateBySlot(((en_slot_type_t)0xA5A5A5A5u));
@@ -26049,9 +26041,17 @@ void Bootloader_UdsMain(void)
 
      
     {
-        uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
-        isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Sent 31 ACK (71 01 FF 00) via ISOTP\r\n" "\033[0m" "\r\n", "MAIN");
+        stc_uds_shared_t _st;
+        UdsShared_Read(&_st);
+        if (_st.magic == 0x55445300UL && _st.pending_sid == 0x31) {
+            uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
+            isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
+            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Sent deferred 31 ACK (71 01 FF 00) via ISOTP\r\n" "\033[0m" "\r\n", "MAIN");
+            _st.pending_sid = 0;
+            UdsShared_Write(&_st);
+        } else {
+            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  No pending 31 ACK (pending_sid=0x%02X), skip\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)_st . pending_sid);
+        }
     }
 
      
