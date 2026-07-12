@@ -718,7 +718,8 @@ void Bootloader_UdsMain(void)
             state.target_slot = SLOT_APP2;
             UdsShared_Write(&state);
             s_uds_shared_written = 1;
-            MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE\r\n");
+    ClearAppStateBySlot(state.target_slot);
+            MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, APP2 WDT cleared\r\n");
         }
     }
 }

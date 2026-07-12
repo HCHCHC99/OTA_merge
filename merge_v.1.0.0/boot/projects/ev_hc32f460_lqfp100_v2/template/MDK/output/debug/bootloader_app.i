@@ -26098,7 +26098,8 @@ void Bootloader_UdsMain(void)
             state.target_slot = ((en_slot_type_t)0xA5A5A5A5u);
             UdsShared_Write(&state);
             s_uds_shared_written = 1;
-            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared updated: phase=PROGRAMMING_DONE\r\n" "\033[0m" "\r\n", "MAIN");
+            ClearAppStateBySlot(((en_slot_type_t)0xA5A5A5A5u));
+            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared updated: phase=PROGRAMMING_DONE, APP2 WDT cleared\r\n" "\033[0m" "\r\n", "MAIN");
         }
     }
 }

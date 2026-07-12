@@ -1,7 +1,7 @@
 # OTA 可靠性分析
 
 > 基于对 `Bootloader_App.c`、`uds_diagnostic.c`、`flash_download.c`、`main.c`、`Timer0_Unit2.c` 等源码的完整阅读。
-> 分析日期：2026-07-06 | 更新日期：2026-07-10（CAN 驱动修复后复核）
+> 分析日期：2026-07-06 | 更新日期：2026-07-12（双APP故障救援、pending_sid修复、相位指示器）
 >
 > **相关文档:** [CAN适配层修改.md](CAN适配层修改.md) — CAN 驱动架构与缓冲区修复
 
@@ -29,7 +29,7 @@
               ├─ 验证 Reset Vector ≠ 0xFFFFFFFF
               ├─ 关 SysTick、关全局中断、清NVIC
               ├─ 设 MSP、VTOR → 跳转到APP Reset Handler
-              └─ 或 RunBootloaderForever() [LED慢闪 ∞ 两个APP都废了]
+              └─ 或 RunBootloaderForever() → UdsOta_Bootloader_Enter() [进入UDS救援模式, 等待TBOX OTA]
 ```
 
 ### Bootloader_JumpToApp 跳转前检查清单
@@ -64,7 +64,8 @@
 **流程：**
 ```
 TBOX → 0x31 → APP1收到 
-  → UdsShared_SetPhase(ENTER_BOOTLOADER)
+  → 直接写 UDS Shared Flash:
+      magic=UDS_SHARED_MAGIC, phase=ENTER_BOOTLOADER, pending_sid=0x31
   → g_delayed_reset_ms = DELAYED_RESET_MS(100)
   → *resp_len = 0 (不发CAN响应)
   → NVIC_SystemReset()
@@ -72,10 +73,12 @@ TBOX → 0x31 → APP1收到
 Boot_StartupSequence:
   → 读 UDS Shared → phase=ENTER_BOOTLOADER 
   → Bootloader_UdsMain()
+    → 读 pending_sid == 0x31 → 发送 71 01 FF 00 → 清零 pending_sid
+    → 初始化 FlashDownload + UDS → 主循环等下载
 ```
 
 **现有保护：**
-- ✅ UDS Shared 有 magic 校验（`0x55445300`），读后检查防止脏数据
+- ✅ UDS Shared 有 magic 校验（`0x55445300`）和 pending_sid 校验（仅 `==0x31` 才发 ACK）
 - ✅ 需要安全解锁流程（`10 03` → `27 01/02` → 才能 `31 01`）
 - ✅ 延迟 ACK 设计：APP 不响应 0x31，由 Bootloader 启动后补发 `71 01 FF 00`
 
@@ -83,8 +86,8 @@ Boot_StartupSequence:
 
 | # | 问题 | 严重度 | 代码位置 | 说明 |
 |---|------|:---:|------|------|
-| B1 | **UDS Shared 无 phase 冗余校验** | 🟡 P1 | `Boot_StartupSequence:374-384` | 仅靠一个 magic 判断。若扇区8数据异常翻转（如 `phase=1`），Bootloader 无条件进入 UDS 死循环 |
-| B2 | **进入 UDS 模式后无超时退出** | 🔴 P0 | `Bootloader_UdsMain:677` | `while(1)` 死循环。如果 CAN 通信中断/TBOX 掉线，MCU 永远卡在 Bootloader，无法回到 APP |
+| B1 | **UDS Shared 无 phase 冗余校验** | 🟡 P1 | `Boot_StartupSequence:374-384` | 仅靠一个 magic 判断。Phase 2 增加了 `pending_sid` 校验（仅 `==0x31` 才发 ACK），部分缓解但未根治 |
+| B2 | **进入 UDS 模式后无超时退出** | 🟡 P1 | `Bootloader_UdsMain:677` | `while(1)` 死循环。双APP故障恢复模式下可重新 OTA 修复，但单 APP 正常时仍存在超时风险 |
 | B3 | **Boot_SetRunSlotToAddr(APP1) 过早执行** | 🟢 P2 | `uds_handle_routine_control` Bootloader分支 | 刷写还没开始，`APP_RUN_SLOT` 就被设成 APP1。当前行为实际安全(作为回退)，但语义不清晰 |
 
 ---
@@ -192,28 +195,38 @@ APP1 main():
 
 ---
 
-### 🔴 场景 7：双 APP 均故障（最严重）
+### 🟢 场景 7：双 APP 均故障 ✅ 已修复
 
 **触发路径：**
 1. APP1 WDT 复位 ≥3 次 → `APP_STATE_DISABLED`
 2. APP2 WDT 复位 ≥3 次（或 OTA 擦除后未成功写入、或固件本身崩溃）
 3. `SelectTargetSlot` → `eTargetSlot = SLOT_NONE`
-4. `RunBootloaderForever()` → PB6 LED 死循环闪烁 → **设备变砖**
+4. `RunBootloaderForever()` → `UdsOta_Bootloader_Enter()` → `Bootloader_UdsMain()` → **UDS 编程模式等待救援**
 
-**当前代码分析 (`Bootloader_App.c:408-413`)：**
+**修复后代码 (`Bootloader_App.c:519-524`)：**
 ```c
-if (stcCtx.eTargetSlot == SLOT_APP1)      Bootloader_JumpToApp(APP1_START_ADDR);
-else if (stcCtx.eTargetSlot == SLOT_APP2) Bootloader_JumpToApp(APP2_START_ADDR);
-else {
-    MAIN_D("  ERROR: No valid APP slot, running forever!\r\n");
-    RunBootloaderForever();  // ← LED闪烁死循环，没有任何恢复手段
+static void RunBootloaderForever(void) {
+    MAIN_D("  Both APPs disabled, entering UDS programming mode for recovery\r\n");
+    UdsOta_Bootloader_Enter();
+    while(1) { __nop(); }
 }
 ```
 
-| # | 问题 | 严重度 | 说明 |
-|---|------|:---:|------|
-| B16 | **双 APP 故障时无救援通道** | 🔴 P0 | `RunBootloaderForever` 死循环。应进入 UDS 等待模式，允许 TBOX 重新 OTA |
-| B17 | **双 APP 故障时无法进入 Bootloader_UdsMain** | 🔴 P0 | 代码路径：双故障 → `SelectTargetSlot` 返回 NONE → 不上报 UDS phase → `Boot_StartupSequence` 不会进入 `Bootloader_UdsMain`。救援路径被自己切断了 |
+**救援流程：**
+```
+双APP故障 → RunBootloaderForever → Bootloader_UdsMain
+  → pending_sid=0 → 跳过31 ACK
+  → UDS初始化 + while(1): UdsOta_Poll()
+  → TBOX: 10 02 → 27 → 34/36/37 → 下载新固件 → FW_UPDATE_COMPLETE
+  → ClearAppStateBySlot(SLOT_APP2) ← 清零APP2的WDT计数
+  → TBOX: 11 01 → 复位
+  → Boot_StartupSequence: APP2 WDT=0 → AVAILABLE → JumpToApp(APP2)
+```
+
+| # | 问题 | 严重度 | 状态 |
+|---|------|:---:|:--:|
+| B16 | ~~双 APP 故障时无救援通道~~ | 🔴→🟢 | ✅ 已修复 |
+| B17 | ~~双 APP 故障时无法进入 Bootloader_UdsMain~~ | 🔴→🟢 | ✅ 已修复 |
 
 ---
 
@@ -278,12 +291,12 @@ static void UpdateAppState(stc_app_info_t *pstcApp) {
 
 ### 🔴 P0 — 会导致设备变砖
 
-| # | 标题 | 代码位置 | 触发条件 |
-|---|------|------|------|
-| **B16/B17** | **双 APP 故障时无救援通道**：`RunBootloaderForever` 死循环，应进入 UDS 等待模式 | `Bootloader_App.c:522-530`, `:408-413` | 双WDT≥3 或 单故障+OTA失败 |
-| **B4** | **擦除后 APP2 向量表无效但被标记 AVAILABLE**：`InitAppInfo` 不检查固件完整性 | `Bootloader_App.c:439-445` | OTA擦除后断电 |
-| **B5** | **刷写中 WDT 复位后重新进入 UDS 模式**：FlashDownload 状态丢失，APP2 半损坏 | `Boot_StartupSequence:374-384` | OTA中途WDT复位 |
-| **B12** | **OTA 刷写唯一正常 APP 无自保**：APP1 故障时不应擦除 APP2 | `flash_download.c`, `uds_diagnostic.c 0x31 handler` | APP1故障+OTA触发 |
+| # | 标题 | 代码位置 | 触发条件 | 状态 |
+|---|------|------|------|:--:|
+| **B16/B17** | ~~双 APP 故障时无救援通道~~ | `Bootloader_App.c:519-524` | 双WDT≥3 | ✅ 已修复 |
+| **B4** | **擦除后 APP2 向量表无效但被标记 AVAILABLE**：`InitAppInfo` 不检查固件完整性 | `Bootloader_App.c:439-445` | OTA擦除后断电 | — |
+| **B5** | **刷写中 WDT 复位后重新进入 UDS 模式**：FlashDownload 状态丢失，APP2 半损坏 | `Boot_StartupSequence:374-384` | OTA中途WDT复位 | — |
+| **B12** | **OTA 刷写唯一正常 APP 无自保**：APP1 故障时不应擦除 APP2 | `flash_download.c`, `uds_diagnostic.c 0x31 handler` | APP1故障+OTA触发 | — |
 
 ### 🟡 P1 — 会导致临时不可用或恢复困难
 
@@ -353,7 +366,31 @@ static void UpdateAppState(stc_app_info_t *pstcApp) {
 
 ---
 
-## 七、CAN 驱动修复补充说明 (2026-07-10)
+---
+
+## 八、2026-07-12 修改记录
+
+### 已修复问题
+
+| 修复项 | 涉及文件 | 说明 |
+|--------|---------|------|
+| **双 APP 故障救援 (B16/B17)** | `Bootloader_App.c` (boot/app1/app2) | `RunBootloaderForever()` 改为调用 `UdsOta_Bootloader_Enter()`，进入 UDS 编程模式等待 TBOX 救援 |
+| **救援后 WDT 清零** | `Bootloader_App.c` (boot/app1/app2) | `FW_UPDATE_COMPLETE` 后自动调用 `ClearAppStateBySlot(SLOT_APP2)`，确保复位后新固件可启动 |
+| **WDT 计数持久化** | `Bootloader_App.c` (boot/app1/app2) | `g_u32Debug_ClearAppState` 从 3 改为 0，WDT 计数跨复位保留 |
+| **Phase 1 pending_sid** | `uds_diagnostic.c` (boot/app1/app2) | 写 Flash 时同时设置 `pending_sid=0x31`（不再使用 `UdsShared_SetPhase` 清零该字段） |
+| **Phase 2 条件 31 ACK** | `Bootloader_App.c` (boot/app1/app2) | 读取 `pending_sid`，仅 `==0x31` 时才发送 71 01 FF 00，发送后清零 |
+| **PB6 相位指示器** | `uds_diagnostic.c`, `Bootloader_App.c`, `main.c` (boot/app1/app2) | Phase 1/2/3 各用 PB6 闪烁 3 次（100/200/300ms），替代 main.c 阻塞调试闪烁 |
+| **app2 UDS 对齐** | `uds_ota.h/c` (新建), `main.c`, `Bootloader_App.c` (app2) | app2 获得与 app1 一致的 UDS 封装层 |
+
+### 仍待修复（选中但未实施）
+
+| # | 问题 | 原因 |
+|---|------|------|
+| B4 | InitAppInfo 无固件完整性检查 | 需增加 SP/ResetVector 范围校验 |
+| B5 | 刷写中 WDT 复位的状态恢复 | 需在 UDS Shared 增加"刷写进行中"标记 |
+| B12 | OTA 擦除唯一正常 APP 无自保 | 需在 0x31 handler 检查非目标 APP 状态 |
+
+## 九、CAN 驱动修复补充说明 (2026-07-10)
 
 本可靠性分析文档撰写时（2026-07-06），三个固件工程（app1/boot/app2）的 CAN 适配层存在以下问题：
 
