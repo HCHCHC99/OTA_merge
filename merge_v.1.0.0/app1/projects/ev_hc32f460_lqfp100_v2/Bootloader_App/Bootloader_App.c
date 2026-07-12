@@ -6,6 +6,7 @@
 #include "TickTimer.h"
 #include "rtt_log.h"
 #include "main.h"
+#include "uds_ota.h"
 
 // ###########################################################################
 //
@@ -271,7 +272,7 @@ void Bootloader_JumpToApp(uint32_t u32AppAddr)
         NVIC->ICPR[i] = 0xFFFFFFFF;
     }
 
-    // 5. ����ջָ���������
+    // 5. ����ջָ���������?
     __set_MSP(*(uint32_t *)u32AppAddr);
     SCB->VTOR = ((uint32_t)u32AppAddr & SCB_VTOR_TBLOFF_Msk);
     
@@ -282,7 +283,7 @@ void Bootloader_JumpToApp(uint32_t u32AppAddr)
     (*((void(*)(void))app_start_address))();
 }
 
-// RAM��պ������ؼ�ʵ�֣�
+// RAM��պ������ؼ�ʵ�֣�?
 void ClearAllRAM(void)
 {
     volatile uint32_t *ram_addr = (volatile uint32_t *)RAM_START_ADDR;
@@ -363,7 +364,7 @@ void Boot_StartupSequence(void)
         pSharedCtrl->debug_flag = 0;
     }
 
-    /* ==== UDS 共享状态检查 ==== */
+    /* ==== UDS 共享状态检�? ==== */
     {
         stc_uds_shared_t stcUdsState;
         UdsShared_Read(&stcUdsState);
@@ -374,13 +375,13 @@ void Boot_StartupSequence(void)
         if (stcUdsState.magic == UDS_SHARED_MAGIC) {
             if (stcUdsState.phase == UDS_PHASE_ENTER_BOOTLOADER) {
                 MAIN_D("  -> Enter UDS Programming Mode\r\n");
-                /* APP 请求进入编程模式 → 进入 Bootloader UDS 模式 */
+                /* APP 请求进入编程模式 �? 进入 Bootloader UDS 模式 */
                 Bootloader_UdsMain();
-                /* Bootloader_UdsMain 不返回，内部处理所有 UDS 通信 */
+                /* Bootloader_UdsMain 不返回，内部处理所�? UDS 通信 */
                 while(1) { __nop(); }
             }
-            /* 其他 phase (IDLE/PROGRAMMING_DONE): 正常启动 APP，
-             * APP 启动后会通过 App_CheckPendingUdsAck() 检查 pending_sid */
+            /* 其他 phase (IDLE/PROGRAMMING_DONE): 正常启动 APP�?
+             * APP 启动后会通过 App_CheckPendingUdsAck() 检�? pending_sid */
         }
     }
 
@@ -536,7 +537,7 @@ static void CheckAndClearAppState(void) {
 }
 
 // ====================================================================
-// UDS 共享区 Flash 读写函数
+// UDS 共享�? Flash 读写函数
 // ====================================================================
 
 void UdsShared_Read(stc_uds_shared_t *pState)
@@ -585,15 +586,15 @@ void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot)
 }
 
 // ====================================================================
-// Bootloader UDS 编程模式主循环
+// Bootloader UDS 编程模式主循�?
 // ====================================================================
 
 
 // ====================================================================
-// Bootloader UDS 编程模式: ISOTP RX 回调 + 过滤器注册
+// Bootloader UDS 编程模式: ISOTP RX 回调 + 过滤器注�?
 // ====================================================================
 
-/* ISOTP 重组后的 UDS 消息输出缓冲区 */
+/* ISOTP 重组后的 UDS 消息输出缓冲�? */
 static uint8_t s_bl_uds_rx_buffer[4100];
 
 static void BL_ISOTP_RxCallback(const CanMsg_t *pMsg)
@@ -610,8 +611,8 @@ static void BL_ISOTP_RxCallback(const CanMsg_t *pMsg)
 static void BL_ISOTP_RegisterRxFilters(void)
 {
     static const uint32_t s_isotp_can_ids[4] = {
-        0x18DA03F1UL,  /* 物理寻址请求 ID (TBOX → 控制器) */
-        0x18DAF103UL,  /* 物理寻址响应 ID (控制器 → TBOX) */
+        0x18DA03F1UL,  /* 物理寻址请求 ID (TBOX �? 控制�?) */
+        0x18DAF103UL,  /* 物理寻址响应 ID (控制�? �? TBOX) */
         0x18FF8118UL,  /* OTA 专用 ID */
         0x18DBFFF0UL   /* 功能寻址请求 ID (广播) */
     };
@@ -629,19 +630,35 @@ static void BL_ISOTP_RegisterRxFilters(void)
 }
 
 // ====================================================================
-// Bootloader UDS 编程模式主循环
+// Bootloader UDS 编程模式主循�?
 // ====================================================================
 
 void Bootloader_UdsMain(void)
 {
-    uint64_t last_ms_tick;
     uint64_t last_wdt_feed;
     FlashDownloadConfig_t stcFwConfig;
     uint8_t i;
 
     MAIN_D("===== Bootloader UDS Main Start =====\r\n");
 
-    /* ==== 1. 发送 31 服务的肯定响应 (71 01 FF 00) ==== */
+    /* ==== Phase 2: PB6 blink 3 times (500ms) - Bootloader UDS download mode ==== */
+    {
+        uint8_t _pb6_i;
+        stc_gpio_init_t stcPortInit;
+        MEM_ZERO_STRUCT(stcPortInit);
+        stcPortInit.u16PinDir = PIN_DIR_OUT;
+        LL_PERIPH_WE(LL_PERIPH_GPIO);
+        GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
+        LL_PERIPH_WP(LL_PERIPH_GPIO);
+        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
+            GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(200);
+            GPIO_ResetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(200);
+        }
+    }
+
+    /* ==== 1. 发�? 31 服务的肯定响�? (71 01 FF 00) ==== */
     {
         CanMsg_t stcMsg;
         uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
@@ -656,7 +673,7 @@ void Bootloader_UdsMain(void)
         MAIN_D("  Sent 31 ACK (71 01 FF 00) on CAN ID 0x18DAF103\r\n");
     }
 
-    /* ==== 2. 初始化固件下载模块 ==== */
+    /* ==== 2. 初始化固件下载模�? ==== */
     MEM_ZERO_STRUCT(stcFwConfig);
     stcFwConfig.max_firmware_size     = 48UL * 1024UL;
     stcFwConfig.flash_sector_size    = 0x2000UL;
@@ -668,17 +685,16 @@ void Bootloader_UdsMain(void)
     MAIN_D("  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n",
            UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + 0xC000UL);
 
-    /* ==== 3. 注册固件下载接口到 UDS ==== */
+    /* ==== 3. 注册固件下载接口�? UDS ==== */
     uds_dl_init_fw();
 
-    /* ==== 4. 初始化 UDS 诊断服务 ==== */
+    /* ==== 4. 初始�? UDS 诊断服务 ==== */
     uds_init();
     MAIN_D("  UDS init done\r\n");
 
-    /* ==== 5. 主循环 ==== */
+    /* ==== 5. 主循�? ==== */
     MAIN_D("  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n");
-    last_ms_tick  = tickTimer_GetCount();
-    last_wdt_feed = last_ms_tick;
+    last_wdt_feed = tickTimer_GetCount();
 
     static uint8_t s_uds_shared_written = 0;
 
@@ -691,23 +707,7 @@ void Bootloader_UdsMain(void)
             last_wdt_feed = tick;
         }
 
-        /* 1ms 门控: ISOTP/UDS 超时管理 */
-        if (tick != last_ms_tick) {
-            last_ms_tick = tick;
-            if (g_delayed_reset_ms > 0) {
-                g_delayed_reset_ms--;
-                if (g_delayed_reset_ms == 0) {
-                    MAIN_D("Delayed reset done, resetting...\r\n");
-                    NVIC_SystemReset();
-                    while(1);
-                }
-            }
-            isotp_ms_update();
-            uds_ms_update();
-            isotp_tx_process();
-        }
-
-        FlashDownload_Task();
+        UdsOta_Poll();
 
         if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
             stc_uds_shared_t state;
@@ -719,8 +719,6 @@ void Bootloader_UdsMain(void)
             s_uds_shared_written = 1;
             MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE\r\n");
         }
-
-        CanIf_Poll();
     }
 }
 
@@ -742,7 +740,7 @@ void App_CheckPendingUdsAck(void)
 
     if (state.pending_sid == 0x11) {
         MAIN_D("  Sending pending 11 01 ACK (51 01)\r\n");
-        /* 补发 11 01 的肯定响应 (51 01)
+        /* 补发 11 01 的肯定响�? (51 01)
          * ISOTP 单帧格式: PCI=0x04 (4字节数据) + 51 01 00 00, DLC=8 */
         CanMsg_t stcMsg;
         uint8_t au8Data[8] = {0x04, 0x51, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -757,7 +755,25 @@ void App_CheckPendingUdsAck(void)
         CanIf_Send(&stcMsg);
     }
 
-    /* 清除共享区 */
+    /* ==== Phase 3: PB6 quick blink 3 times - APP sent deferred 51 01 ACK ==== */
+    {
+        uint8_t _pb6_i;
+        stc_gpio_init_t stcPortInit;
+        MEM_ZERO_STRUCT(stcPortInit);
+        stcPortInit.u16PinDir = PIN_DIR_OUT;
+        LL_PERIPH_WE(LL_PERIPH_GPIO);
+        GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
+        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
+            GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(300);
+            GPIO_ResetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(300);
+        }
+        GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
+        LL_PERIPH_WP(LL_PERIPH_GPIO);
+    }
+
+    /* 清除共享�? */
     UdsShared_Clear();
     MAIN_D("  UDS shared state cleared\r\n");
 }

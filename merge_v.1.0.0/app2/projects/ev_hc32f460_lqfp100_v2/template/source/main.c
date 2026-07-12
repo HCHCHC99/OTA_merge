@@ -16,20 +16,10 @@
   #include "Pwm.h"
   #include "hc32_ll_utility.h"
 #if UDS_CAN_ENABLE
-  #include "Adapter_Can.h"
-  #include "isotp_transport.h"
-  #include "uds_diagnostic.h"
-  #include "flash_download.h"
+  #include "uds_ota.h"
 #endif
 #include "Bootloader_App.h"
 
-#if UDS_CAN_ENABLE
-  /* uds_dl_bridge.c 没有独立�? .h 文件，在此前向声�? */
-  extern void uds_dl_init_fw(void);
-#endif
-
-  /* 延迟复位：handler 设置为 DELAYED_RESET_MS，main 循环中倒计时 */
-  volatile uint32_t g_delayed_reset_ms = 0;
 
   /*=============================================================================
    * ȫ��PWMʵ�������������ʹ�ã�????
@@ -116,56 +106,6 @@
   /*=============================================================================
    * ISOTP/UDS 集成：CAN RX 回调和缓冲区
    *=============================================================================*/
-
-#if UDS_CAN_ENABLE
-  /* ISOTP 重组后的 UDS 消息输出缓冲区（最�? 4096 字节�? */
-  static uint8_t s_uds_rx_buffer[4100];
-
-  /*
-   * ISOTP CAN RX 回调 �? �? CanIf 分发层在 RX 中断上下文外调用（main 循环中）�?
-   * �? CAN 帧送入 ISOTP 重组，完成后分发�? UDS 诊断层�?
-   */
-  static void ISOTP_RxCallback(const CanMsg_t *pMsg)
-  {
-      uint16_t out_len = 0;
-      int8_t result = isotp_receive_frame(0, pMsg->u32ID,
-                                          (uint8_t*)pMsg->au8Data, pMsg->u8DLC,
-                                          s_uds_rx_buffer, &out_len);
-      if (result == ISOTP_OK) {
-          uds_receive_handler(0, pMsg->u32ID, s_uds_rx_buffer, out_len);
-      }
-  }
-
-  /*
-   * 注册 ISOTP 所需�? 4 �? CAN ID �? CanIf 过滤器�?
-   * ISOTP 过滤列表�?0x18DA03F1, 0x18DAF103, 0x18FF8118, 0x18DBFFF0
-   */
-  static void ISOTP_RegisterRxFilters(void)
-  {
-      static const uint32_t s_isotp_can_ids[4] = {
-          0x18DA03F1UL,  /* 物理寻址请求 ID (TBOX �? 控制�?) */
-          0x18DAF103UL,  /* 物理寻址响应 ID (控制�? �? TBOX) */
-          0x18FF8118UL,  /* OTA 专用 ID */
-          0x18DBFFF0UL   /* 功能寻址请求 ID (广播) */
-      };
-
-      CanIf_RxFilterEntry_t stcEntry;
-      stcEntry.u32CanId   = 0UL;
-      stcEntry.u32CanMask = 0UL;  /* 精确匹配 */
-      stcEntry.u8Format   = CAN_ID_EXT;
-      stcEntry.pfnCallback = &ISOTP_RxCallback;
-
-      for (uint8_t i = 0U; i < 4U; i++) {
-          stcEntry.u32CanId = s_isotp_can_ids[i];
-          if (!CanIf_RegisterRxFilter(&stcEntry)) {
-              MAIN_D("ISOTP: failed to register RX filter for CAN ID 0x%08X\r\n",
-                     s_isotp_can_ids[i]);
-          }
-      }
-      MAIN_D("ISOTP: 4 CAN ID RX filters registered\r\n");
-  }
-#endif /* UDS_CAN_ENABLE */
-
   /*=============================================================================
    * ������
    *=============================================================================*/
@@ -179,52 +119,18 @@ int main(void)
     __enable_irq();
     Hardware_Init();
     MAIN_D("===== main(): APP2 PATH =====\r\n");
-    App_CheckPendingUdsAck();
-	tickTimer_DelayMs(500);
-	GPIO_TOGGLE(GPIO_PORT_B, GPIO_PIN_07);
-	tickTimer_DelayMs(500);
-	GPIO_TOGGLE(GPIO_PORT_B, GPIO_PIN_07);
-	tickTimer_DelayMs(500);
-	GPIO_TOGGLE(GPIO_PORT_B, GPIO_PIN_07);
-	tickTimer_DelayMs(500);
-	GPIO_TOGGLE(GPIO_PORT_B, GPIO_PIN_07);
-	tickTimer_DelayMs(500);
-	GPIO_TOGGLE(GPIO_PORT_B, GPIO_PIN_07);
-    
+    UdsOta_App_CheckPendingAck();
+	/* PB6 phase indicator moved to UDS phase handlers (Phase1/2/3) */
+
 #if UDS_CAN_ENABLE
-    MAIN_D("=== UDS Stack Init Start ===\r\n");
-    isotp_init(0);
-    ISOTP_RegisterRxFilters();
-    FlashDownload_Init(NULL);
-    uds_dl_init_fw();
-    uds_init();
-    MAIN_D("=== UDS Stack Init Done ===\r\n");
+    UdsOta_Init();
 #endif
     
     {
-        static uint64_t s_last_ms_tick = 0;
         while (1)
         {
 #if UDS_CAN_ENABLE
-            {
-                uint64_t current_tick = tickTimer_GetCount();
-                if (current_tick != s_last_ms_tick) {
-                    s_last_ms_tick = current_tick;
-                    if (g_delayed_reset_ms > 0) {
-                        g_delayed_reset_ms--;
-                        if (g_delayed_reset_ms == 0) {
-                            MAIN_D("Delayed reset done, resetting...\r\n");
-                            NVIC_SystemReset();
-                            while(1);
-                        }
-                    }
-                    isotp_ms_update();
-                    uds_ms_update();
-                    isotp_tx_process();
-                }
-            }
-            FlashDownload_Task();
-            CanIf_Poll();
+            UdsOta_Poll();
 #endif
         }
     }

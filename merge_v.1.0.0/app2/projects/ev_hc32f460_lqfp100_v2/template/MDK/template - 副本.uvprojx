@@ -908,6 +908,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\UDS\uds_dl_bridge.c</FilePath>
             </File>
+            <File>
+              <FileName>uds_ota.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UDS\uds_ota.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1823,6 +1828,11 @@
               <FileName>uds_dl_bridge.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\UDS\uds_dl_bridge.c</FilePath>
+            </File>
+            <File>
+              <FileName>uds_ota.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\UDS\uds_ota.c</FilePath>
             </File>
           </Files>
         </Group>

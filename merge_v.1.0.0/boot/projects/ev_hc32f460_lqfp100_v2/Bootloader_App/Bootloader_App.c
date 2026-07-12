@@ -6,6 +6,7 @@
 #include "TickTimer.h"
 #include "rtt_log.h"
 #include "main.h"
+#include "uds_ota.h"
 
 // ###########################################################################
 //
@@ -634,12 +635,28 @@ static void BL_ISOTP_RegisterRxFilters(void)
 
 void Bootloader_UdsMain(void)
 {
-    uint64_t last_ms_tick;
     uint64_t last_wdt_feed;
     FlashDownloadConfig_t stcFwConfig;
     uint8_t i;
 
     MAIN_D("===== Bootloader UDS Main Start =====\r\n");
+
+    /* ==== Phase 2: PB6 blink 3 times (500ms) - Bootloader UDS download mode ==== */
+    {
+        uint8_t _pb6_i;
+        stc_gpio_init_t stcPortInit;
+        MEM_ZERO_STRUCT(stcPortInit);
+        stcPortInit.u16PinDir = PIN_DIR_OUT;
+        LL_PERIPH_WE(LL_PERIPH_GPIO);
+        GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
+        LL_PERIPH_WP(LL_PERIPH_GPIO);
+        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
+            GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(200);
+            GPIO_ResetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(200);
+        }
+    }
 
     /* ==== 1. 发送 31 服务的肯定响应 (71 01 FF 00) ==== */
     {
@@ -669,8 +686,7 @@ void Bootloader_UdsMain(void)
 
     /* ==== 5. 主循环 ==== */
     MAIN_D("  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n");
-    last_ms_tick  = tickTimer_GetCount();
-    last_wdt_feed = last_ms_tick;
+    last_wdt_feed = tickTimer_GetCount();
 
     static uint8_t s_uds_shared_written = 0;
 
@@ -683,23 +699,7 @@ void Bootloader_UdsMain(void)
             last_wdt_feed = tick;
         }
 
-        /* 1ms 门控: ISOTP/UDS 超时管理 */
-        if (tick != last_ms_tick) {
-            last_ms_tick = tick;
-            if (g_delayed_reset_ms > 0) {
-                g_delayed_reset_ms--;
-                if (g_delayed_reset_ms == 0) {
-                    MAIN_D("Delayed reset done, resetting...\r\n");
-                    NVIC_SystemReset();
-                    while(1);
-                }
-            }
-            isotp_ms_update();
-            uds_ms_update();
-            isotp_tx_process();
-        }
-
-        FlashDownload_Task();
+        UdsOta_Poll();
 
         if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
             stc_uds_shared_t state;
@@ -711,8 +711,6 @@ void Bootloader_UdsMain(void)
             s_uds_shared_written = 1;
             MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE\r\n");
         }
-
-        CanIf_Poll();
     }
 }
 
@@ -747,6 +745,24 @@ void App_CheckPendingUdsAck(void)
         stcMsg.u8DLC  = 8U;
         for (i = 0; i < 8; i++) stcMsg.au8Data[i] = au8Data[i];
         CanIf_Send(&stcMsg);
+    }
+
+    /* ==== Phase 3: PB6 quick blink 3 times - APP sent deferred 51 01 ACK ==== */
+    {
+        uint8_t _pb6_i;
+        stc_gpio_init_t stcPortInit;
+        MEM_ZERO_STRUCT(stcPortInit);
+        stcPortInit.u16PinDir = PIN_DIR_OUT;
+        LL_PERIPH_WE(LL_PERIPH_GPIO);
+        GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
+        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
+            GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(300);
+            GPIO_ResetPins(GPIO_PORT_B, GPIO_PIN_06);
+            tickTimer_DelayMs(300);
+        }
+        GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
+        LL_PERIPH_WP(LL_PERIPH_GPIO);
     }
 
     /* 清除共享区 */

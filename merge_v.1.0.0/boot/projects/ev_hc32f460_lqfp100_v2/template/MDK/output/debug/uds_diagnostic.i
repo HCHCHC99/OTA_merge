@@ -25224,6 +25224,61 @@ static void uds_write_data_by_id(uint16_t did, uint16_t value);
  
 static void uds_handle_diagnostic_session_control(uint8_t* data, uint8_t len, uint8_t* resp, uint8_t* resp_len);
  
+#line 1 "..\\..\\Utils\\TickTimer.h"
+
+
+
+#line 5 "..\\..\\Utils\\TickTimer.h"
+#line 6 "..\\..\\Utils\\TickTimer.h"
+
+
+
+typedef struct {
+    uint64_t startTick;   
+    uint64_t delayMs;     
+    _Bool isRunning;       
+} NonBlockingDelay_t;
+
+
+void tickTimer_Init(void);
+
+
+uint64_t tickTimer_GetCount(void);
+
+
+void tickTimer_DelayMs(uint64_t ms);
+
+
+
+void tickTimer_Update(void);
+
+
+
+
+void nbDelay_Init(NonBlockingDelay_t* delayObj, uint64_t delayMs);
+
+
+void nbDelay_Start(NonBlockingDelay_t* delayObj);
+
+
+
+_Bool nbDelay_IsComplete(NonBlockingDelay_t* delayObj);
+
+
+_Bool nbDelay_IsComplete_noclose(NonBlockingDelay_t* delayObj);
+
+
+void nbDelay_Stop(NonBlockingDelay_t* delayObj);
+
+
+void nbDelay_SetTime(NonBlockingDelay_t* delayObj, uint64_t delayMs);
+
+
+uint64_t tickTimer_GetElapsedSinceLastCall(void);
+
+uint64_t tickTimer_GetRawTick(void);
+
+#line 44 "..\\..\\UDS\\uds_diagnostic.c"
 static uint8_t uds_map_dl_result_to_nrc(uds_dl_result_t dl_result)
 {
     switch (dl_result)
@@ -25347,7 +25402,7 @@ void uds_ms_update(void)
     {
         print_cnt = 0;
         (void)0;
-#line 174 "..\\..\\UDS\\uds_diagnostic.c"
+#line 175 "..\\..\\UDS\\uds_diagnostic.c"
     }
 
 }
@@ -25921,6 +25976,22 @@ static void uds_handle_routine_control(uint8_t* data, uint8_t len, uint8_t* resp
     
      
     if (((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x1A000 || ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x4C000) {
+             
+        {
+            uint8_t _pb6_i;
+            stc_gpio_init_t stcPortInit;
+            memset(&(stcPortInit), 0, sizeof(stcPortInit));
+            stcPortInit.u16PinDir = ((0x0002U));
+            LL_PERIPH_WE((1UL << 2U));
+            GPIO_Init((0x01U), (0x0040U), &stcPortInit);
+            LL_PERIPH_WP((1UL << 2U));
+            for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
+                GPIO_SetPins((0x01U), (0x0040U));
+                tickTimer_DelayMs(100);
+                GPIO_ResetPins((0x01U), (0x0040U));
+                tickTimer_DelayMs(100);
+            }
+        }
         UdsShared_SetPhase(UDS_PHASE_ENTER_BOOTLOADER, 0);
         *resp_len = 0;
         (void)0;

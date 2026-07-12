@@ -1,9 +1,4 @@
-#line 1 "..\\..\\Bootloader_App\\Bootloader_App.c"
-#line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
-
-#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+#line 1 "..\\..\\UDS\\uds_ota.c"
 
 
 
@@ -11,14 +6,8 @@
 
 
 
-
-
-
-
-
-
-
-
+ 
+#line 1 "..\\..\\UDS\\uds_ota.h"
 
 
 
@@ -30,132 +19,6 @@
 
 
 
- 
-
-
-
-
-
-
-
- 
-#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
- 
-
-
-
-
-
-
-
- 
-#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
- 
-
-
-
-
-
-
- 
-
- 
- 
- 
-
-
-
-
-
- 
-
-
-
-
-
-#line 34 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
-
-
-
-
-  typedef signed int ptrdiff_t;
-
-
-
-  
-
-
-
-    typedef unsigned int size_t;    
-#line 57 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
-
-
-
-   
-
-
-
-      typedef unsigned short wchar_t;  
-#line 82 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
-
-
-
-    
-
-
-
-
-   
-
-
-
-
-  typedef long double max_align_t;
-
-
-
-
-
-
-
-
-
-#line 114 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
-
-
-
- 
-
-#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
  
  
@@ -412,6 +275,227 @@ typedef unsigned     long long uintmax_t;
 
 
  
+#line 13 "..\\..\\UDS\\uds_ota.h"
+
+ 
+
+ 
+extern volatile uint32_t g_delayed_reset_ms;
+
+ 
+
+ 
+void UdsOta_Init(void);
+
+ 
+void UdsOta_Poll(void);
+
+ 
+void UdsOta_App_CheckPendingAck(void);
+
+ 
+void UdsOta_Bootloader_Enter(void);
+
+#line 10 "..\\..\\UDS\\uds_ota.c"
+#line 1 "..\\..\\Adp\\Adapter_Can.h"
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+#line 15 "..\\..\\Adp\\Adapter_Can.h"
+#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdbool.h"
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+#line 25 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdbool.h"
+
+
+
+#line 16 "..\\..\\Adp\\Adapter_Can.h"
+#line 1 "..\\..\\Adp\\can_module.h"
+
+
+
+
+
+
+ 
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+ 
+
+
+
+
+
+
+ 
+
+ 
+ 
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+#line 34 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+
+
+
+
+  typedef signed int ptrdiff_t;
+
+
+
+  
+
+
+
+    typedef unsigned int size_t;    
+#line 57 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+
+
+
+   
+
+
+
+      typedef unsigned short wchar_t;  
+#line 82 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+
+
+
+    
+
+
+
+
+   
+
+
+
+
+  typedef long double max_align_t;
+
+
+
+
+
+
+
+
+
+#line 114 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
+
+
+
+ 
+
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
 #line 41 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
 
 
@@ -20333,684 +20417,6 @@ void LL_PERIPH_WP(uint32_t u32Peripheral);
 
 
  
-#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
-#line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
- 
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-#line 170 "../../../../drivers/cmsis/Include/core_cm4.h"
-
-
-
-#line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
-
-#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
-#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
- 
- 
- 
- 
-
-
-
-
- 
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-#line 38 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-  
-
-
-
-    typedef unsigned int size_t;    
-#line 54 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-
-
-extern __declspec(__nothrow) void *memcpy(void * __restrict  ,
-                    const void * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) void *memmove(void *  ,
-                    const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-#line 193 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
-
- 
-
-#line 209 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-
-#line 232 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-
-   
-
-
-
-
- 
-
-#line 247 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
- 
-
-#line 270 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
-extern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
-
-extern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
-   
-
-
-
- 
-extern __declspec(__nothrow) char *strerror(int  );
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
-   
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-#line 502 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-
- 
-
-#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-typedef uint32_t en_slot_type_t;
-
-
-
-
-typedef enum {
-    APP_STATE_AVAILABLE = 0,
-    APP_STATE_DISABLED = 1
-} en_app_state_t;
-
-typedef enum {
-    WDT_RESET_NONE = 0,
-    WDT_RESET_SWDT = 1,
-    WDT_RESET_WDT = 2
-} en_wdt_reset_type_t;
-
-typedef enum {
-    BOOT_STATUS_NORMAL = 0,
-    BOOT_STATUS_APP1_DISABLED = 1,
-    BOOT_STATUS_APP2_DISABLED = 2,
-    BOOT_STATUS_BOTH_DISABLED = 3
-} en_boot_status_t;
-
-typedef struct {
-    en_slot_type_t eSlot;
-    uint32_t u32WdtCount;
-    en_app_state_t eState;
-    uint32_t u32StartAddr;
-} stc_app_info_t;
-
-typedef struct {
-    en_wdt_reset_type_t eWdtResetType;
-    en_slot_type_t eCurrentSlot;
-    en_slot_type_t eTargetSlot;
-    stc_app_info_t stcApp1;
-    stc_app_info_t stcApp2;
-    uint8_t u8NeedUpdateSlotFlag;
-} stc_boot_context_t;
-
-
-
-
-
-
-
-
-
-
-typedef struct {
-    volatile uint32_t app1_feed_ctrl;
-    volatile uint32_t app2_feed_ctrl;
-    volatile uint32_t debug_flag;
-    volatile uint32_t reserved[5];
-} stc_shared_ctrl_t;
-
-static inline stc_shared_ctrl_t* GetSharedCtrl(void)
-{
-    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
-}
-
-
-
-
-
-
-
-
-
-typedef enum {
-    UDS_PHASE_IDLE              = 0,   
-    UDS_PHASE_ENTER_BOOTLOADER  = 1,   
-    UDS_PHASE_PROGRAMMING_DONE  = 2,   
-} en_uds_phase_t;
-
-typedef struct {
-    uint32_t magic;             
-    uint32_t phase;             
-    uint32_t target_slot;       
-    uint32_t fw_size;           
-    uint32_t fw_crc;            
-    uint32_t result;            
-    uint32_t pending_sid;       
-    uint32_t reserved[7];       
-} stc_uds_shared_t;             
-
-
-void UdsShared_Read(stc_uds_shared_t *pState);
-void UdsShared_Write(const stc_uds_shared_t *pState);
-void UdsShared_Clear(void);
-void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot);
-void App_CheckPendingUdsAck(void);
-
-
-void Bootloader_UdsMain(void);
-
-
-
-
-
-void Boot_StartupSequence(void);                
-
-void InitSharedCtrl(void);
-void Bootloader_Init(void);
-int32_t Bootloader_FlashEraseSector(uint32_t u32Addr);
-void DisableAllNVICInterrupts(void);
-void Bootloader_JumpToApp(uint32_t u32AppAddr);
-void Boot_SwitchAndRunOther(void);
-void Boot_SetRunSlotToAddr(uint32_t u32Addr);
-void Bootloader_Delay(uint32_t u32Count);
-
-uint32_t GetWdtResetCount(uint32_t u32Addr);
-void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount);
-void ClearWdtResetCount(uint32_t u32Addr);
-
-void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value);
-uint32_t GetWdtFeedControl(uint32_t u32Addr);
-void ClearAppStateBySlot(en_slot_type_t eSlot);
-uint32_t READ_FLASH_DIRECT(uint32_t addr);
-
-
-void ClearAllRAM(void);
-
-#line 2 "..\\..\\Bootloader_App\\Bootloader_App.c"
-#line 1 "..\\..\\Adp\\Adapter_Can.h"
-
-
-
-
- 
-
-
-
-
-
-
-
-
-#line 15 "..\\..\\Adp\\Adapter_Can.h"
-#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdbool.h"
- 
-
-
-
-
-
-
- 
-
-
-
-
-
-#line 25 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdbool.h"
-
-
-
-#line 16 "..\\..\\Adp\\Adapter_Can.h"
-#line 1 "..\\..\\Adp\\can_module.h"
-
-
-
-
-
-
- 
-
-
-
-
 #line 13 "..\\..\\Adp\\can_module.h"
 #line 14 "..\\..\\Adp\\can_module.h"
 #line 15 "..\\..\\Adp\\can_module.h"
@@ -21335,7 +20741,7 @@ uint8_t CanIf_GetTxQueueCount(void);
 
 
 
-#line 3 "..\\..\\Bootloader_App\\Bootloader_App.c"
+#line 11 "..\\..\\UDS\\uds_ota.c"
 #line 1 "..\\..\\UDS\\isotp_transport.h"
 
 
@@ -21513,7 +20919,7 @@ void isotp_get_last_filtered_data(uint8_t* out_data, uint8_t* out_len);
 _Bool isotp_get_filter_record(uint16_t index, uint32_t* can_id, uint8_t* data, uint8_t* len);
 
 
-#line 4 "..\\..\\Bootloader_App\\Bootloader_App.c"
+#line 12 "..\\..\\UDS\\uds_ota.c"
 #line 1 "..\\..\\UDS\\uds_diagnostic.h"
 
 
@@ -22274,6 +21680,428 @@ extern __declspec(__nothrow) int __C_library_version_number(void);
 
  
 #line 11 "..\\..\\UDS\\common.h"
+#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+ 
+ 
+ 
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+#line 38 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+  
+
+
+
+    typedef unsigned int size_t;    
+#line 54 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+
+extern __declspec(__nothrow) void *memcpy(void * __restrict  ,
+                    const void * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) void *memmove(void *  ,
+                    const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+#line 193 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+
+ 
+
+#line 209 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+
+#line 232 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+ 
+
+#line 247 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+ 
+
+#line 270 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
+extern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+extern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) char *strerror(int  );
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+#line 502 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+ 
+
 #line 12 "..\\..\\UDS\\common.h"
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdarg.h"
  
@@ -24481,7 +24309,7 @@ const char* uds_security_to_string(uds_security_state_t state);
 
 
 
-#line 5 "..\\..\\Bootloader_App\\Bootloader_App.c"
+#line 13 "..\\..\\UDS\\uds_ota.c"
 #line 1 "..\\..\\UDS\\flash_download.h"
 
 
@@ -24667,62 +24495,7 @@ void FlashDownload_Task(void);
  
 _Bool FlashDownload_IsPending(void);
 
-#line 6 "..\\..\\Bootloader_App\\Bootloader_App.c"
-#line 1 "..\\..\\Utils\\TickTimer.h"
-
-
-
-#line 5 "..\\..\\Utils\\TickTimer.h"
-#line 6 "..\\..\\Utils\\TickTimer.h"
-
-
-
-typedef struct {
-    uint64_t startTick;   
-    uint64_t delayMs;     
-    _Bool isRunning;       
-} NonBlockingDelay_t;
-
-
-void tickTimer_Init(void);
-
-
-uint64_t tickTimer_GetCount(void);
-
-
-void tickTimer_DelayMs(uint64_t ms);
-
-
-
-void tickTimer_Update(void);
-
-
-
-
-void nbDelay_Init(NonBlockingDelay_t* delayObj, uint64_t delayMs);
-
-
-void nbDelay_Start(NonBlockingDelay_t* delayObj);
-
-
-
-_Bool nbDelay_IsComplete(NonBlockingDelay_t* delayObj);
-
-
-_Bool nbDelay_IsComplete_noclose(NonBlockingDelay_t* delayObj);
-
-
-void nbDelay_Stop(NonBlockingDelay_t* delayObj);
-
-
-void nbDelay_SetTime(NonBlockingDelay_t* delayObj, uint64_t delayMs);
-
-
-uint64_t tickTimer_GetElapsedSinceLastCall(void);
-
-uint64_t tickTimer_GetRawTick(void);
-
-#line 7 "..\\..\\Bootloader_App\\Bootloader_App.c"
+#line 14 "..\\..\\UDS\\uds_ota.c"
 #line 1 "..\\..\\RTT\\rtt_log.h"
 
 
@@ -25324,7 +25097,62 @@ typedef enum {
 
 
 
-#line 8 "..\\..\\Bootloader_App\\Bootloader_App.c"
+#line 15 "..\\..\\UDS\\uds_ota.c"
+#line 1 "..\\..\\Utils\\TickTimer.h"
+
+
+
+#line 5 "..\\..\\Utils\\TickTimer.h"
+#line 6 "..\\..\\Utils\\TickTimer.h"
+
+
+
+typedef struct {
+    uint64_t startTick;   
+    uint64_t delayMs;     
+    _Bool isRunning;       
+} NonBlockingDelay_t;
+
+
+void tickTimer_Init(void);
+
+
+uint64_t tickTimer_GetCount(void);
+
+
+void tickTimer_DelayMs(uint64_t ms);
+
+
+
+void tickTimer_Update(void);
+
+
+
+
+void nbDelay_Init(NonBlockingDelay_t* delayObj, uint64_t delayMs);
+
+
+void nbDelay_Start(NonBlockingDelay_t* delayObj);
+
+
+
+_Bool nbDelay_IsComplete(NonBlockingDelay_t* delayObj);
+
+
+_Bool nbDelay_IsComplete_noclose(NonBlockingDelay_t* delayObj);
+
+
+void nbDelay_Stop(NonBlockingDelay_t* delayObj);
+
+
+void nbDelay_SetTime(NonBlockingDelay_t* delayObj, uint64_t delayMs);
+
+
+uint64_t tickTimer_GetElapsedSinceLastCall(void);
+
+uint64_t tickTimer_GetRawTick(void);
+
+#line 16 "..\\..\\UDS\\uds_ota.c"
 #line 1 "../source/main.h"
 
 
@@ -25361,8 +25189,28 @@ extern volatile uint32_t g_delayed_reset_ms;
 
 
  
-#line 9 "..\\..\\Bootloader_App\\Bootloader_App.c"
-#line 1 "..\\..\\UDS\\uds_ota.h"
+#line 17 "..\\..\\UDS\\uds_ota.c"
+#line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+
+
+#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
 
 
 
@@ -25374,28 +25222,18 @@ extern volatile uint32_t g_delayed_reset_ms;
 
 
 
-#line 13 "..\\..\\UDS\\uds_ota.h"
 
- 
 
- 
-extern volatile uint32_t g_delayed_reset_ms;
 
- 
 
- 
-void UdsOta_Init(void);
+#line 170 "../../../../drivers/cmsis/Include/core_cm4.h"
 
- 
-void UdsOta_Poll(void);
 
- 
-void UdsOta_App_CheckPendingAck(void);
 
- 
-void UdsOta_Bootloader_Enter(void);
+#line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
 
-#line 10 "..\\..\\Bootloader_App\\Bootloader_App.c"
+#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 
 
@@ -25408,571 +25246,6 @@ void UdsOta_Bootloader_Enter(void);
 
 
 
-
-
-volatile uint32_t g_u32Debug_ClearAppState = 3;
-
-
-static en_wdt_reset_type_t GetWdtResetType(void);
-static en_slot_type_t GetCurrentSlot(void);
-static void ValidateSlotFlag(stc_boot_context_t *pstcCtx);
-static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr);
-static void UpdateAppState(stc_app_info_t *pstcApp);
-static void HandleWatchdogReset(stc_boot_context_t *pstcCtx);
-static void SelectTargetSlot(stc_boot_context_t *pstcCtx);
-static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx);
-static en_boot_status_t GetBootStatus(stc_boot_context_t *pstcCtx);
-static void ShowBootStatus(en_boot_status_t eStatus);
-static void RunBootloaderForever(void);
-static void CheckAndClearAppState(void);
-
-
-
-
-uint32_t READ_FLASH_DIRECT(uint32_t addr)
-{
-    uint32_t value;
-    uint32_t u32FrmcState;
-
-    u32FrmcState = ((CM_EFM_TypeDef *)(0x40010400UL))->FRMC;
-    ((CM_EFM_TypeDef *)(0x40010400UL))->FRMC = (u32FrmcState & ~(0x00010000UL));
-    __dsb(0xF);
-    value = *((volatile uint32_t *)addr);
-    __dmb(0xF);
-    ((CM_EFM_TypeDef *)(0x40010400UL))->FRMC = u32FrmcState;
-
-    return value;
-}
-
-void Bootloader_Delay(uint32_t u32Count)
-{
-    while (u32Count-- > 0) { __nop(); }
-}
-
-void DisableAllNVICInterrupts(void)
-{
-    uint32_t i;
-    for(i = 0; i < 128; i++)
-    {
-        __NVIC_DisableIRQ((IRQn_Type)i);
-    }
-    for(i = 0; i < 4; i++)
-    {
-        ((NVIC_Type *) ((0xE000E000UL) + 0x0100UL) )->ICPR[i] = 0xFFFFFFFF;
-    }
-}
-
-
-
-
-void InitSharedCtrl(void)
-{
-    stc_shared_ctrl_t *pCtrl = GetSharedCtrl();
-    if (pCtrl->app1_feed_ctrl != 0x00000000u &&
-        pCtrl->app1_feed_ctrl != 0xDEADBEEFu)
-    {
-        pCtrl->app1_feed_ctrl = 0x00000000u;
-        pCtrl->app2_feed_ctrl = 0x00000000u;
-        pCtrl->debug_flag = 0;
-        for (int i = 0; i < 5; i++) pCtrl->reserved[i] = 0;
-    }
-}
-
-
-
-
-int32_t Bootloader_FlashEraseSector(uint32_t u32Addr)
-{
-    int32_t res;
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    res = EFM_SectorErase(u32Addr);
-    EFM_REG_Lock();
-    return res;
-}
-
-
-
-
-uint32_t GetWdtResetCount(uint32_t u32Addr)
-{
-    uint32_t u32Count = READ_FLASH_DIRECT(u32Addr);
-    return (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-}
-
-void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount)
-{
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-    uint32_t u32Count, u32Feed;
-
-    if (u32Addr == (0x16000 + 0x008)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
-    } else if (u32Addr == (0x18000 + 0x008)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
-    } else return;
-
-    u32Count = READ_FLASH_DIRECT(u32CountAddr);
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-    u32Feed = (u32Feed == 0xFFFFFFFF) ? 0x00000000u : u32Feed;
-
-    if (u32Count < 3) u32Count++;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, u32Count);
-    EFM_REG_Lock();
-}
-
-void ClearWdtResetCount(uint32_t u32Addr)
-{
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-    uint32_t u32Count, u32Feed;
-
-    if (u32Addr == (0x16000 + 0x008)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
-    } else if (u32Addr == (0x18000 + 0x008)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
-    } else return;
-
-    u32Count = READ_FLASH_DIRECT(u32CountAddr);
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-    u32Feed = (u32Feed == 0xFFFFFFFF) ? 0x00000000u : u32Feed;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, 0);
-    EFM_REG_Lock();
-}
-
-void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value)
-{
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-    uint32_t u32Count, u32Feed;
-
-    if (u32Value != 0x00000000u && u32Value != 0xDEADBEEFu) return;
-
-    if (u32Addr == (0x16000 + 0x000)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
-    } else if (u32Addr == (0x18000 + 0x000)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
-    } else return;
-
-    u32Count = READ_FLASH_DIRECT(u32CountAddr);
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-    u32Feed = u32Value;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, u32Count);
-    EFM_REG_Lock();
-}
-
-uint32_t GetWdtFeedControl(uint32_t u32Addr)
-{
-    uint32_t u32Value = READ_FLASH_DIRECT(u32Addr);
-    return (u32Value == 0xFFFFFFFF) ? 0x00000000u : u32Value;
-}
-
-void ClearAppStateBySlot(en_slot_type_t eSlot)
-{
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr, u32Feed;
-
-    if (eSlot == ((en_slot_type_t)0x5A5A5A5Au)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
-    } else if (eSlot == ((en_slot_type_t)0xA5A5A5A5u)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
-    } else return;
-
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Feed = (u32Feed == 0xFFFFFFFF) ? 0x00000000u : u32Feed;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, 0);
-    EFM_REG_Lock();
-}
-
-
-
-
-void Bootloader_JumpToApp(uint32_t u32AppAddr)
-{
-    uint32_t app_start_address;
-    uint32_t app_sp = *(uint32_t *)u32AppAddr;
-    app_start_address = *(uint32_t *)(u32AppAddr + 4);
-
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "=== Bootloader Jump To APP ===\r\n" "\033[0m" "\r\n", "MAIN");
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  APP Start Addr: 0x%08X\r\n" "\033[0m" "\r\n", "MAIN",u32AppAddr);
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  APP SP:         0x%08X\r\n" "\033[0m" "\r\n", "MAIN",app_sp);
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  APP Reset:      0x%08X\r\n" "\033[0m" "\r\n", "MAIN",app_start_address);
-
-    if (app_start_address == 0xFFFFFFFF) {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  ERROR: APP Reset vector is 0xFFFFFFFF, jump aborted!\r\n" "\033[0m" "\r\n", "MAIN");
-        return;
-    }
-
-    
-    
-    
-    
-    ((SysTick_Type *) ((0xE000E000UL) + 0x0010UL) )->CTRL = 0;
-    ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->ICSR |= (1UL << 25U); 
-
-    
-    __disable_irq();
-    DisableAllNVICInterrupts();
-    
-    
-    for (uint8_t i = 0; i < 8; i++) 
-    {
-        ((NVIC_Type *) ((0xE000E000UL) + 0x0100UL) )->ICER[i] = 0xFFFFFFFF;
-        ((NVIC_Type *) ((0xE000E000UL) + 0x0100UL) )->ICPR[i] = 0xFFFFFFFF;
-    }
-
-    
-    __set_MSP(*(uint32_t *)u32AppAddr);
-    ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR = ((uint32_t)u32AppAddr & (0x1FFFFFFUL << 7U));
-    
-    __dsb(0xF);
-    __isb(0xF);
-
-    
-    (*((void(*)(void))app_start_address))();
-}
-
-
-void ClearAllRAM(void)
-{
-    volatile uint32_t *ram_addr = (volatile uint32_t *)0x1FFF8000UL;
-    register uint32_t current_msp __asm("msp");
-    uint32_t clear_end;
-    uint32_t ram_word_count;
-
-     
-    if (current_msp > 0x1FFF8000UL + 0xF000U) {
-        clear_end = current_msp - 0xF000U;
-    } else {
-        clear_end = 0x1FFF8000UL;
-    }
-    if (clear_end > 0x1FFF8000UL + 0x2F000UL) {
-        clear_end = 0x1FFF8000UL + 0x2F000UL;
-    }
-
-    ram_word_count = (clear_end - 0x1FFF8000UL) / 4U;
-
-    for (uint32_t i = 0; i < ram_word_count; i++)
-    {
-        ram_addr[i] = 0;
-    }
-
-    __dsb(0xF);
-    __isb(0xF);
-}
-
-void Boot_SwitchAndRunOther(void)
-{
-    uint32_t curr = READ_FLASH_DIRECT(0x7C000);
-    uint32_t target = (curr == 0x5A5A5A5Au) ? 0xA5A5A5A5u : 0x5A5A5A5Au;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(0x7C000);
-    EFM_ProgramWord(0x7C000, target);
-    EFM_REG_Lock();
-
-    __NVIC_SystemReset();
-}
-
-void Boot_SetRunSlotToAddr(uint32_t u32Addr)
-{
-    uint32_t u32Magic;
-    if (u32Addr == 0x1A000)
-        u32Magic = 0x5A5A5A5Au;
-    else if (u32Addr == 0x4C000)
-        u32Magic = 0xA5A5A5A5u;
-    else
-        return;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(0x7C000);
-    EFM_ProgramWord(0x7C000, u32Magic);
-    EFM_REG_Lock();
-}
-
-
-
-
-void Bootloader_Init(void) {}
-
-void Boot_StartupSequence(void)
-{
-    stc_boot_context_t stcCtx;
-    memset(&stcCtx, 0, sizeof(stc_boot_context_t));
-
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "===== Bootloader Start =====\r\n" "\033[0m" "\r\n", "MAIN");
-
-    stc_shared_ctrl_t *pSharedCtrl = GetSharedCtrl();
-    if (pSharedCtrl->debug_flag == 0x5A5A5A5A) {
-        SetWdtFeedControl((0x16000 + 0x000), pSharedCtrl->app1_feed_ctrl);
-        SetWdtFeedControl((0x18000 + 0x000), pSharedCtrl->app2_feed_ctrl);
-        pSharedCtrl->debug_flag = 0;
-    }
-
-     
-    {
-        stc_uds_shared_t stcUdsState;
-        UdsShared_Read(&stcUdsState);
-
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS Shared: magic=0x%08X, phase=%d, pending_sid=0x%02X\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)stcUdsState . magic, (int)stcUdsState . phase, (unsigned int)stcUdsState . pending_sid);
-
-
-        if (stcUdsState.magic == 0x55445300UL) {
-            if (stcUdsState.phase == UDS_PHASE_ENTER_BOOTLOADER) {
-                SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Enter UDS Programming Mode\r\n" "\033[0m" "\r\n", "MAIN");
-                 
-                Bootloader_UdsMain();
-                 
-                while(1) { __nop(); }
-            }
-            
- 
-        }
-    }
-
-    CheckAndClearAppState();
-    stcCtx.eWdtResetType = GetWdtResetType();
-    stcCtx.eCurrentSlot = GetCurrentSlot();
-    ValidateSlotFlag(&stcCtx);
-
-    InitAppInfo(&stcCtx.stcApp1, ((en_slot_type_t)0x5A5A5A5Au), 0x1A000);
-    InitAppInfo(&stcCtx.stcApp2, ((en_slot_type_t)0xA5A5A5A5u), 0x4C000);
-    UpdateAppState(&stcCtx.stcApp1);
-    UpdateAppState(&stcCtx.stcApp2);
-    HandleWatchdogReset(&stcCtx);
-    SelectTargetSlot(&stcCtx);
-    UpdateSlotFlagToFlash(&stcCtx);
-
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  WDT Reset: %d, CurSlot: %d, Target: %d\r\n" "\033[0m" "\r\n", "MAIN",(int)stcCtx . eWdtResetType, (int)stcCtx . eCurrentSlot, (int)stcCtx . eTargetSlot);
-
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  APP1 state=%d, WDT=%d | APP2 state=%d, WDT=%d\r\n" "\033[0m" "\r\n", "MAIN",(int)stcCtx . stcApp1 . eState, (int)stcCtx . stcApp1 . u32WdtCount, (int)stcCtx . stcApp2 . eState, (int)stcCtx . stcApp2 . u32WdtCount);
-
-
-
-    ShowBootStatus(GetBootStatus(&stcCtx));
-
-    if (stcCtx.eTargetSlot == ((en_slot_type_t)0x5A5A5A5Au))      Bootloader_JumpToApp(0x1A000);
-    else if (stcCtx.eTargetSlot == ((en_slot_type_t)0xA5A5A5A5u)) Bootloader_JumpToApp(0x4C000);
-    else {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  ERROR: No valid APP slot, running forever!\r\n" "\033[0m" "\r\n", "MAIN");
-        RunBootloaderForever();
-    }
-}
-
-
-
-
-static en_wdt_reset_type_t GetWdtResetType(void) {
-    if ( SET == RMU_GetStatus(((0x0040U)))) return WDT_RESET_SWDT;
-    if ( SET == RMU_GetStatus(((0x0020U)))) return WDT_RESET_WDT;
-    return WDT_RESET_NONE;
-}
-
-static en_slot_type_t GetCurrentSlot(void) {
-    uint32_t s = READ_FLASH_DIRECT(0x7C000);
-    if (s == 0x5A5A5A5Au) return ((en_slot_type_t)0x5A5A5A5Au);
-    if (s == 0xA5A5A5A5u) return ((en_slot_type_t)0xA5A5A5A5u);
-    return ((en_slot_type_t)0);
-}
-
-static void ValidateSlotFlag(stc_boot_context_t *pstcCtx) {
-    if (pstcCtx->eCurrentSlot == ((en_slot_type_t)0)) {
-        pstcCtx->eCurrentSlot = ((en_slot_type_t)0x5A5A5A5Au);
-        pstcCtx->u8NeedUpdateSlotFlag = 1;
-    }
-}
-
-static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr) {
-    pstcApp->eSlot = eSlot;
-    pstcApp->u32StartAddr = u32Addr;
-    uint32_t cnt = (eSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? READ_FLASH_DIRECT((0x16000 + 0x008)) : READ_FLASH_DIRECT((0x18000 + 0x008));
-    pstcApp->u32WdtCount = (cnt == 0xFFFFFFFF) ? 0 : cnt;
-    pstcApp->eState = APP_STATE_AVAILABLE;
-}
-
-static void UpdateAppState(stc_app_info_t *pstcApp) {
-    pstcApp->eState = (pstcApp->u32WdtCount >= 3) ? APP_STATE_DISABLED : APP_STATE_AVAILABLE;
-}
-
-static void HandleWatchdogReset(stc_boot_context_t *pstcCtx) {
-    if (pstcCtx->eWdtResetType == WDT_RESET_NONE) return;
-    stc_app_info_t *app = 0;
-    uint32_t addr = 0;
-
-    if (pstcCtx->eCurrentSlot == ((en_slot_type_t)0x5A5A5A5Au)) {
-        app = &pstcCtx->stcApp1; addr = (0x16000 + 0x008);
-    } else if (pstcCtx->eCurrentSlot == ((en_slot_type_t)0xA5A5A5A5u)) {
-        app = &pstcCtx->stcApp2; addr = (0x18000 + 0x008);
-    } else return;
-
-    if (app->eState == APP_STATE_AVAILABLE) {
-        UpdateWdtResetCount(addr, 0);
-        app->u32WdtCount = (app->eSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? GetWdtResetCount((0x16000 + 0x008)) : GetWdtResetCount((0x18000 + 0x008));
-        if (app->u32WdtCount >= 3) app->eState = APP_STATE_DISABLED;
-    }
-}
-
-static void SelectTargetSlot(stc_boot_context_t *pstcCtx) {
-    uint8_t aok = (pstcCtx->stcApp1.eState == APP_STATE_AVAILABLE);
-    uint8_t bok = (pstcCtx->stcApp2.eState == APP_STATE_AVAILABLE);
-
-    if (pstcCtx->eCurrentSlot == ((en_slot_type_t)0x5A5A5A5Au) && aok) pstcCtx->eTargetSlot = ((en_slot_type_t)0x5A5A5A5Au);
-    else if (pstcCtx->eCurrentSlot == ((en_slot_type_t)0xA5A5A5A5u) && bok) pstcCtx->eTargetSlot = ((en_slot_type_t)0xA5A5A5A5u);
-    else if (bok) { pstcCtx->eTargetSlot = ((en_slot_type_t)0xA5A5A5A5u); pstcCtx->u8NeedUpdateSlotFlag = 1; }
-    else if (aok) { pstcCtx->eTargetSlot = ((en_slot_type_t)0x5A5A5A5Au); pstcCtx->u8NeedUpdateSlotFlag = 1; }
-    else pstcCtx->eTargetSlot = ((en_slot_type_t)0);
-}
-
-static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx) {
-    if (!pstcCtx->u8NeedUpdateSlotFlag || pstcCtx->eTargetSlot == ((en_slot_type_t)0)) return;
-    uint32_t val = (pstcCtx->eTargetSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? 0x5A5A5A5Au : 0xA5A5A5A5u;
-
-    EFM_REG_Unlock(); EFM_FWMC_Cmd(ENABLE); while(!EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(0x7C000);
-    EFM_ProgramWord(0x7C000, val);
-    EFM_REG_Lock();
-    pstcCtx->u8NeedUpdateSlotFlag = 0;
-}
-
-static en_boot_status_t GetBootStatus(stc_boot_context_t *pstcCtx) {
-    uint8_t aok = (pstcCtx->stcApp1.eState == APP_STATE_AVAILABLE);
-    uint8_t bok = (pstcCtx->stcApp2.eState == APP_STATE_AVAILABLE);
-    if (!aok && !bok) return BOOT_STATUS_BOTH_DISABLED;
-    if (!aok) return BOOT_STATUS_APP1_DISABLED;
-    if (!bok) return BOOT_STATUS_APP2_DISABLED;
-    return BOOT_STATUS_NORMAL;
-}
-
-static void ShowBootStatus(en_boot_status_t eStatus) {
-    stc_gpio_init_t stcPortInit;
-    memset(&(stcPortInit), 0, sizeof(stcPortInit));
-    stcPortInit.u16PinDir = ((0x0002U));
-    LL_PERIPH_WE((1UL << 2U));
-    GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-    LL_PERIPH_WP((1UL << 2U));
-    uint8_t cnt; uint32_t dly;
-
-    switch(eStatus) {
-        case BOOT_STATUS_NORMAL: cnt=2; dly=50; break;
-        case BOOT_STATUS_APP1_DISABLED: cnt=3; dly=50; break;
-        case BOOT_STATUS_APP2_DISABLED: cnt=4; dly=50; break;
-        default: cnt=5; dly=200000; break;
-    }
-
-    for (uint8_t i=0; i<cnt; i++) {
-        GPIO_TogglePins((0x01U), (0x0040U)); Bootloader_Delay(dly);
-        GPIO_TogglePins((0x01U), (0x0040U)); Bootloader_Delay(dly);
-    }
-}
-
-static void RunBootloaderForever(void) {
-    stc_gpio_init_t stcPortInit;
-    memset(&(stcPortInit), 0, sizeof(stcPortInit));
-    stcPortInit.u16PinDir = ((0x0002U));
-    LL_PERIPH_WE((1UL << 2U));
-    GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-    LL_PERIPH_WP((1UL << 2U));
-    while(1) { GPIO_TogglePins((0x01U), (0x0040U)); Bootloader_Delay(200000); }
-}
-
-static void CheckAndClearAppState(void) {
-    if (g_u32Debug_ClearAppState == 1) ClearAppStateBySlot(((en_slot_type_t)0x5A5A5A5Au));
-    else if (g_u32Debug_ClearAppState == 2) ClearAppStateBySlot(((en_slot_type_t)0xA5A5A5A5u));
-    else if (g_u32Debug_ClearAppState == 3) { ClearAppStateBySlot(((en_slot_type_t)0x5A5A5A5Au)); ClearAppStateBySlot(((en_slot_type_t)0xA5A5A5A5u)); }
-}
-
-
-
-
-
-void UdsShared_Read(stc_uds_shared_t *pState)
-{
-    uint32_t *pSrc = (uint32_t *)0x00010000;
-    uint32_t *pDst = (uint32_t *)pState;
-    uint32_t count = sizeof(stc_uds_shared_t) / 4;
-    uint32_t i;
-    for (i = 0; i < count; i++) {
-        pDst[i] = READ_FLASH_DIRECT((uint32_t)(uintptr_t)(pSrc + i));
-    }
-}
-
-void UdsShared_Write(const stc_uds_shared_t *pState)
-{
-    uint32_t u32SectorBase = 0x00010000;
-    const uint32_t *pSrc = (const uint32_t *)pState;
-    uint32_t count = sizeof(stc_uds_shared_t) / 4;
-    uint32_t i;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(u32SectorBase);
-
-    for (i = 0; i < count; i++) {
-        EFM_ProgramWord(u32SectorBase + i * 4, pSrc[i]);
-    }
-    EFM_REG_Lock();
-}
-
-void UdsShared_Clear(void)
-{
-    Bootloader_FlashEraseSector(0x00010000);
-}
-
-void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot)
-{
-    stc_uds_shared_t state;
-    memset(&(state), 0, sizeof(state));
-    state.magic       = 0x55445300UL;
-    state.phase       = phase;
-    state.target_slot = target_slot;
-    state.result      = 0;
-    UdsShared_Write(&state);
-}
 
 
 
@@ -25984,20 +25257,189 @@ void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot)
 
 
  
-static uint8_t s_bl_uds_rx_buffer[4100];
 
-static void BL_ISOTP_RxCallback(const CanMsg_t *pMsg)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef uint32_t en_slot_type_t;
+
+
+
+
+typedef enum {
+    APP_STATE_AVAILABLE = 0,
+    APP_STATE_DISABLED = 1
+} en_app_state_t;
+
+typedef enum {
+    WDT_RESET_NONE = 0,
+    WDT_RESET_SWDT = 1,
+    WDT_RESET_WDT = 2
+} en_wdt_reset_type_t;
+
+typedef enum {
+    BOOT_STATUS_NORMAL = 0,
+    BOOT_STATUS_APP1_DISABLED = 1,
+    BOOT_STATUS_APP2_DISABLED = 2,
+    BOOT_STATUS_BOTH_DISABLED = 3
+} en_boot_status_t;
+
+typedef struct {
+    en_slot_type_t eSlot;
+    uint32_t u32WdtCount;
+    en_app_state_t eState;
+    uint32_t u32StartAddr;
+} stc_app_info_t;
+
+typedef struct {
+    en_wdt_reset_type_t eWdtResetType;
+    en_slot_type_t eCurrentSlot;
+    en_slot_type_t eTargetSlot;
+    stc_app_info_t stcApp1;
+    stc_app_info_t stcApp2;
+    uint8_t u8NeedUpdateSlotFlag;
+} stc_boot_context_t;
+
+
+
+
+
+
+
+
+
+
+typedef struct {
+    volatile uint32_t app1_feed_ctrl;
+    volatile uint32_t app2_feed_ctrl;
+    volatile uint32_t debug_flag;
+    volatile uint32_t reserved[5];
+} stc_shared_ctrl_t;
+
+static inline stc_shared_ctrl_t* GetSharedCtrl(void)
+{
+    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
+}
+
+
+
+
+
+
+
+
+
+typedef enum {
+    UDS_PHASE_IDLE              = 0,   
+    UDS_PHASE_ENTER_BOOTLOADER  = 1,   
+    UDS_PHASE_PROGRAMMING_DONE  = 2,   
+} en_uds_phase_t;
+
+typedef struct {
+    uint32_t magic;             
+    uint32_t phase;             
+    uint32_t target_slot;       
+    uint32_t fw_size;           
+    uint32_t fw_crc;            
+    uint32_t result;            
+    uint32_t pending_sid;       
+    uint32_t reserved[7];       
+} stc_uds_shared_t;             
+
+
+void UdsShared_Read(stc_uds_shared_t *pState);
+void UdsShared_Write(const stc_uds_shared_t *pState);
+void UdsShared_Clear(void);
+void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot);
+void App_CheckPendingUdsAck(void);
+
+
+void Bootloader_UdsMain(void);
+
+
+
+
+
+void Boot_StartupSequence(void);                
+
+void InitSharedCtrl(void);
+void Bootloader_Init(void);
+int32_t Bootloader_FlashEraseSector(uint32_t u32Addr);
+void DisableAllNVICInterrupts(void);
+void Bootloader_JumpToApp(uint32_t u32AppAddr);
+void Boot_SwitchAndRunOther(void);
+void Boot_SetRunSlotToAddr(uint32_t u32Addr);
+void Bootloader_Delay(uint32_t u32Count);
+
+uint32_t GetWdtResetCount(uint32_t u32Addr);
+void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount);
+void ClearWdtResetCount(uint32_t u32Addr);
+
+void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value);
+uint32_t GetWdtFeedControl(uint32_t u32Addr);
+void ClearAppStateBySlot(en_slot_type_t eSlot);
+uint32_t READ_FLASH_DIRECT(uint32_t addr);
+
+
+void ClearAllRAM(void);
+
+#line 18 "..\\..\\UDS\\uds_ota.c"
+
+ 
+extern void uds_dl_init_fw(void);
+
+ 
+
+ 
+volatile uint32_t g_delayed_reset_ms = 0;
+
+ 
+
+ 
+static uint8_t s_uds_rx_buffer[4100];
+
+ 
+
+
+
+
+ 
+static void ISOTP_RxCallback(const CanMsg_t *pMsg)
 {
     uint16_t out_len = 0;
     int8_t result = isotp_receive_frame(0, pMsg->u32ID,
                                         (uint8_t*)pMsg->au8Data, pMsg->u8DLC,
-                                        s_bl_uds_rx_buffer, &out_len);
+                                        s_uds_rx_buffer, &out_len);
     if (result == 0) {
-        uds_receive_handler(0, pMsg->u32ID, s_bl_uds_rx_buffer, out_len);
+        uds_receive_handler(0, pMsg->u32ID, s_uds_rx_buffer, out_len);
     }
 }
 
-static void BL_ISOTP_RegisterRxFilters(void)
+
+
+
+ 
+static void ISOTP_RegisterRxFilters(void)
 {
     static const uint32_t s_isotp_can_ids[4] = {
         0x18DA03F1UL,   
@@ -26010,151 +25452,71 @@ static void BL_ISOTP_RegisterRxFilters(void)
     stcEntry.u32CanId   = 0UL;
     stcEntry.u32CanMask = 0UL;   
     stcEntry.u8Format   = ((0x40000000UL) | (0x20000000UL));
-    stcEntry.pfnCallback = &BL_ISOTP_RxCallback;
+    stcEntry.pfnCallback = &ISOTP_RxCallback;
 
     for (uint8_t i = 0U; i < 4U; i++) {
         stcEntry.u32CanId = s_isotp_can_ids[i];
-        CanIf_RegisterRxFilter(&stcEntry);
-    }
-}
+        if (!CanIf_RegisterRxFilter(&stcEntry)) {
+            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "ISOTP: failed to register RX filter for CAN ID 0x%08X\r\n" "\033[0m" "\r\n", "MAIN",s_isotp_can_ids[i]);
 
-
-
-
-
-void Bootloader_UdsMain(void)
-{
-    uint64_t last_wdt_feed;
-    FlashDownloadConfig_t stcFwConfig;
-    uint8_t i;
-
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "===== Bootloader UDS Main Start =====\r\n" "\033[0m" "\r\n", "MAIN");
-
-     
-    {
-        uint8_t _pb6_i;
-        stc_gpio_init_t stcPortInit;
-        memset(&(stcPortInit), 0, sizeof(stcPortInit));
-        stcPortInit.u16PinDir = ((0x0002U));
-        LL_PERIPH_WE((1UL << 2U));
-        GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-        LL_PERIPH_WP((1UL << 2U));
-        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-            GPIO_SetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(200);
-            GPIO_ResetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(200);
         }
     }
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "ISOTP: 4 CAN ID RX filters registered\r\n" "\033[0m" "\r\n", "MAIN");
+}
 
-     
-    {
-        uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
-        isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Sent 31 ACK (71 01 FF 00) via ISOTP\r\n" "\033[0m" "\r\n", "MAIN");
-    }
+ 
 
-     
-    memset(&(stcFwConfig), 0, sizeof(stcFwConfig));
-    stcFwConfig.max_firmware_size     = 48UL * 1024UL;
-    stcFwConfig.flash_sector_size    = 0x2000UL;
-    stcFwConfig.user_start_addr      = 0x4C000;
-    stcFwConfig.user_end_addr        = 0x4C000 + 0xC000UL;
-    stcFwConfig.verify_enabled       = 1U;
-    stcFwConfig.auto_reset_on_complete = 0U;
-    FlashDownload_Init(&stcFwConfig);
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n" "\033[0m" "\r\n", "MAIN",0x4C000, 0x4C000 + 0xC000UL);
+ 
+void UdsOta_Init(void)
+{
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "=== UDS Stack Init Start ===\r\n" "\033[0m" "\r\n", "MAIN");
 
-
-     
+    isotp_init(0);
+    ISOTP_RegisterRxFilters();
+    FlashDownload_Init(0);
     uds_dl_init_fw();
-
-     
     uds_init();
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS init done\r\n" "\033[0m" "\r\n", "MAIN");
+
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "=== UDS Stack Init Done ===\r\n" "\033[0m" "\r\n", "MAIN");
+}
+
+ 
+void UdsOta_Poll(void)
+{
+    static uint64_t s_last_ms_tick = 0;
+    uint64_t current_tick = tickTimer_GetCount();
 
      
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n" "\033[0m" "\r\n", "MAIN");
-    last_wdt_feed = tickTimer_GetCount();
-
-    static uint8_t s_uds_shared_written = 0;
-
-    while (1) {
-        uint64_t tick = tickTimer_GetCount();
+    if (current_tick != s_last_ms_tick) {
+        s_last_ms_tick = current_tick;
 
          
-        if ((tick - last_wdt_feed) >= 500) {
-            SWDT_FeedDog();
-            last_wdt_feed = tick;
+        if (g_delayed_reset_ms > 0) {
+            g_delayed_reset_ms--;
+            if (g_delayed_reset_ms == 0) {
+                SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "Delayed reset done, resetting...\r\n" "\033[0m" "\r\n", "MAIN");
+                __NVIC_SystemReset();
+                while(1);
+            }
         }
 
-        UdsOta_Poll();
-
-        if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
-            stc_uds_shared_t state;
-            UdsShared_Read(&state);
-            state.phase = UDS_PHASE_PROGRAMMING_DONE;
-            state.result = 1;
-            state.target_slot = ((en_slot_type_t)0xA5A5A5A5u);
-            UdsShared_Write(&state);
-            s_uds_shared_written = 1;
-            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared updated: phase=PROGRAMMING_DONE\r\n" "\033[0m" "\r\n", "MAIN");
-        }
+        isotp_ms_update();
+        uds_ms_update();
+        isotp_tx_process();
     }
+
+    FlashDownload_Task();
+    CanIf_Poll();
 }
 
-
-
-
-void App_CheckPendingUdsAck(void)
-{
-    stc_uds_shared_t state;
-    UdsShared_Read(&state);
-
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "App_CheckPendingUdsAck: magic=0x%08X, pending_sid=0x%02X\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)state . magic, (unsigned int)state . pending_sid);
-
-
-    if (state.magic != 0x55445300UL) {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  No pending UDS state, skip\r\n" "\033[0m" "\r\n", "MAIN");
-        return;
-    }
-
-    if (state.pending_sid == 0x11) {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Sending pending 11 01 ACK (51 01)\r\n" "\033[0m" "\r\n", "MAIN");
-        
  
-        CanMsg_t stcMsg;
-        uint8_t au8Data[8] = {0x04, 0x51, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
-        uint8_t i;
-        stcMsg.u32ID = 0x18DAF103UL;
-        stcMsg.u8IDE  = 1U;
-        stcMsg.u8RTR  = 0U;
-        stcMsg.u8FDF  = 0U;
-        stcMsg.u8BRS  = 0U;
-        stcMsg.u8DLC  = 8U;
-        for (i = 0; i < 8; i++) stcMsg.au8Data[i] = au8Data[i];
-        CanIf_Send(&stcMsg);
-    }
+void UdsOta_App_CheckPendingAck(void)
+{
+    App_CheckPendingUdsAck();
+}
 
-     
-    {
-        uint8_t _pb6_i;
-        stc_gpio_init_t stcPortInit;
-        memset(&(stcPortInit), 0, sizeof(stcPortInit));
-        stcPortInit.u16PinDir = ((0x0002U));
-        LL_PERIPH_WE((1UL << 2U));
-        GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-            GPIO_SetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(300);
-            GPIO_ResetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(300);
-        }
-        GPIO_SetPins((0x01U), (0x0040U));
-        LL_PERIPH_WP((1UL << 2U));
-    }
-
-     
-    UdsShared_Clear();
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared state cleared\r\n" "\033[0m" "\r\n", "MAIN");
+ 
+void UdsOta_Bootloader_Enter(void)
+{
+    Bootloader_UdsMain();
 }
