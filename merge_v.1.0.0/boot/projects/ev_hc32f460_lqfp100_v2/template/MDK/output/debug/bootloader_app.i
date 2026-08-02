@@ -26056,14 +26056,14 @@ void Bootloader_UdsMain(void)
 
      
     memset(&(stcFwConfig), 0, sizeof(stcFwConfig));
-    stcFwConfig.max_firmware_size     = 48UL * 1024UL;
+    stcFwConfig.max_firmware_size     = 80UL * 1024UL;
     stcFwConfig.flash_sector_size    = 0x2000UL;
     stcFwConfig.user_start_addr      = 0x4C000;
-    stcFwConfig.user_end_addr        = 0x4C000 + 0xC000UL;
+    stcFwConfig.user_end_addr        = 0x4C000 + 0x14000UL;
     stcFwConfig.verify_enabled       = 1U;
     stcFwConfig.auto_reset_on_complete = 0U;
     FlashDownload_Init(&stcFwConfig);
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n" "\033[0m" "\r\n", "MAIN",0x4C000, 0x4C000 + 0xC000UL);
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n" "\033[0m" "\r\n", "MAIN",0x4C000, 0x4C000 + 0x14000UL);
 
 
      

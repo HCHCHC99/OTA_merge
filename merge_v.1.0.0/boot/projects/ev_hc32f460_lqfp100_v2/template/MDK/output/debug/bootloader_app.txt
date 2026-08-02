@@ -1091,8 +1091,8 @@
 0000a4  2114              MOVS     r1,#0x14
 0000a6  a80f              ADD      r0,sp,#0x3c
 0000a8  f7fffffe          BL       __aeabi_memclr4
-;;;670        stcFwConfig.max_firmware_size     = 48UL * 1024UL;
-0000ac  f44f4040          MOV      r0,#0xc000
+;;;670        stcFwConfig.max_firmware_size     = 80UL * 1024UL;
+0000ac  f44f30a0          MOV      r0,#0x14000
 0000b0  900f              STR      r0,[sp,#0x3c]
 ;;;671        stcFwConfig.flash_sector_size    = 0x2000UL;
 0000b2  f44f5000          MOV      r0,#0x2000
@@ -1100,8 +1100,8 @@
 ;;;672        stcFwConfig.user_start_addr      = UDS_TARGET_FLASH_ADDR;
 0000b8  f44f2098          MOV      r0,#0x4c000
 0000bc  9011              STR      r0,[sp,#0x44]
-;;;673        stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + 0xC000UL;
-0000be  f44f20b0          MOV      r0,#0x58000
+;;;673        stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + 0x14000UL;
+0000be  f44f20c0          MOV      r0,#0x60000
 0000c2  9012              STR      r0,[sp,#0x48]
 ;;;674        stcFwConfig.verify_enabled       = 1U;
 0000c4  2001              MOVS     r0,#1
@@ -1113,14 +1113,14 @@
 0000d0  a80f              ADD      r0,sp,#0x3c
 0000d2  f7fffffe          BL       FlashDownload_Init
 ;;;677        MAIN_D("  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n",
-0000d6  f44f20b0          MOV      r0,#0x58000
+0000d6  f44f20c0          MOV      r0,#0x60000
 0000da  f44f2398          MOV      r3,#0x4c000
 0000de  a227              ADR      r2,|L11.380|
 0000e0  493b              LDR      r1,|L11.464|
 0000e2  9000              STR      r0,[sp,#0]
 0000e4  2000              MOVS     r0,#0
 0000e6  f7fffffe          BL       SEGGER_RTT_printf
-;;;678               UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + 0xC000UL);
+;;;678               UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + 0x14000UL);
 ;;;679    
 ;;;680        /* ==== 3. 注册固件下载接口到 UDS ==== */
 ;;;681        uds_dl_init_fw();
