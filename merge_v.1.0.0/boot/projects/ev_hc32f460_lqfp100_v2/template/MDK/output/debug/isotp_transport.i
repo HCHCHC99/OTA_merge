@@ -22908,7 +22908,7 @@ static _Bool s_tx_pending = 0;
 
 
  
-static const uint32_t s_filter_can_ids[4] = {0x18DA03F1, 0x18DAF103, 0x18FF8118, 0x18DBFFF0};
+static const uint32_t s_filter_can_ids[5] = {0x18DA03F1, 0x18DAF103, 0x18FF8118, 0x18DBFFF0, 0x18FF5858};
 
  
 typedef struct {
@@ -23134,7 +23134,7 @@ static void isotp_print_tx_frame(uint32_t can_id, uint8_t* frame_data, uint8_t f
  
 static _Bool isotp_is_can_id_filtered(uint32_t can_id)
 {
-    for (uint8_t i = 0; i < 4; i++) {
+    for (uint8_t i = 0; i < 5; i++) {
         if (s_filter_can_ids[i] == can_id) {
             return 1;
         }
@@ -23173,6 +23173,13 @@ static const char* isotp_ota_annotate(uint32_t can_id, uint8_t* data)
 
     if (can_id == 0x18FF8118) {
         if (data[0] == 0x01 && data[1] == 0x00) return "<-- Enable";
+        return "";
+    }
+
+    if (can_id == 0x18FF5858) {
+        if (data[0] == 0x01) return "<-- ForceBL";
+        if (data[0] == 0x02) return "<-- ForceBootAPP2";
+        if (data[0] == 0x03) return "<-- ForceBootAPP1";
         return "";
     }
 
@@ -23235,6 +23242,8 @@ static void isotp_print_ota_frame(uint32_t can_id, uint8_t* data, uint8_t len)
     } else if (can_id == 0x18DAF103) {
         direction = "[TX]";
     } else if (can_id == 0x18FF8118) {
+        direction = "[RX]";
+    } else if (can_id == 0x18FF5858) {
         direction = "[RX]";
     } else if (can_id == 0x18DBFFF0) {
         direction = "[RX]";

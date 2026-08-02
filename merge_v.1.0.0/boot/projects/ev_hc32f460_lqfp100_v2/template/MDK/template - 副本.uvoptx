@@ -120,7 +120,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>` ?b</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -152,18 +151,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>116</LineNumber>
+          <LineNumber>395</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>40804</Address>
+          <Address>2292</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\source\main.c</Filename>
+          <Filename>..\..\Bootloader_App\Bootloader_App.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\boot\../source/main.c\116</Expression>
+          <Expression>\\boot\../../Bootloader_App/Bootloader_App.c\395</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -335,7 +334,7 @@
         <Mm>
           <WinNumber>2</WinNumber>
           <SubType>0</SubType>
-          <ItemText>0x4C000</ItemText>
+          <ItemText>0x4c000</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow2>
@@ -1118,7 +1117,7 @@
 
   <Group>
     <GroupName>Adp</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

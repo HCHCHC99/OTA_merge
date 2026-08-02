@@ -29,6 +29,12 @@
 /* UDS OTA: flash target = APP2, post-flash forced boot = APP1 (macro for now) */
 #define UDS_TARGET_FLASH_ADDR            APP2_START_ADDR
 #define UDS_POST_FLASH_BOOT_ADDR         APP1_START_ADDR
+/* 阶段2/3: 上电强制指令检测 (Boot_StartupSequence 50ms 窗口) */
+#define BOOT_FORCE_CMD_CAN_ID            0x18FF5858UL   /* 强制指令 CAN ID */
+#define BOOT_FORCE_CMD_ENTER_BL          0x01U          /* 强制进入 Bootloader 编程模式 (阶段2) */
+#define BOOT_FORCE_CMD_BOOT_APP2         0x02U          /* 强制下次启动 APP2 (阶段3预留) */
+#define BOOT_FORCE_CMD_BOOT_APP1         0x03U          /* 强制下次启动 APP1 (阶段3预留) */
+#define BOOT_FORCE_CMD_WINDOW_MS         50U            /* 上电检测窗口 (ms) */
 
 #define APP1_STATE_SECTOR_BASE           0x16000
 #define APP2_STATE_SECTOR_BASE           0x18000

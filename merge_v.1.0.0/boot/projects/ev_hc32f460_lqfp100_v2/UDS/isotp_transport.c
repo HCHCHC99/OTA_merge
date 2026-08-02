@@ -297,6 +297,13 @@ static const char* isotp_ota_annotate(uint32_t can_id, uint8_t* data)
         return "";
     }
 
+    if (can_id == 0x18FF5858) {
+        if (data[0] == 0x01) return "<-- ForceBL";
+        if (data[0] == 0x02) return "<-- ForceBootAPP2";
+        if (data[0] == 0x03) return "<-- ForceBootAPP1";
+        return "";
+    }
+
     if (frame_type == ISOTP_FRAME_FLOW_CONTROL) return "<-- FC";
     if (frame_type == ISOTP_FRAME_CONSECUTIVE) return "<-- CF";
 
@@ -356,6 +363,8 @@ static void isotp_print_ota_frame(uint32_t can_id, uint8_t* data, uint8_t len)
     } else if (can_id == 0x18DAF103) {
         direction = "[TX]";
     } else if (can_id == 0x18FF8118) {
+        direction = "[RX]";
+    } else if (can_id == 0x18FF5858) {
         direction = "[RX]";
     } else if (can_id == 0x18DBFFF0) {
         direction = "[RX]";

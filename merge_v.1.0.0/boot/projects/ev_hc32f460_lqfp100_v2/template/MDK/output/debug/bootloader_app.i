@@ -20820,6 +20820,12 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
  
 
 
+ 
+
+
+
+
+
 
 
 
@@ -25396,6 +25402,25 @@ void UdsOta_App_CheckPendingAck(void);
 void UdsOta_Bootloader_Enter(void);
 
 #line 10 "..\\..\\Bootloader_App\\Bootloader_App.c"
+ 
+static volatile uint8_t s_force_cmd = 0U;
+static volatile uint8_t s_force_window_active = 0U;
+
+ 
+static void Boot_ForceCmdRxCallback(const CanMsg_t *pMsg)
+{
+    if ((pMsg != 0) && (pMsg->u8DLC >= 1U)) {
+        s_force_cmd = pMsg->au8Data[0];
+        if (s_force_window_active) {
+            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  [FRC] RX 0x18FF5858 DLC=%d: %02X %02X %02X %02X %02X %02X %02X %02X\r\n" "\033[0m" "\r\n", "MAIN",(int)pMsg->u8DLC, (unsigned int)pMsg->au8Data[0], (unsigned int)pMsg->au8Data[1], (unsigned int)pMsg->au8Data[2], (unsigned int)pMsg->au8Data[3], (unsigned int)pMsg->au8Data[4], (unsigned int)pMsg->au8Data[5], (unsigned int)pMsg->au8Data[6], (unsigned int)pMsg->au8Data[7]);
+
+
+
+
+
+        }
+    }
+}
 
 
 
@@ -25739,6 +25764,39 @@ void Boot_StartupSequence(void)
     memset(&stcCtx, 0, sizeof(stc_boot_context_t));
 
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "===== Bootloader Start =====\r\n" "\033[0m" "\r\n", "MAIN");
+     
+    {
+        static _Bool s_force_filter_registered = 0;
+        uint64_t u64WinStart;
+
+        if (!s_force_filter_registered) {
+            CanIf_RxFilterEntry_t stcForceEntry;
+            memset(&(stcForceEntry), 0, sizeof(stcForceEntry));
+            stcForceEntry.u32CanId    = 0x18FF5858UL;
+            stcForceEntry.u32CanMask  = 0UL;
+            stcForceEntry.u8Format    = ((0x40000000UL) | (0x20000000UL));
+            stcForceEntry.pfnCallback = Boot_ForceCmdRxCallback;
+            s_force_filter_registered = CanIf_RegisterRxFilter(&stcForceEntry);
+        }
+
+        s_force_cmd = 0U;
+        s_force_window_active = 1U;
+        u64WinStart = tickTimer_GetCount();
+        while ((tickTimer_GetCount() - u64WinStart) < 50U) {
+            UdsOta_Poll();
+            if (s_force_cmd != 0U) {
+                SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Force cmd on 0x18FF5858 = 0x%02X\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)s_force_cmd);
+                if (s_force_cmd == 0x01U) {
+                    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Force enter UDS programming mode (stage2, no APP)\r\n" "\033[0m" "\r\n", "MAIN");
+                    UdsOta_Bootloader_Enter();    
+                }
+                
+
+ 
+            }
+        }
+    }
+    s_force_window_active = 0U;
 
     stc_shared_ctrl_t *pSharedCtrl = GetSharedCtrl();
     if (pSharedCtrl->debug_flag == 0x5A5A5A5A) {
