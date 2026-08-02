@@ -1149,7 +1149,7 @@
 ;;;691        static uint8_t s_uds_shared_written = 0;
 ;;;692    
 ;;;693        while (1) {
-00010e  e034              B        |L11.378|
+00010e  e033              B        |L11.376|
                   |L11.272|
 ;;;694            uint64_t tick = tickTimer_GetCount();
 000110  f7fffffe          BL       tickTimer_GetCount
@@ -1158,10 +1158,10 @@
 ;;;695    
 ;;;696            /* 500ms WDT 喂狗 */
 ;;;697            if ((tick - last_wdt_feed) >= 500) {
-000118  1b31              SUBS     r1,r6,r4
+000118  1b32              SUBS     r2,r6,r4
 00011a  eb670005          SBC      r0,r7,r5
 00011e  f44f73fa          MOV      r3,#0x1f4
-000122  1ac9              SUBS     r1,r1,r3
+000122  1ad2              SUBS     r2,r2,r3
 000124  f1700000          SBCS     r0,r0,#0
 000128  d303              BCC      |L11.306|
 ;;;698                SWDT_FeedDog();
@@ -1178,10 +1178,10 @@
 ;;;704            if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
 000136  4831              LDR      r0,|L11.508|
 000138  7800              LDRB     r0,[r0,#0]  ; s_uds_shared_written
-00013a  b9e8              CBNZ     r0,|L11.376|
+00013a  b9e0              CBNZ     r0,|L11.374|
 00013c  f7fffffe          BL       FlashDownload_GetState
 000140  2805              CMP      r0,#5
-000142  d119              BNE      |L11.376|
+000142  d118              BNE      |L11.374|
 ;;;705                stc_uds_shared_t state;
 ;;;706                UdsShared_Read(&state);
 000144  a801              ADD      r0,sp,#4
@@ -1202,25 +1202,26 @@
 00015e  2001              MOVS     r0,#1
 000160  4926              LDR      r1,|L11.508|
 000162  7008              STRB     r0,[r1,#0]
-;;;712                ClearAppStateBySlot(SLOT_APP2);
-000164  f04f30a5          MOV      r0,#0xa5a5a5a5
-000168  f7fffffe          BL       ClearAppStateBySlot
+;;;712                ClearAppStateBySlot(state.target_slot);
+000164  9803              LDR      r0,[sp,#0xc]
+000166  f7fffffe          BL       ClearAppStateBySlot
 ;;;713                MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, APP2 WDT cleared\r\n");
-00016c  a203              ADR      r2,|L11.380|
-00016e  4924              LDR      r1,|L11.512|
-000170  2000              MOVS     r0,#0
-000172  f7fffffe          BL       SEGGER_RTT_printf
+00016a  a204              ADR      r2,|L11.380|
+00016c  4924              LDR      r1,|L11.512|
+00016e  2000              MOVS     r0,#0
+000170  f7fffffe          BL       SEGGER_RTT_printf
 ;;;714            }
+000174  bf00              NOP      
+                  |L11.374|
+;;;715        }
 000176  bf00              NOP      
                   |L11.376|
-;;;715        }
-000178  bf00              NOP      
-                  |L11.378|
-00017a  e7c9              B        |L11.272|
+000178  e7ca              B        |L11.272|
 ;;;716    }
 ;;;717    
                           ENDP
 
+00017a  0000              DCW      0x0000
                   |L11.380|
 00017c  4d41494e          DCB      "MAIN",0
 000180  00      

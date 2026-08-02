@@ -655,18 +655,9 @@ void Bootloader_UdsMain(void)
         stc_uds_shared_t _st;
         UdsShared_Read(&_st);
         if (_st.magic == UDS_SHARED_MAGIC && _st.pending_sid == 0x31) {
-            CanMsg_t stcMsg;
             uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
-            uint8_t i;
-            stcMsg.u32ID = 0x18DAF103UL;
-            stcMsg.u8IDE  = 1U;
-            stcMsg.u8RTR  = 0U;
-            stcMsg.u8FDF  = 0U;
-            stcMsg.u8BRS  = 0U;
-            stcMsg.u8DLC  = 4U;
-            for (i = 0; i < 4; i++) stcMsg.au8Data[i] = au8Data[i];
-            CanIf_Send(&stcMsg);
-            MAIN_D("  Sent deferred 31 ACK (71 01 FF 00) on CAN ID 0x18DAF103\r\n");
+            isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
+            MAIN_D("  Sent deferred 31 ACK (71 01 FF 00) via ISOTP\r\n");
             _st.pending_sid = 0;
             UdsShared_Write(&_st);
         } else {
