@@ -23177,9 +23177,9 @@ static const char* isotp_ota_annotate(uint32_t can_id, uint8_t* data)
     }
 
     if (can_id == 0x18FF5858) {
-        if (data[0] == 0x01) return "<-- ForceBL";
+        if (data[0] == 0xFF) return "<-- ForceBL";
+        if (data[0] == 0x01) return "<-- ForceBootAPP1";
         if (data[0] == 0x02) return "<-- ForceBootAPP2";
-        if (data[0] == 0x03) return "<-- ForceBootAPP1";
         return "";
     }
 

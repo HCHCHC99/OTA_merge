@@ -12,6 +12,19 @@ static volatile uint8_t s_force_cmd = 0U;
 static volatile uint8_t s_force_window_active = 0U;
 
 /* 强制指令 RX 回调：仅记录 data[0]，由 Boot_StartupSequence 的 50ms 窗口消费 */
+/* 阶段3: 强制指令结果回帧（CAN ID 0x18EF5858，data[0]=状态） */
+static void Boot_SendForceResp(uint8_t u8Status)
+{
+    CanMsg_t stcMsg;
+    MEM_ZERO_STRUCT(stcMsg);
+    stcMsg.u32ID = BOOT_FORCE_RESP_CAN_ID;
+    stcMsg.u8IDE = 1U;
+    stcMsg.u8DLC = 8U;
+    stcMsg.au8Data[0] = u8Status;
+    CanIf_Send(&stcMsg);
+    MAIN_D("  Force resp 0x18EF5858: status=0x%02X\r\n", (unsigned int)u8Status);
+}
+
 static void Boot_ForceCmdRxCallback(const CanMsg_t *pMsg)
 {
     if ((pMsg != NULL) && (pMsg->u8DLC >= 1U)) {
@@ -395,9 +408,74 @@ void Boot_StartupSequence(void)
                     MAIN_D("  -> Force enter UDS programming mode (stage2, no APP)\r\n");
                     UdsOta_Bootloader_Enter();   /* 不返回 */
                 }
-                /* 阶段3扩展点:
-                 *   BOOT_FORCE_CMD_BOOT_APP2 → Boot_SetRunSlotToAddr(APP2_START_ADDR) 后 break
-                 *   BOOT_FORCE_CMD_BOOT_APP1 → Boot_SetRunSlotToAddr(APP1_START_ADDR) 后 break */
+                else if ((s_force_cmd == BOOT_FORCE_CMD_BOOT_APP2) ||
+                         (s_force_cmd == BOOT_FORCE_CMD_BOOT_APP1)) {
+                    /* 阶段3: 强制下次启动槽位
+                     * - 受坏块标记限制：目标>=3 拒绝，不写自动跳转槽
+                     * - 设置成功后软件复位，重新进 boot 按新槽位正常启动
+                     * - 幂等保护：槽位已是目标值时不重复复位（防 TBOX 持续发送导致复位循环） */
+                    uint32_t u32Wdt1 = READ_FLASH_DIRECT(WDT_COUNT_APP1_ADDR);
+                    uint32_t u32Wdt2 = READ_FLASH_DIRECT(WDT_COUNT_APP2_ADDR);
+                    uint32_t u32T0;
+                    uint8_t u8App1Ok;
+                    uint8_t u8App2Ok;
+                    /* 与 InitAppInfo 保持一致：擦除态(0xFFFFFFFF)视为 0（未初始化，不算坏块） */
+                    if (u32Wdt1 == 0xFFFFFFFFUL) { u32Wdt1 = 0U; }
+                    if (u32Wdt2 == 0xFFFFFFFFUL) { u32Wdt2 = 0U; }
+                    u8App1Ok = (u32Wdt1 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
+                    u8App2Ok = (u32Wdt2 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
+
+                    if ((u8App1Ok == 0U) && (u8App2Ok == 0U)) {
+                        /* 双 APP 均故障：回帧并进入编程模式等待刷写 */
+                        Boot_SendForceResp(BOOT_FORCE_RESP_BOTH_FAULTY);
+                        MAIN_D("  -> Both APPs faulty, entering UDS programming mode\r\n");
+                        UdsOta_Bootloader_Enter();   /* 不返回 */
+                    }
+                    else if (s_force_cmd == BOOT_FORCE_CMD_BOOT_APP2) {
+                        if (u8App2Ok != 0U) {
+                            if (READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR) != SLOT_B_MAGIC) {
+                                Boot_SetRunSlotToAddr(APP2_START_ADDR);
+                                Boot_SendForceResp(BOOT_FORCE_RESP_APP2_OK);
+                                MAIN_D("  -> Force boot slot = APP2, resetting...\r\n");
+                                /* 确保回帧已发出后再复位 */
+                                u32T0 = tickTimer_GetCount();
+                                while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
+                                NVIC_SystemReset();
+                                while (1) { }
+                            } else {
+                                Boot_SendForceResp(BOOT_FORCE_RESP_APP2_OK);
+                                MAIN_D("  -> Slot already APP2, no reset\r\n");
+                            }
+                        } else {
+                            /* APP2 坏块标记>=3：拒绝，不写自动跳转槽 */
+                            Boot_SendForceResp(BOOT_FORCE_RESP_REJECTED);
+                            MAIN_D("  -> APP2 bad-blocked (>=3), rejected, slot unchanged\r\n");
+                        }
+                        break;
+                    }
+                    else {
+                        if (u8App1Ok != 0U) {
+                            if (READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR) != SLOT_A_MAGIC) {
+                                Boot_SetRunSlotToAddr(APP1_START_ADDR);
+                                Boot_SendForceResp(BOOT_FORCE_RESP_APP1_OK);
+                                MAIN_D("  -> Force boot slot = APP1, resetting...\r\n");
+                                /* 确保回帧已发出后再复位 */
+                                u32T0 = tickTimer_GetCount();
+                                while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
+                                NVIC_SystemReset();
+                                while (1) { }
+                            } else {
+                                Boot_SendForceResp(BOOT_FORCE_RESP_APP1_OK);
+                                MAIN_D("  -> Slot already APP1, no reset\r\n");
+                            }
+                        } else {
+                            /* APP1 坏块标记>=3：拒绝，不写自动跳转槽 */
+                            Boot_SendForceResp(BOOT_FORCE_RESP_REJECTED);
+                            MAIN_D("  -> APP1 bad-blocked (>=3), rejected, slot unchanged\r\n");
+                        }
+                        break;
+                    }
+                }
             }
         }
     }

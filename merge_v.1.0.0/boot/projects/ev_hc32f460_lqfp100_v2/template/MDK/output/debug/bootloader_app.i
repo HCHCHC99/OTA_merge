@@ -20826,6 +20826,12 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
 
+ 
+
+
+
+
+
 
 
 
@@ -25407,6 +25413,19 @@ static volatile uint8_t s_force_cmd = 0U;
 static volatile uint8_t s_force_window_active = 0U;
 
  
+ 
+static void Boot_SendForceResp(uint8_t u8Status)
+{
+    CanMsg_t stcMsg;
+    memset(&(stcMsg), 0, sizeof(stcMsg));
+    stcMsg.u32ID = 0x18EF5858UL;
+    stcMsg.u8IDE = 1U;
+    stcMsg.u8DLC = 8U;
+    stcMsg.au8Data[0] = u8Status;
+    CanIf_Send(&stcMsg);
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Force resp 0x18EF5858: status=0x%02X\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)u8Status);
+}
+
 static void Boot_ForceCmdRxCallback(const CanMsg_t *pMsg)
 {
     if ((pMsg != 0) && (pMsg->u8DLC >= 1U)) {
@@ -25786,13 +25805,78 @@ void Boot_StartupSequence(void)
             UdsOta_Poll();
             if (s_force_cmd != 0U) {
                 SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  Force cmd on 0x18FF5858 = 0x%02X\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)s_force_cmd);
-                if (s_force_cmd == 0x01U) {
+                if (s_force_cmd == 0xFFU) {
                     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Force enter UDS programming mode (stage2, no APP)\r\n" "\033[0m" "\r\n", "MAIN");
                     UdsOta_Bootloader_Enter();    
                 }
-                
+                else if ((s_force_cmd == 0x02U) ||
+                         (s_force_cmd == 0x01U)) {
+                    
+
 
  
+                    uint32_t u32Wdt1 = READ_FLASH_DIRECT((0x16000 + 0x008));
+                    uint32_t u32Wdt2 = READ_FLASH_DIRECT((0x18000 + 0x008));
+                    uint32_t u32T0;
+                    uint8_t u8App1Ok;
+                    uint8_t u8App2Ok;
+                     
+                    if (u32Wdt1 == 0xFFFFFFFFUL) { u32Wdt1 = 0U; }
+                    if (u32Wdt2 == 0xFFFFFFFFUL) { u32Wdt2 = 0U; }
+                    u8App1Ok = (u32Wdt1 < 3) ? 1U : 0U;
+                    u8App2Ok = (u32Wdt2 < 3) ? 1U : 0U;
+
+                    if ((u8App1Ok == 0U) && (u8App2Ok == 0U)) {
+                         
+                        Boot_SendForceResp(0x03U);
+                        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Both APPs faulty, entering UDS programming mode\r\n" "\033[0m" "\r\n", "MAIN");
+                        UdsOta_Bootloader_Enter();    
+                    }
+                    else if (s_force_cmd == 0x02U) {
+                        if (u8App2Ok != 0U) {
+                            if (READ_FLASH_DIRECT(0x7C000) != 0xA5A5A5A5u) {
+                                Boot_SetRunSlotToAddr(0x4C000);
+                                Boot_SendForceResp(0x02U);
+                                SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Force boot slot = APP2, resetting...\r\n" "\033[0m" "\r\n", "MAIN");
+                                 
+                                u32T0 = tickTimer_GetCount();
+                                while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
+                                __NVIC_SystemReset();
+                                while (1) { }
+                            } else {
+                                Boot_SendForceResp(0x02U);
+                                SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Slot already APP2, no reset\r\n" "\033[0m" "\r\n", "MAIN");
+                            }
+                        } else {
+                             
+                            Boot_SendForceResp(0x04U);
+                            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> APP2 bad-blocked (>=3), rejected, slot unchanged\r\n" "\033[0m" "\r\n", "MAIN");
+                        }
+                        break;
+                    }
+                    else {
+                        if (u8App1Ok != 0U) {
+                            if (READ_FLASH_DIRECT(0x7C000) != 0x5A5A5A5Au) {
+                                Boot_SetRunSlotToAddr(0x1A000);
+                                Boot_SendForceResp(0x01U);
+                                SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Force boot slot = APP1, resetting...\r\n" "\033[0m" "\r\n", "MAIN");
+                                 
+                                u32T0 = tickTimer_GetCount();
+                                while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
+                                __NVIC_SystemReset();
+                                while (1) { }
+                            } else {
+                                Boot_SendForceResp(0x01U);
+                                SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Slot already APP1, no reset\r\n" "\033[0m" "\r\n", "MAIN");
+                            }
+                        } else {
+                             
+                            Boot_SendForceResp(0x04U);
+                            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> APP1 bad-blocked (>=3), rejected, slot unchanged\r\n" "\033[0m" "\r\n", "MAIN");
+                        }
+                        break;
+                    }
+                }
             }
         }
     }

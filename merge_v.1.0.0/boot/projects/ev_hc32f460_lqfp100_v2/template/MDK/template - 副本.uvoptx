@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-        </SetRegEntry>
+          <Name></Name>        </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
@@ -151,9 +151,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>395</LineNumber>
+          <LineNumber>421</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>2292</Address>
+          <Address>2486</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -162,7 +162,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\..\Bootloader_App\Bootloader_App.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\boot\../../Bootloader_App/Bootloader_App.c\395</Expression>
+          <Expression>\\boot\../../Bootloader_App/Bootloader_App.c\421</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

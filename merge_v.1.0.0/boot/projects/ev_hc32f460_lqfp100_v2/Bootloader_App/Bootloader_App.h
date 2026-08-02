@@ -31,10 +31,16 @@
 #define UDS_POST_FLASH_BOOT_ADDR         APP1_START_ADDR
 /* 阶段2/3: 上电强制指令检测 (Boot_StartupSequence 50ms 窗口) */
 #define BOOT_FORCE_CMD_CAN_ID            0x18FF5858UL   /* 强制指令 CAN ID */
-#define BOOT_FORCE_CMD_ENTER_BL          0x01U          /* 强制进入 Bootloader 编程模式 (阶段2) */
-#define BOOT_FORCE_CMD_BOOT_APP2         0x02U          /* 强制下次启动 APP2 (阶段3预留) */
-#define BOOT_FORCE_CMD_BOOT_APP1         0x03U          /* 强制下次启动 APP1 (阶段3预留) */
+#define BOOT_FORCE_CMD_ENTER_BL          0xFFU          /* 强制进入 Bootloader 编程模式 (阶段2) */
+#define BOOT_FORCE_CMD_BOOT_APP2         0x02U          /* 强制下次启动 APP2 (阶段3) */
+#define BOOT_FORCE_CMD_BOOT_APP1         0x01U          /* 强制下次启动 APP1 (阶段3) */
 #define BOOT_FORCE_CMD_WINDOW_MS         50U            /* 上电检测窗口 (ms) */
+/* 阶段3: 强制指令结果回帧（CAN ID 0x18EF5858，data[0]=状态） */
+#define BOOT_FORCE_RESP_CAN_ID       0x18EF5858UL
+#define BOOT_FORCE_RESP_APP1_OK      0x01U   /* 已设置下次启动 APP1 */
+#define BOOT_FORCE_RESP_APP2_OK      0x02U   /* 已设置下次启动 APP2 */
+#define BOOT_FORCE_RESP_BOTH_FAULTY  0x03U   /* 双 APP 均故障，进入编程模式等待刷写 */
+#define BOOT_FORCE_RESP_REJECTED     0x04U   /* 目标坏块标记>=3，拒绝强制跳转（不修改自动跳转槽） */
 
 #define APP1_STATE_SECTOR_BASE           0x16000
 #define APP2_STATE_SECTOR_BASE           0x18000
