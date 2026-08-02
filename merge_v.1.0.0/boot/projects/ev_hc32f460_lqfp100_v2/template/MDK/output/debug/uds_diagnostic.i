@@ -25022,9 +25022,29 @@ _Bool seedkey_calc_lv1_key(uint8_t *seed, uint8_t *key);
 
 
 
+
+
+
+
+
+
+
+
+
+
+ 
+#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
  
 
 
+
+
+
+
+
+   
+#line 63 "..\\..\\Bootloader_App\\Bootloader_App.h"
  
 
 

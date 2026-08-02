@@ -783,14 +783,32 @@ void Bootloader_UdsMain(void)
 
         if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
             stc_uds_shared_t state;
+            FlashDownloadProgress_t stcProg;
             UdsShared_Read(&state);
+            FlashDownload_GetProgress(&stcProg);
+
             state.phase = UDS_PHASE_PROGRAMMING_DONE;
             state.result = 1;
-            state.target_slot = SLOT_APP2;
+            /* 实际下载目标槽（由 0x34 地址映射决定: APP1/APP2） */
+            if (stcProg.target_address == APP2_START_ADDR) {
+                state.target_slot = SLOT_APP2;
+            } else {
+                state.target_slot = SLOT_APP1;
+            }
             UdsShared_Write(&state);
             s_uds_shared_written = 1;
+            /* 清除实际下载槽的 WDT 故障计数 */
             ClearAppStateBySlot(state.target_slot);
-            MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, APP2 WDT cleared\r\n");
+#if (BOOT_OTA_MODE_DEBUG == 0U)
+            /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
+            if (stcProg.target_address == APP2_START_ADDR) {
+                Boot_SetRunSlotToAddr(APP2_START_ADDR);
+            } else if (stcProg.target_address == APP1_START_ADDR) {
+                Boot_SetRunSlotToAddr(APP1_START_ADDR);
+            }
+#endif
+            MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n",
+                   (unsigned int)stcProg.target_address);
         }
     }
 }

@@ -26,9 +26,40 @@
 #define APP2_START_ADDR                  0x4C000
 #define APP_RUN_SLOT_ADDR                0x7C000
 
-/* UDS OTA: flash target = APP2, post-flash forced boot = APP1 (macro for now) */
-#define UDS_TARGET_FLASH_ADDR            APP2_START_ADDR
-#define UDS_POST_FLASH_BOOT_ADDR         APP1_START_ADDR
+/* ===== OTA 模式选择 =====
+ * 调试模式        (BOOT_OTA_MODE_DEBUG=1, BOOT_OTA_MODE_PLUS=0):
+ *                  烧写窗口: 仅 APP2（TBOX 0x08004000~0x08018000 → 0x4C000）
+ *                  OTA 完成后始终跳转 APP1（便于反复调试）
+ * 调试模式Plus版  (BOOT_OTA_MODE_DEBUG=1, BOOT_OTA_MODE_PLUS=1):
+ *                  烧写窗口: APP1 + APP2 双窗口（新增 TBOX 0x08018000~0x0802C000 → 0x1A000）
+ *                  OTA 完成后始终跳转 APP1
+ * 正式模式        (BOOT_OTA_MODE_DEBUG=0, BOOT_OTA_MODE_PLUS=任意):
+ *                  烧写窗口: APP1 + APP2 双窗口
+ *                  OTA 完成后跳转实际烧录的槽位（烧到哪里就跳到哪里）
+ */
+#ifndef BOOT_OTA_MODE_DEBUG
+#define BOOT_OTA_MODE_DEBUG                 1U
+#endif
+#ifndef BOOT_OTA_MODE_PLUS
+#define BOOT_OTA_MODE_PLUS                  0U
+#endif
+
+/* 双烧写窗口使能: 调试Plus 或 正式模式 */
+#if ((BOOT_OTA_MODE_DEBUG == 0U) || (BOOT_OTA_MODE_PLUS == 1U))
+#define BOOT_OTA_DUAL_WINDOW_EN             1U
+#else
+#define BOOT_OTA_DUAL_WINDOW_EN             0U
+#endif
+
+#if (BOOT_OTA_MODE_DEBUG == 1U)
+  /* 调试模式 / 调试Plus: OTA 完成后始终跳 APP1 */
+  #define UDS_TARGET_FLASH_ADDR            APP2_START_ADDR
+  #define UDS_POST_FLASH_BOOT_ADDR         APP1_START_ADDR
+#else
+  /* 正式模式: 烧到哪里就跳到哪里（跳转槽由 FW_UPDATE_COMPLETE 按实际下载地址设置） */
+  #define UDS_TARGET_FLASH_ADDR            APP2_START_ADDR
+  #define UDS_POST_FLASH_BOOT_ADDR         APP2_START_ADDR
+#endif
 /* 阶段2/3: 上电强制指令检测 (Boot_StartupSequence 50ms 窗口) */
 #define BOOT_FORCE_CMD_CAN_ID            0x18FF5858UL   /* 强制指令 CAN ID */
 #define BOOT_FORCE_CMD_ENTER_BL          0xFFU          /* 强制进入 Bootloader 编程模式 (阶段2) */

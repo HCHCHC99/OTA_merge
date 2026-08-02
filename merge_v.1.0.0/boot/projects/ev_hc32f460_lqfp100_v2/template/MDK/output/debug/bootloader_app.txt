@@ -5,17 +5,17 @@
                           AREA ||i.App_CheckPendingUdsAck||, CODE, READONLY, ALIGN=2
 
                   App_CheckPendingUdsAck PROC
-;;;800    // ====================================================================
-;;;801    void App_CheckPendingUdsAck(void)
+;;;818    // ====================================================================
+;;;819    void App_CheckPendingUdsAck(void)
 000000  b510              PUSH     {r4,lr}
-;;;802    {
+;;;820    {
 000002  b096              SUB      sp,sp,#0x58
-;;;803        stc_uds_shared_t state;
-;;;804        UdsShared_Read(&state);
+;;;821        stc_uds_shared_t state;
+;;;822        UdsShared_Read(&state);
 000004  a808              ADD      r0,sp,#0x20
 000006  f7fffffe          BL       UdsShared_Read
-;;;805    
-;;;806        MAIN_D("App_CheckPendingUdsAck: magic=0x%08X, pending_sid=0x%02X\r\n",
+;;;823    
+;;;824        MAIN_D("App_CheckPendingUdsAck: magic=0x%08X, pending_sid=0x%02X\r\n",
 00000a  980e              LDR      r0,[sp,#0x38]
 00000c  9000              STR      r0,[sp,#0]
 00000e  a222              ADR      r2,|L1.152|
@@ -23,87 +23,87 @@
 000012  2000              MOVS     r0,#0
 000014  9b08              LDR      r3,[sp,#0x20]
 000016  f7fffffe          BL       SEGGER_RTT_printf
-;;;807               (unsigned int)state.magic, (unsigned int)state.pending_sid);
-;;;808    
-;;;809        if (state.magic != UDS_SHARED_MAGIC) {
+;;;825               (unsigned int)state.magic, (unsigned int)state.pending_sid);
+;;;826    
+;;;827        if (state.magic != UDS_SHARED_MAGIC) {
 00001a  4922              LDR      r1,|L1.164|
 00001c  9808              LDR      r0,[sp,#0x20]
 00001e  4288              CMP      r0,r1
 000020  d006              BEQ      |L1.48|
-;;;810            MAIN_D("  No pending UDS state, skip\r\n");
+;;;828            MAIN_D("  No pending UDS state, skip\r\n");
 000022  a21d              ADR      r2,|L1.152|
 000024  a120              ADR      r1,|L1.168|
 000026  2000              MOVS     r0,#0
 000028  f7fffffe          BL       SEGGER_RTT_printf
                   |L1.44|
-;;;811            return;
-;;;812        }
-;;;813    
-;;;814        if (state.pending_sid == 0x11) {
-;;;815            MAIN_D("  Sending pending 11 01 ACK (51 01)\r\n");
-;;;816            /* 补发 11 01 的肯定响应 (51 01)
-;;;817             * ISOTP 单帧格式: PCI=0x04 (4字节数据) + 51 01 00 00, DLC=8 */
-;;;818            CanMsg_t stcMsg;
-;;;819            uint8_t au8Data[8] = {0x04, 0x51, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
-;;;820            uint8_t i;
-;;;821            stcMsg.u32ID = 0x18DAF103UL;
-;;;822            stcMsg.u8IDE  = 1U;
-;;;823            stcMsg.u8RTR  = 0U;
-;;;824            stcMsg.u8FDF  = 0U;
-;;;825            stcMsg.u8BRS  = 0U;
-;;;826            stcMsg.u8DLC  = 8U;
-;;;827            for (i = 0; i < 8; i++) stcMsg.au8Data[i] = au8Data[i];
-;;;828            CanIf_Send(&stcMsg);
-;;;829        }
-;;;830    
-;;;831        
-;;;832    
-;;;833        /* 清除共享区 */
-;;;834        UdsShared_Clear();
-;;;835        MAIN_D("  UDS shared state cleared\r\n");
-;;;836    }
+;;;829            return;
+;;;830        }
+;;;831    
+;;;832        if (state.pending_sid == 0x11) {
+;;;833            MAIN_D("  Sending pending 11 01 ACK (51 01)\r\n");
+;;;834            /* 补发 11 01 的肯定响应 (51 01)
+;;;835             * ISOTP 单帧格式: PCI=0x04 (4字节数据) + 51 01 00 00, DLC=8 */
+;;;836            CanMsg_t stcMsg;
+;;;837            uint8_t au8Data[8] = {0x04, 0x51, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
+;;;838            uint8_t i;
+;;;839            stcMsg.u32ID = 0x18DAF103UL;
+;;;840            stcMsg.u8IDE  = 1U;
+;;;841            stcMsg.u8RTR  = 0U;
+;;;842            stcMsg.u8FDF  = 0U;
+;;;843            stcMsg.u8BRS  = 0U;
+;;;844            stcMsg.u8DLC  = 8U;
+;;;845            for (i = 0; i < 8; i++) stcMsg.au8Data[i] = au8Data[i];
+;;;846            CanIf_Send(&stcMsg);
+;;;847        }
+;;;848    
+;;;849        
+;;;850    
+;;;851        /* 清除共享区 */
+;;;852        UdsShared_Clear();
+;;;853        MAIN_D("  UDS shared state cleared\r\n");
+;;;854    }
 00002c  b016              ADD      sp,sp,#0x58
 00002e  bd10              POP      {r4,pc}
                   |L1.48|
-000030  980e              LDR      r0,[sp,#0x38]         ;814
-000032  2811              CMP      r0,#0x11              ;814
+000030  980e              LDR      r0,[sp,#0x38]         ;832
+000032  2811              CMP      r0,#0x11              ;832
 000034  d126              BNE      |L1.132|
 000036  a218              ADR      r2,|L1.152|
 000038  a127              ADR      r1,|L1.216|
-00003a  2000              MOVS     r0,#0                 ;815
+00003a  2000              MOVS     r0,#0                 ;833
 00003c  f7fffffe          BL       SEGGER_RTT_printf
 000040  a133              ADR      r1,|L1.272|
-000042  c903              LDM      r1,{r0,r1}            ;819
-000044  e9cd0100          STRD     r0,r1,[sp,#0]         ;819
+000042  c903              LDM      r1,{r0,r1}            ;837
+000044  e9cd0100          STRD     r0,r1,[sp,#0]         ;837
 000048  4833              LDR      r0,|L1.280|
-00004a  9002              STR      r0,[sp,#8]            ;821
-00004c  2001              MOVS     r0,#1                 ;822
-00004e  f88d000c          STRB     r0,[sp,#0xc]          ;822
-000052  2000              MOVS     r0,#0                 ;823
-000054  f88d000d          STRB     r0,[sp,#0xd]          ;823
-000058  f88d000e          STRB     r0,[sp,#0xe]          ;824
-00005c  f88d000f          STRB     r0,[sp,#0xf]          ;825
-000060  2008              MOVS     r0,#8                 ;826
-000062  f88d0010          STRB     r0,[sp,#0x10]         ;826
-000066  2400              MOVS     r4,#0                 ;827
+00004a  9002              STR      r0,[sp,#8]            ;839
+00004c  2001              MOVS     r0,#1                 ;840
+00004e  f88d000c          STRB     r0,[sp,#0xc]          ;840
+000052  2000              MOVS     r0,#0                 ;841
+000054  f88d000d          STRB     r0,[sp,#0xd]          ;841
+000058  f88d000e          STRB     r0,[sp,#0xe]          ;842
+00005c  f88d000f          STRB     r0,[sp,#0xf]          ;843
+000060  2008              MOVS     r0,#8                 ;844
+000062  f88d0010          STRB     r0,[sp,#0x10]         ;844
+000066  2400              MOVS     r4,#0                 ;845
 000068  e006              B        |L1.120|
                   |L1.106|
-00006a  f81d1004          LDRB     r1,[sp,r4]            ;827
-00006e  f10d0011          ADD      r0,sp,#0x11           ;827
-000072  5501              STRB     r1,[r0,r4]            ;827
-000074  1c60              ADDS     r0,r4,#1              ;827
-000076  b2c4              UXTB     r4,r0                 ;827
+00006a  f81d1004          LDRB     r1,[sp,r4]            ;845
+00006e  f10d0011          ADD      r0,sp,#0x11           ;845
+000072  5501              STRB     r1,[r0,r4]            ;845
+000074  1c60              ADDS     r0,r4,#1              ;845
+000076  b2c4              UXTB     r4,r0                 ;845
                   |L1.120|
-000078  2c08              CMP      r4,#8                 ;827
+000078  2c08              CMP      r4,#8                 ;845
 00007a  dbf6              BLT      |L1.106|
-00007c  a802              ADD      r0,sp,#8              ;828
+00007c  a802              ADD      r0,sp,#8              ;846
 00007e  f7fffffe          BL       CanIf_Send
-000082  bf00              NOP                            ;829
+000082  bf00              NOP                            ;847
                   |L1.132|
 000084  f7fffffe          BL       UdsShared_Clear
 000088  a203              ADR      r2,|L1.152|
 00008a  a124              ADR      r1,|L1.284|
-00008c  2000              MOVS     r0,#0                 ;835
+00008c  2000              MOVS     r0,#0                 ;853
 00008e  f7fffffe          BL       SEGGER_RTT_printf
 000092  bf00              NOP      
 000094  e7ca              B        |L1.44|
@@ -117,7 +117,7 @@
 00009e  00                DCB      0
 00009f  00                DCB      0
                   |L1.160|
-                          DCD      ||.conststring||+0x424
+                          DCD      ||.conststring||+0x42c
                   |L1.164|
                           DCD      0x55445300
                   |L1.168|
@@ -1006,13 +1006,13 @@
 0003a6  00                DCB      0
 0003a7  00                DCB      0
                   |L7.936|
-                          DCD      ||.conststring||+0x270
+                          DCD      ||.conststring||+0x278
                   |L7.940|
                           DCD      0x00016008
                   |L7.944|
                           DCD      0x00018008
                   |L7.948|
-                          DCD      ||.conststring||+0x2bc
+                          DCD      ||.conststring||+0x2c4
                   |L7.952|
 0003b8  1b5b3336          DCB      27,"[36m[%s]   -> Force boot slot = APP2, resetting...\r"
 0003bc  6d5b2573
@@ -1046,7 +1046,7 @@
 000426  00      
 000427  00                DCB      0
                   |L7.1064|
-                          DCD      ||.conststring||+0x304
+                          DCD      ||.conststring||+0x30c
                   |L7.1068|
 00042c  1b5b3336          DCB      27,"[36m[%s]   -> Force boot slot = APP1, resetting...\r"
 000430  6d5b2573
@@ -1080,11 +1080,11 @@
 00049a  00      
 00049b  00                DCB      0
                   |L7.1180|
-                          DCD      ||.conststring||+0x34c
+                          DCD      ||.conststring||+0x354
                   |L7.1184|
                           DCD      0x20026f00
                   |L7.1188|
-                          DCD      ||.conststring||+0x394
+                          DCD      ||.conststring||+0x39c
                   |L7.1192|
                           DCD      0x55445300
                   |L7.1196|
@@ -1121,7 +1121,7 @@
 000518  0d0a00  
 00051b  00                DCB      0
                   |L7.1308|
-                          DCD      ||.conststring||+0x3e0
+                          DCD      ||.conststring||+0x3e8
                   |L7.1312|
 000520  1b5b3336          DCB      27,"[36m[%s]   ERROR: No valid APP slot, running forever"
 000524  6d5b2573
@@ -1450,15 +1450,15 @@
                   Bootloader_UdsMain PROC
 ;;;722    
 ;;;723    void Bootloader_UdsMain(void)
-000000  b094              SUB      sp,sp,#0x50
+000000  b098              SUB      sp,sp,#0x60
 ;;;724    {
 ;;;725        uint64_t last_wdt_feed;
 ;;;726        FlashDownloadConfig_t stcFwConfig;
 ;;;727        uint8_t i;
 ;;;728    
 ;;;729        MAIN_D("===== Bootloader UDS Main Start =====\r\n");
-000002  a24a              ADR      r2,|L13.300|
-000004  a14b              ADR      r1,|L13.308|
+000002  a250              ADR      r2,|L13.324|
+000004  a151              ADR      r1,|L13.332|
 000006  2000              MOVS     r0,#0
 000008  f7fffffe          BL       SEGGER_RTT_printf
 ;;;730    
@@ -1468,45 +1468,45 @@
 ;;;734        {
 ;;;735            stc_uds_shared_t _st;
 ;;;736            UdsShared_Read(&_st);
-00000c  a801              ADD      r0,sp,#4
+00000c  a805              ADD      r0,sp,#0x14
 00000e  f7fffffe          BL       UdsShared_Read
 ;;;737            if (_st.magic == UDS_SHARED_MAGIC && _st.pending_sid == 0x31) {
-000012  4956              LDR      r1,|L13.364|
-000014  9801              LDR      r0,[sp,#4]
+000012  495c              LDR      r1,|L13.388|
+000014  9805              LDR      r0,[sp,#0x14]
 000016  4288              CMP      r0,r1
 000018  d116              BNE      |L13.72|
-00001a  9807              LDR      r0,[sp,#0x1c]
+00001a  980b              LDR      r0,[sp,#0x2c]
 00001c  2831              CMP      r0,#0x31
 00001e  d113              BNE      |L13.72|
 ;;;738                uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
-000020  a053              ADR      r0,|L13.368|
+000020  a059              ADR      r0,|L13.392|
 000022  6800              LDR      r0,[r0,#0]
-000024  9000              STR      r0,[sp,#0]
+000024  9004              STR      r0,[sp,#0x10]
 ;;;739                isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
 000026  2304              MOVS     r3,#4
-000028  466a              MOV      r2,sp
-00002a  4952              LDR      r1,|L13.372|
+000028  aa04              ADD      r2,sp,#0x10
+00002a  4958              LDR      r1,|L13.396|
 00002c  2000              MOVS     r0,#0
 00002e  f7fffffe          BL       isotp_send_message
 ;;;740                MAIN_D("  Sent deferred 31 ACK (71 01 FF 00) via ISOTP\r\n");
-000032  a23e              ADR      r2,|L13.300|
-000034  4950              LDR      r1,|L13.376|
+000032  a244              ADR      r2,|L13.324|
+000034  4956              LDR      r1,|L13.400|
 000036  2000              MOVS     r0,#0
 000038  f7fffffe          BL       SEGGER_RTT_printf
 ;;;741                _st.pending_sid = 0;
 00003c  2000              MOVS     r0,#0
-00003e  9007              STR      r0,[sp,#0x1c]
+00003e  900b              STR      r0,[sp,#0x2c]
 ;;;742                UdsShared_Write(&_st);
-000040  a801              ADD      r0,sp,#4
+000040  a805              ADD      r0,sp,#0x14
 000042  f7fffffe          BL       UdsShared_Write
 ;;;743            } else {
 000046  e005              B        |L13.84|
                   |L13.72|
 ;;;744                MAIN_D("  No pending 31 ACK (pending_sid=0x%02X), skip\r\n", (unsigned int)_st.pending_sid);
-000048  a238              ADR      r2,|L13.300|
-00004a  494c              LDR      r1,|L13.380|
+000048  a23e              ADR      r2,|L13.324|
+00004a  4952              LDR      r1,|L13.404|
 00004c  2000              MOVS     r0,#0
-00004e  9b07              LDR      r3,[sp,#0x1c]
+00004e  9b0b              LDR      r3,[sp,#0x2c]
 000050  f7fffffe          BL       SEGGER_RTT_printf
                   |L13.84|
 ;;;745            }
@@ -1515,34 +1515,34 @@
 ;;;748        /* ==== 2. 初始化固件下载模块 ==== */
 ;;;749        MEM_ZERO_STRUCT(stcFwConfig);
 000054  2114              MOVS     r1,#0x14
-000056  a80f              ADD      r0,sp,#0x3c
+000056  a813              ADD      r0,sp,#0x4c
 000058  f7fffffe          BL       __aeabi_memclr4
 ;;;750        stcFwConfig.max_firmware_size     = 80UL * 1024UL;
 00005c  f44f30a0          MOV      r0,#0x14000
-000060  900f              STR      r0,[sp,#0x3c]
+000060  9013              STR      r0,[sp,#0x4c]
 ;;;751        stcFwConfig.flash_sector_size    = 0x2000UL;
 000062  f44f5000          MOV      r0,#0x2000
-000066  9010              STR      r0,[sp,#0x40]
+000066  9014              STR      r0,[sp,#0x50]
 ;;;752        stcFwConfig.user_start_addr      = UDS_TARGET_FLASH_ADDR;
 000068  f44f2098          MOV      r0,#0x4c000
-00006c  9011              STR      r0,[sp,#0x44]
+00006c  9015              STR      r0,[sp,#0x54]
 ;;;753        stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + 0x14000UL;
 00006e  f44f20c0          MOV      r0,#0x60000
-000072  9012              STR      r0,[sp,#0x48]
+000072  9016              STR      r0,[sp,#0x58]
 ;;;754        stcFwConfig.verify_enabled       = 1U;
 000074  2001              MOVS     r0,#1
-000076  f88d004c          STRB     r0,[sp,#0x4c]
+000076  f88d005c          STRB     r0,[sp,#0x5c]
 ;;;755        stcFwConfig.auto_reset_on_complete = 0U;
 00007a  2000              MOVS     r0,#0
-00007c  f88d004d          STRB     r0,[sp,#0x4d]
+00007c  f88d005d          STRB     r0,[sp,#0x5d]
 ;;;756        FlashDownload_Init(&stcFwConfig);
-000080  a80f              ADD      r0,sp,#0x3c
+000080  a813              ADD      r0,sp,#0x4c
 000082  f7fffffe          BL       FlashDownload_Init
 ;;;757        MAIN_D("  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n",
 000086  f44f20c0          MOV      r0,#0x60000
 00008a  f44f2398          MOV      r3,#0x4c000
-00008e  a227              ADR      r2,|L13.300|
-000090  493b              LDR      r1,|L13.384|
+00008e  a22d              ADR      r2,|L13.324|
+000090  4941              LDR      r1,|L13.408|
 000092  9000              STR      r0,[sp,#0]
 000094  2000              MOVS     r0,#0
 000096  f7fffffe          BL       SEGGER_RTT_printf
@@ -1556,15 +1556,15 @@
 ;;;764        uds_init();
 00009e  f7fffffe          BL       uds_init
 ;;;765        MAIN_D("  UDS init done\r\n");
-0000a2  a222              ADR      r2,|L13.300|
-0000a4  a137              ADR      r1,|L13.388|
+0000a2  a228              ADR      r2,|L13.324|
+0000a4  a13d              ADR      r1,|L13.412|
 0000a6  2000              MOVS     r0,#0
 0000a8  f7fffffe          BL       SEGGER_RTT_printf
 ;;;766    
 ;;;767        /* ==== 5. 主循环 ==== */
 ;;;768        MAIN_D("  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n");
-0000ac  a21f              ADR      r2,|L13.300|
-0000ae  493e              LDR      r1,|L13.424|
+0000ac  a225              ADR      r2,|L13.324|
+0000ae  4944              LDR      r1,|L13.448|
 0000b0  2000              MOVS     r0,#0
 0000b2  f7fffffe          BL       SEGGER_RTT_printf
 ;;;769        last_wdt_feed = tickTimer_GetCount();
@@ -1575,7 +1575,7 @@
 ;;;771        static uint8_t s_uds_shared_written = 0;
 ;;;772    
 ;;;773        while (1) {
-0000be  e033              B        |L13.296|
+0000be  e03f              B        |L13.320|
                   |L13.192|
 ;;;774            uint64_t tick = tickTimer_GetCount();
 0000c0  f7fffffe          BL       tickTimer_GetCount
@@ -1602,103 +1602,132 @@
 0000e2  f7fffffe          BL       UdsOta_Poll
 ;;;783    
 ;;;784            if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
-0000e6  4831              LDR      r0,|L13.428|
+0000e6  4837              LDR      r0,|L13.452|
 0000e8  7800              LDRB     r0,[r0,#0]  ; s_uds_shared_written
-0000ea  b9e0              CBNZ     r0,|L13.294|
+0000ea  bb40              CBNZ     r0,|L13.318|
 0000ec  f7fffffe          BL       FlashDownload_GetState
 0000f0  2805              CMP      r0,#5
-0000f2  d118              BNE      |L13.294|
+0000f2  d124              BNE      |L13.318|
 ;;;785                stc_uds_shared_t state;
-;;;786                UdsShared_Read(&state);
-0000f4  a801              ADD      r0,sp,#4
+;;;786                FlashDownloadProgress_t stcProg;
+;;;787                UdsShared_Read(&state);
+0000f4  a805              ADD      r0,sp,#0x14
 0000f6  f7fffffe          BL       UdsShared_Read
-;;;787                state.phase = UDS_PHASE_PROGRAMMING_DONE;
-0000fa  2002              MOVS     r0,#2
-0000fc  9002              STR      r0,[sp,#8]
-;;;788                state.result = 1;
-0000fe  2001              MOVS     r0,#1
-000100  9006              STR      r0,[sp,#0x18]
-;;;789                state.target_slot = SLOT_APP2;
-000102  f04f30a5          MOV      r0,#0xa5a5a5a5
-000106  9003              STR      r0,[sp,#0xc]
-;;;790                UdsShared_Write(&state);
-000108  a801              ADD      r0,sp,#4
-00010a  f7fffffe          BL       UdsShared_Write
-;;;791                s_uds_shared_written = 1;
-00010e  2001              MOVS     r0,#1
-000110  4926              LDR      r1,|L13.428|
-000112  7008              STRB     r0,[r1,#0]
-;;;792                ClearAppStateBySlot(state.target_slot);
-000114  9803              LDR      r0,[sp,#0xc]
-000116  f7fffffe          BL       ClearAppStateBySlot
-;;;793                MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, APP2 WDT cleared\r\n");
-00011a  a204              ADR      r2,|L13.300|
-00011c  4924              LDR      r1,|L13.432|
-00011e  2000              MOVS     r0,#0
-000120  f7fffffe          BL       SEGGER_RTT_printf
-;;;794            }
-000124  bf00              NOP      
-                  |L13.294|
-;;;795        }
-000126  bf00              NOP      
-                  |L13.296|
-000128  e7ca              B        |L13.192|
-;;;796    }
-;;;797    
+;;;788                FlashDownload_GetProgress(&stcProg);
+0000fa  a801              ADD      r0,sp,#4
+0000fc  f7fffffe          BL       FlashDownload_GetProgress
+;;;789    
+;;;790                state.phase = UDS_PHASE_PROGRAMMING_DONE;
+000100  2002              MOVS     r0,#2
+000102  9006              STR      r0,[sp,#0x18]
+;;;791                state.result = 1;
+000104  2001              MOVS     r0,#1
+000106  900a              STR      r0,[sp,#0x28]
+;;;792                /* 实际下载目标槽（由 0x34 地址映射决定: APP1/APP2） */
+;;;793                if (stcProg.target_address == APP2_START_ADDR) {
+000108  9803              LDR      r0,[sp,#0xc]
+00010a  f5b02f98          CMP      r0,#0x4c000
+00010e  d103              BNE      |L13.280|
+;;;794                    state.target_slot = SLOT_APP2;
+000110  f04f30a5          MOV      r0,#0xa5a5a5a5
+000114  9007              STR      r0,[sp,#0x1c]
+000116  e002              B        |L13.286|
+                  |L13.280|
+;;;795                } else {
+;;;796                    state.target_slot = SLOT_APP1;
+000118  f04f305a          MOV      r0,#0x5a5a5a5a
+00011c  9007              STR      r0,[sp,#0x1c]
+                  |L13.286|
+;;;797                }
+;;;798                UdsShared_Write(&state);
+00011e  a805              ADD      r0,sp,#0x14
+000120  f7fffffe          BL       UdsShared_Write
+;;;799                s_uds_shared_written = 1;
+000124  2001              MOVS     r0,#1
+000126  4927              LDR      r1,|L13.452|
+000128  7008              STRB     r0,[r1,#0]
+;;;800                /* 清除实际下载槽的 WDT 故障计数 */
+;;;801                ClearAppStateBySlot(state.target_slot);
+00012a  9807              LDR      r0,[sp,#0x1c]
+00012c  f7fffffe          BL       ClearAppStateBySlot
+;;;802    #if (BOOT_OTA_MODE_DEBUG == 0U)
+;;;803                /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
+;;;804                if (stcProg.target_address == APP2_START_ADDR) {
+;;;805                    Boot_SetRunSlotToAddr(APP2_START_ADDR);
+;;;806                } else if (stcProg.target_address == APP1_START_ADDR) {
+;;;807                    Boot_SetRunSlotToAddr(APP1_START_ADDR);
+;;;808                }
+;;;809    #endif
+;;;810                MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n",
+000130  a204              ADR      r2,|L13.324|
+000132  4925              LDR      r1,|L13.456|
+000134  2000              MOVS     r0,#0
+000136  9b03              LDR      r3,[sp,#0xc]
+000138  f7fffffe          BL       SEGGER_RTT_printf
+;;;811                       (unsigned int)stcProg.target_address);
+;;;812            }
+00013c  bf00              NOP      
+                  |L13.318|
+;;;813        }
+00013e  bf00              NOP      
+                  |L13.320|
+000140  e7be              B        |L13.192|
+;;;814    }
+;;;815    
                           ENDP
 
-00012a  0000              DCW      0x0000
-                  |L13.300|
-00012c  4d41494e          DCB      "MAIN",0
-000130  00      
-000131  00                DCB      0
-000132  00                DCB      0
-000133  00                DCB      0
-                  |L13.308|
-000134  1b5b3336          DCB      27,"[36m[%s] ===== Bootloader UDS Main Start =====\r\n",27
-000138  6d5b2573
-00013c  5d203d3d
-000140  3d3d3d20
-000144  426f6f74
-000148  6c6f6164
-00014c  65722055
-000150  4453204d
-000154  61696e20
-000158  53746172
-00015c  74203d3d
-000160  3d3d3d0d
-000164  0a1b    
-000166  5b306d0d          DCB      "[0m\r\n",0
-00016a  0a00    
-                  |L13.364|
-                          DCD      0x55445300
-                  |L13.368|
-000170  7101ff00          DCB      "q",1,255,0
-                  |L13.372|
-                          DCD      0x18daf103
-                  |L13.376|
-                          DCD      ||.conststring||+0xf8
-                  |L13.380|
-                          DCD      ||.conststring||+0x13c
-                  |L13.384|
-                          DCD      ||.conststring||+0x180
+000142  0000              DCW      0x0000
+                  |L13.324|
+000144  4d41494e          DCB      "MAIN",0
+000148  00      
+000149  00                DCB      0
+00014a  00                DCB      0
+00014b  00                DCB      0
+                  |L13.332|
+00014c  1b5b3336          DCB      27,"[36m[%s] ===== Bootloader UDS Main Start =====\r\n",27
+000150  6d5b2573
+000154  5d203d3d
+000158  3d3d3d20
+00015c  426f6f74
+000160  6c6f6164
+000164  65722055
+000168  4453204d
+00016c  61696e20
+000170  53746172
+000174  74203d3d
+000178  3d3d3d0d
+00017c  0a1b    
+00017e  5b306d0d          DCB      "[0m\r\n",0
+000182  0a00    
                   |L13.388|
-000184  1b5b3336          DCB      27,"[36m[%s]   UDS init done\r\n",27,"[0m\r\n",0
-000188  6d5b2573
-00018c  5d202020
-000190  55445320
-000194  696e6974
-000198  20646f6e
-00019c  650d0a1b
-0001a0  5b306d0d
-0001a4  0a00    
-0001a6  00                DCB      0
-0001a7  00                DCB      0
-                  |L13.424|
+                          DCD      0x55445300
+                  |L13.392|
+000188  7101ff00          DCB      "q",1,255,0
+                  |L13.396|
+                          DCD      0x18daf103
+                  |L13.400|
+                          DCD      ||.conststring||+0xf8
+                  |L13.404|
+                          DCD      ||.conststring||+0x13c
+                  |L13.408|
+                          DCD      ||.conststring||+0x180
+                  |L13.412|
+00019c  1b5b3336          DCB      27,"[36m[%s]   UDS init done\r\n",27,"[0m\r\n",0
+0001a0  6d5b2573
+0001a4  5d202020
+0001a8  55445320
+0001ac  696e6974
+0001b0  20646f6e
+0001b4  650d0a1b
+0001b8  5b306d0d
+0001bc  0a00    
+0001be  00                DCB      0
+0001bf  00                DCB      0
+                  |L13.448|
                           DCD      ||.conststring||+0x1c4
-                  |L13.428|
+                  |L13.452|
                           DCD      s_uds_shared_written
-                  |L13.432|
+                  |L13.456|
                           DCD      ||.conststring||+0x21c
 
                           AREA ||i.CheckAndClearAppState||, CODE, READONLY, ALIGN=2
@@ -3200,157 +3229,159 @@
 000248  4d4d494e
 00024c  475f444f
 000250  4e      
-000251  452c2041          DCB      "E, APP2 WDT cleared\r\n",27,"[0m\r\n",0
-000255  50503220
-000259  57445420
-00025d  636c6561
-000261  7265640d
-000265  0a1b5b30
-000269  6d0d0a00
-00026d  00                DCB      0
-00026e  00                DCB      0
-00026f  00                DCB      0
-000270  1b5b3336          DCB      27,"[36m[%s]   -> Force enter UDS programming mode (stag"
-000274  6d5b2573
-000278  5d202020
-00027c  2d3e2046
-000280  6f726365
-000284  20656e74
-000288  65722055
-00028c  44532070
-000290  726f6772
-000294  616d6d69
-000298  6e67206d
-00029c  6f646520
-0002a0  28737461
-0002a4  67      
-0002a5  65322c20          DCB      "e2, no APP)\r\n",27,"[0m\r\n",0
-0002a9  6e6f2041
-0002ad  5050290d
-0002b1  0a1b5b30
-0002b5  6d0d0a00
-0002b9  00                DCB      0
-0002ba  00                DCB      0
-0002bb  00                DCB      0
-0002bc  1b5b3336          DCB      27,"[36m[%s]   -> Both APPs faulty, entering UDS program"
-0002c0  6d5b2573
-0002c4  5d202020
-0002c8  2d3e2042
-0002cc  6f746820
-0002d0  41505073
-0002d4  20666175
-0002d8  6c74792c
-0002dc  20656e74
-0002e0  6572696e
-0002e4  67205544
-0002e8  53207072
-0002ec  6f677261
-0002f0  6d      
-0002f1  6d696e67          DCB      "ming mode\r\n",27,"[0m\r\n",0
-0002f5  206d6f64
-0002f9  650d0a1b
-0002fd  5b306d0d
-000301  0a00    
-000303  00                DCB      0
-000304  1b5b3336          DCB      27,"[36m[%s]   -> APP2 bad-blocked (>=3), rejected, slot"
-000308  6d5b2573
-00030c  5d202020
-000310  2d3e2041
-000314  50503220
-000318  6261642d
-00031c  626c6f63
-000320  6b656420
-000324  283e3d33
-000328  292c2072
-00032c  656a6563
-000330  7465642c
-000334  20736c6f
-000338  74      
-000339  20756e63          DCB      " unchanged\r\n",27,"[0m\r\n",0
-00033d  68616e67
-000341  65640d0a
-000345  1b5b306d
-000349  0d0a00  
-00034c  1b5b3336          DCB      27,"[36m[%s]   -> APP1 bad-blocked (>=3), rejected, slot"
-000350  6d5b2573
-000354  5d202020
-000358  2d3e2041
-00035c  50503120
-000360  6261642d
-000364  626c6f63
-000368  6b656420
-00036c  283e3d33
-000370  292c2072
-000374  656a6563
-000378  7465642c
-00037c  20736c6f
-000380  74      
-000381  20756e63          DCB      " unchanged\r\n",27,"[0m\r\n",0
-000385  68616e67
-000389  65640d0a
-00038d  1b5b306d
-000391  0d0a00  
-000394  1b5b3336          DCB      27,"[36m[%s]   UDS Shared: magic=0x%08X, phase=%d, pendi"
-000398  6d5b2573
-00039c  5d202020
-0003a0  55445320
-0003a4  53686172
-0003a8  65643a20
-0003ac  6d616769
-0003b0  633d3078
-0003b4  25303858
-0003b8  2c207068
-0003bc  6173653d
-0003c0  25642c20
-0003c4  70656e64
-0003c8  69      
-0003c9  6e675f73          DCB      "ng_sid=0x%02X\r\n",27,"[0m\r\n",0
-0003cd  69643d30
-0003d1  78253032
-0003d5  580d0a1b
-0003d9  5b306d0d
-0003dd  0a00    
-0003df  00                DCB      0
-0003e0  1b5b3336          DCB      27,"[36m[%s]   APP1 state=%d, WDT=%d | APP2 state=%d, WD"
-0003e4  6d5b2573
-0003e8  5d202020
-0003ec  41505031
-0003f0  20737461
-0003f4  74653d25
-0003f8  642c2057
-0003fc  44543d25
-000400  64207c20
-000404  41505032
-000408  20737461
-00040c  74653d25
-000410  642c2057
-000414  44      
-000415  543d2564          DCB      "T=%d\r\n",27,"[0m\r\n",0
-000419  0d0a1b5b
-00041d  306d0d0a
-000421  00      
-000422  00                DCB      0
-000423  00                DCB      0
-000424  1b5b3336          DCB      27,"[36m[%s] App_CheckPendingUdsAck: magic=0x%08X, pendi"
-000428  6d5b2573
-00042c  5d204170
-000430  705f4368
-000434  65636b50
-000438  656e6469
-00043c  6e675564
-000440  7341636b
-000444  3a206d61
-000448  6769633d
-00044c  30782530
-000450  38582c20
-000454  70656e64
-000458  69      
-000459  6e675f73          DCB      "ng_sid=0x%02X\r\n",27,"[0m\r\n",0
-00045d  69643d30
-000461  78253032
-000465  580d0a1b
-000469  5b306d0d
-00046d  0a00    
+000251  452c2074          DCB      "E, target=0x%08X WDT cleared\r\n",27,"[0m\r\n",0
+000255  61726765
+000259  743d3078
+00025d  25303858
+000261  20574454
+000265  20636c65
+000269  61726564
+00026d  0d0a1b5b
+000271  306d0d0a
+000275  00      
+000276  00                DCB      0
+000277  00                DCB      0
+000278  1b5b3336          DCB      27,"[36m[%s]   -> Force enter UDS programming mode (stag"
+00027c  6d5b2573
+000280  5d202020
+000284  2d3e2046
+000288  6f726365
+00028c  20656e74
+000290  65722055
+000294  44532070
+000298  726f6772
+00029c  616d6d69
+0002a0  6e67206d
+0002a4  6f646520
+0002a8  28737461
+0002ac  67      
+0002ad  65322c20          DCB      "e2, no APP)\r\n",27,"[0m\r\n",0
+0002b1  6e6f2041
+0002b5  5050290d
+0002b9  0a1b5b30
+0002bd  6d0d0a00
+0002c1  00                DCB      0
+0002c2  00                DCB      0
+0002c3  00                DCB      0
+0002c4  1b5b3336          DCB      27,"[36m[%s]   -> Both APPs faulty, entering UDS program"
+0002c8  6d5b2573
+0002cc  5d202020
+0002d0  2d3e2042
+0002d4  6f746820
+0002d8  41505073
+0002dc  20666175
+0002e0  6c74792c
+0002e4  20656e74
+0002e8  6572696e
+0002ec  67205544
+0002f0  53207072
+0002f4  6f677261
+0002f8  6d      
+0002f9  6d696e67          DCB      "ming mode\r\n",27,"[0m\r\n",0
+0002fd  206d6f64
+000301  650d0a1b
+000305  5b306d0d
+000309  0a00    
+00030b  00                DCB      0
+00030c  1b5b3336          DCB      27,"[36m[%s]   -> APP2 bad-blocked (>=3), rejected, slot"
+000310  6d5b2573
+000314  5d202020
+000318  2d3e2041
+00031c  50503220
+000320  6261642d
+000324  626c6f63
+000328  6b656420
+00032c  283e3d33
+000330  292c2072
+000334  656a6563
+000338  7465642c
+00033c  20736c6f
+000340  74      
+000341  20756e63          DCB      " unchanged\r\n",27,"[0m\r\n",0
+000345  68616e67
+000349  65640d0a
+00034d  1b5b306d
+000351  0d0a00  
+000354  1b5b3336          DCB      27,"[36m[%s]   -> APP1 bad-blocked (>=3), rejected, slot"
+000358  6d5b2573
+00035c  5d202020
+000360  2d3e2041
+000364  50503120
+000368  6261642d
+00036c  626c6f63
+000370  6b656420
+000374  283e3d33
+000378  292c2072
+00037c  656a6563
+000380  7465642c
+000384  20736c6f
+000388  74      
+000389  20756e63          DCB      " unchanged\r\n",27,"[0m\r\n",0
+00038d  68616e67
+000391  65640d0a
+000395  1b5b306d
+000399  0d0a00  
+00039c  1b5b3336          DCB      27,"[36m[%s]   UDS Shared: magic=0x%08X, phase=%d, pendi"
+0003a0  6d5b2573
+0003a4  5d202020
+0003a8  55445320
+0003ac  53686172
+0003b0  65643a20
+0003b4  6d616769
+0003b8  633d3078
+0003bc  25303858
+0003c0  2c207068
+0003c4  6173653d
+0003c8  25642c20
+0003cc  70656e64
+0003d0  69      
+0003d1  6e675f73          DCB      "ng_sid=0x%02X\r\n",27,"[0m\r\n",0
+0003d5  69643d30
+0003d9  78253032
+0003dd  580d0a1b
+0003e1  5b306d0d
+0003e5  0a00    
+0003e7  00                DCB      0
+0003e8  1b5b3336          DCB      27,"[36m[%s]   APP1 state=%d, WDT=%d | APP2 state=%d, WD"
+0003ec  6d5b2573
+0003f0  5d202020
+0003f4  41505031
+0003f8  20737461
+0003fc  74653d25
+000400  642c2057
+000404  44543d25
+000408  64207c20
+00040c  41505032
+000410  20737461
+000414  74653d25
+000418  642c2057
+00041c  44      
+00041d  543d2564          DCB      "T=%d\r\n",27,"[0m\r\n",0
+000421  0d0a1b5b
+000425  306d0d0a
+000429  00      
+00042a  00                DCB      0
+00042b  00                DCB      0
+00042c  1b5b3336          DCB      27,"[36m[%s] App_CheckPendingUdsAck: magic=0x%08X, pendi"
+000430  6d5b2573
+000434  5d204170
+000438  705f4368
+00043c  65636b50
+000440  656e6469
+000444  6e675564
+000448  7341636b
+00044c  3a206d61
+000450  6769633d
+000454  30782530
+000458  38582c20
+00045c  70656e64
+000460  69      
+000461  6e675f73          DCB      "ng_sid=0x%02X\r\n",27,"[0m\r\n",0
+000465  69643d30
+000469  78253032
+00046d  580d0a1b
+000471  5b306d0d
+000475  0a00    
 
                           AREA ||.data||, DATA, ALIGN=2
 

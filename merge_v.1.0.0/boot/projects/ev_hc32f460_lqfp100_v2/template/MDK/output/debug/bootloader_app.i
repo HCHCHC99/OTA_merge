@@ -20817,9 +20817,29 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
 
+
+
+
+
+
+
+
+
+
+
+ 
+#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
  
 
 
+
+
+
+
+
+   
+#line 63 "..\\..\\Bootloader_App\\Bootloader_App.h"
  
 
 
@@ -24556,11 +24576,16 @@ typedef struct
 
 
 
+
+ 
+
+
+
+
+
  
 
 
-
- 
 
 
 
@@ -26184,14 +26209,25 @@ void Bootloader_UdsMain(void)
 
         if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
             stc_uds_shared_t state;
+            FlashDownloadProgress_t stcProg;
             UdsShared_Read(&state);
+            FlashDownload_GetProgress(&stcProg);
+
             state.phase = UDS_PHASE_PROGRAMMING_DONE;
             state.result = 1;
-            state.target_slot = ((en_slot_type_t)0xA5A5A5A5u);
+             
+            if (stcProg.target_address == 0x4C000) {
+                state.target_slot = ((en_slot_type_t)0xA5A5A5A5u);
+            } else {
+                state.target_slot = ((en_slot_type_t)0x5A5A5A5Au);
+            }
             UdsShared_Write(&state);
             s_uds_shared_written = 1;
+             
             ClearAppStateBySlot(state.target_slot);
-            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared updated: phase=PROGRAMMING_DONE, APP2 WDT cleared\r\n" "\033[0m" "\r\n", "MAIN");
+#line 810 "..\\..\\Bootloader_App\\Bootloader_App.c"
+            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)stcProg . target_address);
+
         }
     }
 }

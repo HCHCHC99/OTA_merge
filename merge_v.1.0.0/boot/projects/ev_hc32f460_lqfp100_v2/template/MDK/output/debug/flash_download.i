@@ -335,11 +335,16 @@ typedef struct
 
 
 
+
+ 
+
+
+
+
+
  
 
 
-
- 
 
 
 
@@ -459,11 +464,85 @@ void FlashDownload_Task(void);
 _Bool FlashDownload_IsPending(void);
 
 #line 2 "..\\..\\UDS\\flash_download.c"
-#line 1 "..\\..\\Adp\\flash_advanced.h"
+#line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 
 
-#line 5 "..\\..\\Adp\\flash_advanced.h"
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stddef.h"
  
 
@@ -541,91 +620,6 @@ _Bool FlashDownload_IsPending(void);
 
  
 
-#line 6 "..\\..\\Adp\\flash_advanced.h"
-#line 1 "..\\..\\Adp\\hc32f46x_flash.h"
-
-
-
-#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_efm.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
- 
-
-
-
-
-
-
-
- 
-#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
- 
-
-
-
-
-
-
-
- 
 #line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
 #line 41 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_def.h"
 
@@ -870,7 +864,7 @@ typedef enum {
 
 
  
-#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_efm.h"
+#line 37 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
 
 #line 1 "../../../../drivers/cmsis/Device/HDSC/hc32f4xx/Include/hc32f4xx.h"
 
@@ -12425,6 +12419,2647 @@ extern void SystemCoreClockUpdate(void);
 
 
  
+#line 39 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 77 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+ 
+
+ 
+#line 90 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+ 
+#line 101 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+ 
+
+
+
+ 
+
+ 
+
+
+
+
+ 
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+#line 43 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+ 
+typedef struct {
+    uint16_t u16WatchdogMode;           
+ 
+    uint16_t u16LowThreshold;            
+    uint16_t u16HighThreshold;           
+} stc_adc_awd_config_t;
+
+
+
+ 
+typedef struct {
+    uint16_t u16ScanMode;               
+ 
+    uint16_t u16Resolution;             
+ 
+    uint16_t u16DataAlign;              
+ 
+} stc_adc_init_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 128 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 158 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 210 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 236 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 287 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 344 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 376 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 403 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+ 
+
+
+
+
+ 
+#line 427 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+#line 436 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_adc.h"
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+ 
+int32_t ADC_Init(CM_ADC_TypeDef *ADCx, const stc_adc_init_t *pstcAdcInit);
+int32_t ADC_DeInit(CM_ADC_TypeDef *ADCx);
+int32_t ADC_StructInit(stc_adc_init_t *pstcAdcInit);
+void ADC_ChCmd(CM_ADC_TypeDef *ADCx, uint8_t u8Seq, uint8_t u8Ch, en_functional_state_t enNewState);
+void ADC_MxChCmd(CM_ADC_TypeDef *ADCx, uint8_t u8Seq, uint32_t u32MxCh, en_functional_state_t enNewState);
+void ADC_SetSampleTime(CM_ADC_TypeDef *ADCx, uint8_t u8Ch, uint8_t u8SampleTime);
+
+ 
+void ADC_ConvDataAverageConfig(CM_ADC_TypeDef *ADCx, uint16_t u16AverageCount);
+void ADC_ConvDataAverageChCmd(CM_ADC_TypeDef *ADCx, uint8_t u8Ch, en_functional_state_t enNewState);
+void ADC_ConvDataAverageMxChCmd(CM_ADC_TypeDef *ADCx, uint32_t u32MxCh, en_functional_state_t enNewState);
+
+void ADC_TriggerConfig(CM_ADC_TypeDef *ADCx, uint8_t u8Seq, uint16_t u16TriggerSel);
+void ADC_TriggerCmd(CM_ADC_TypeDef *ADCx, uint8_t u8Seq, en_functional_state_t enNewState);
+void ADC_IntCmd(CM_ADC_TypeDef *ADCx, uint8_t u8IntType, en_functional_state_t enNewState);
+int32_t ADC_Start(CM_ADC_TypeDef *ADCx);
+void ADC_Stop(CM_ADC_TypeDef *ADCx);
+uint16_t ADC_GetValue(const CM_ADC_TypeDef *ADCx, uint8_t u8Ch);
+uint16_t ADC_GetResolution(const CM_ADC_TypeDef *ADCx);
+en_flag_status_t ADC_GetStatus(const CM_ADC_TypeDef *ADCx, uint8_t u8Flag);
+void ADC_ClearStatus(CM_ADC_TypeDef *ADCx, uint8_t u8Flag);
+
+
+ 
+ 
+void ADC_ChRemap(CM_ADC_TypeDef *ADCx, uint8_t u8Ch, uint8_t u8AdcPin);
+uint8_t ADC_GetChPin(const CM_ADC_TypeDef *ADCx, uint8_t u8Ch);
+void ADC_ResetChMapping(CM_ADC_TypeDef *ADCx);
+
+ 
+void ADC_SyncModeConfig(uint16_t u16SyncUnit, uint16_t u16SyncMode, uint8_t u8TriggerDelay);
+void ADC_SyncModeCmd(en_functional_state_t enNewState);
+
+ 
+int32_t ADC_AWD_Config(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint8_t u8Ch, const stc_adc_awd_config_t *pstcAwd);
+void ADC_AWD_SetMode(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint16_t u16WatchdogMode);
+uint16_t ADC_AWD_GetMode(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit);
+void ADC_AWD_SetThreshold(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint16_t u16LowThreshold, uint16_t u16HighThreshold);
+void ADC_AWD_SelectCh(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint8_t u8Ch);
+void ADC_AWD_DeselectCh(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint8_t u8Ch);
+void ADC_AWD_Cmd(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, en_functional_state_t enNewState);
+void ADC_AWD_IntCmd(CM_ADC_TypeDef *ADCx, uint16_t u16IntType, en_functional_state_t enNewState);
+en_flag_status_t ADC_AWD_GetStatus(const CM_ADC_TypeDef *ADCx, uint32_t u32Flag);
+void ADC_AWD_ClearStatus(CM_ADC_TypeDef *ADCx, uint32_t u32Flag);
+
+ 
+void ADC_PGA_Config(CM_ADC_TypeDef *ADCx, uint8_t u8PgaUnit, uint8_t u8Gain, uint8_t u8PgaVss);
+void ADC_PGA_Cmd(CM_ADC_TypeDef *ADCx, uint8_t u8PgaUnit, en_functional_state_t enNewState);
+void ADC_PGA_SelectInputSrc(CM_ADC_TypeDef *ADCx, uint16_t u16PgaInputSrc);
+void ADC_PGA_DeselectInputSrc(CM_ADC_TypeDef *ADCx);
+
+void ADC_DataRegAutoClearCmd(CM_ADC_TypeDef *ADCx, en_functional_state_t enNewState);
+void ADC_SetSeqAResumeMode(CM_ADC_TypeDef *ADCx, uint16_t u16SeqAResumeMode);
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 117 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_aos.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_aos.h"
+
+#line 38 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_aos.h"
+#line 39 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_aos.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 94 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_aos.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+ 
+static __inline void AOS_SW_Trigger(void)
+{
+    ((((bCM_AOS_TypeDef *)0x42210000UL)->INTSFTTRG_b . STRG) = ((uint32_t)(SET)));
+}
+
+void AOS_CommonTriggerCmd(uint32_t u32Target, uint32_t u32CommonTrigger, en_functional_state_t enNewState);
+void AOS_SetTriggerEventSrc(uint32_t u32Target, en_event_src_t enSource);
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 125 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+#line 43 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+ 
+typedef struct {
+    uint32_t u32Prescaler;                   
+    uint32_t u32TimeSeg1;                   
+
+ 
+    uint32_t u32TimeSeg2;                   
+ 
+    uint32_t u32SJW;                        
+
+ 
+} stc_can_bit_time_config_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32ID;                          
+    uint32_t u32IDMask;                      
+    uint32_t u32IDType;                      
+} stc_can_filter_config_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32RefMsgID;                    
+    uint32_t u32RefMsgIDE;                  
+
+ 
+    uint8_t u8NTUPrescaler;                 
+ 
+    uint8_t u8TxBufMode;                    
+ 
+    uint16_t u16TriggerType;                
+ 
+    uint16_t u16TxEnableWindow;              
+    uint16_t u16TxTriggerTime;               
+    uint16_t u16WatchTriggerTime;            
+} stc_can_ttc_config_t;
+
+
+
+ 
+typedef struct {
+    stc_can_bit_time_config_t stcBitCfg;     
+    stc_can_filter_config_t *pstcFilter;    
+ 
+    uint16_t u16FilterSelect;               
+ 
+    uint8_t u8WorkMode;                     
+ 
+    uint8_t u8PTBSingleShotTx;              
+ 
+    uint8_t u8STBSingleShotTx;              
+ 
+    uint8_t u8STBPrioMode;                  
+
+ 
+    uint8_t u8RxWarnLimit;                  
+
+
+ 
+    uint8_t u8ErrorWarnLimit;               
+ 
+    uint8_t u8RxAllFrame;                   
+ 
+    uint8_t u8RxOvfMode;                    
+ 
+    uint8_t u8SelfAck;                      
+ 
+
+    stc_can_ttc_config_t *pstcCanTtc;       
+ 
+} stc_can_init_t;
+
+
+
+ 
+typedef struct {
+    uint8_t u8ArbitrLostPos;                 
+    uint8_t u8ErrorType;                     
+    uint8_t u8RxErrorCount;                  
+    uint8_t u8TxErrorCount;                  
+} stc_can_error_info_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32ID;                          
+    union {
+        uint32_t u32Ctrl;
+        struct {
+            uint32_t DLC: 4;                
+
+ 
+            uint32_t BRS: 1;                 
+            uint32_t FDF: 1;                 
+            uint32_t RTR: 1;                
+ 
+            uint32_t IDE: 1;                
+
+ 
+            uint32_t RSVD: 24;               
+        };
+    };
+    uint8_t au8Data[8U];                     
+} stc_can_tx_frame_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32ID;                          
+    union {
+        uint32_t u32Ctrl;
+        struct {
+            uint32_t DLC: 4;                
+
+ 
+            uint32_t BRS: 1;                 
+            uint32_t FDF: 1;                 
+            uint32_t RTR: 1;                
+ 
+            uint32_t IDE: 1;                
+
+ 
+            uint32_t RSVD: 4;                
+            uint32_t TX: 1;                  
+            uint32_t ERRT: 3;                
+            uint32_t CYCLE_TIME: 16;         
+        };
+    };
+    uint8_t au8Data[8U];                     
+} stc_can_rx_frame_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 227 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 254 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 313 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 375 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+#line 386 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+#line 416 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+#line 435 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+#line 447 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 486 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+#line 503 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 543 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+#line 597 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_can.h"
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+ 
+int32_t CAN_Init(CM_CAN_TypeDef *CANx, const stc_can_init_t *pstcCanInit);
+int32_t CAN_StructInit(stc_can_init_t *pstcCanInit);
+int32_t CAN_DeInit(CM_CAN_TypeDef *CANx);
+void CAN_IntCmd(CM_CAN_TypeDef *CANx, uint32_t u32IntType, en_functional_state_t enNewState);
+int32_t CAN_FillTxFrame(CM_CAN_TypeDef *CANx, uint8_t u8TxBufType, const stc_can_tx_frame_t *pstcTx);
+void CAN_StartTx(CM_CAN_TypeDef *CANx, uint8_t u8TxRequest);
+void CAN_AbortTx(CM_CAN_TypeDef *CANx, uint8_t u8TxBufType);
+int32_t CAN_GetRxFrame(CM_CAN_TypeDef *CANx, stc_can_rx_frame_t *pstcRx);
+
+void CAN_EnterLocalReset(CM_CAN_TypeDef *CANx);
+void CAN_ExitLocalReset(CM_CAN_TypeDef *CANx);
+en_flag_status_t CAN_GetLocalResetStatus(CM_CAN_TypeDef *CANx);
+
+en_flag_status_t CAN_GetStatus(const CM_CAN_TypeDef *CANx, uint32_t u32Flag);
+void CAN_ClearStatus(CM_CAN_TypeDef *CANx, uint32_t u32Flag);
+uint32_t CAN_GetStatusValue(const CM_CAN_TypeDef *CANx);
+int32_t CAN_GetErrorInfo(const CM_CAN_TypeDef *CANx, stc_can_error_info_t *pstcErr);
+uint8_t CAN_GetTxBufStatus(const CM_CAN_TypeDef *CANx);
+uint8_t CAN_GetRxBufStatus(const CM_CAN_TypeDef *CANx);
+void CAN_FilterCmd(CM_CAN_TypeDef *CANx, uint16_t u16FilterSelect, en_functional_state_t enNewState);
+void CAN_SetRxWarnLimit(CM_CAN_TypeDef *CANx, uint8_t u8RxWarnLimit);
+void CAN_SetErrorWarnLimit(CM_CAN_TypeDef *CANx, uint8_t u8ErrorWarnLimit);
+
+ 
+int32_t CAN_TTC_StructInit(stc_can_ttc_config_t *pstcCanTtc);
+int32_t CAN_TTC_Config(CM_CAN_TypeDef *CANx, const stc_can_ttc_config_t *pstcCanTtc);
+void CAN_TTC_IntCmd(CM_CAN_TypeDef *CANx, uint8_t u8IntType, en_functional_state_t enNewState);
+void CAN_TTC_Cmd(CM_CAN_TypeDef *CANx, en_functional_state_t enNewState);
+
+en_flag_status_t CAN_TTC_GetStatus(const CM_CAN_TypeDef *CANx, uint8_t u8Flag);
+void CAN_TTC_ClearStatus(CM_CAN_TypeDef *CANx, uint8_t u8Flag);
+uint8_t CAN_TTC_GetStatusValue(const CM_CAN_TypeDef *CANx);
+
+void CAN_TTC_SetTriggerType(CM_CAN_TypeDef *CANx, uint16_t u16TriggerType);
+void CAN_TTC_SetTxEnableWindow(CM_CAN_TypeDef *CANx, uint16_t u16TxEnableWindow);
+void CAN_TTC_SetTxTriggerTime(CM_CAN_TypeDef *CANx, uint16_t u16TxTriggerTime);
+void CAN_TTC_SetWatchTriggerTime(CM_CAN_TypeDef *CANx, uint16_t u16WatchTriggerTime);
+
+int32_t CAN_TTC_FillTxFrame(CM_CAN_TypeDef *CANx, uint8_t u8CANTTCTxBuf, const stc_can_tx_frame_t *pstcTx);
+
+int32_t CAN_TTC_GetConfig(const CM_CAN_TypeDef *CANx, stc_can_ttc_config_t *pstcCanTtc);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 129 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 37 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+#line 39 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+ 
+typedef struct {
+    uint8_t u8State;            
+ 
+    uint8_t u8Drv;              
+ 
+    uint8_t u8Mode;             
+ 
+    uint8_t u8SuperDrv;         
+ 
+    uint8_t u8StableTime;       
+ 
+} stc_clock_xtal_init_t;
+
+
+
+ 
+typedef struct {
+    uint8_t u8State;            
+ 
+    uint8_t u8ExceptionType;    
+ 
+} stc_clock_xtalstd_init_t;
+
+
+
+ 
+typedef struct {
+    uint8_t u8State;            
+ 
+    uint8_t u8Drv;              
+ 
+    uint8_t u8Filter;           
+ 
+} stc_clock_xtal32_init_t;
+
+
+
+ 
+typedef struct {
+    union {
+        uint32_t SCFGR;      
+        struct {
+            uint32_t PCLK0S     : 3;     
+            uint32_t resvd0     : 1;     
+            uint32_t PCLK1S     : 3;     
+            uint32_t resvd1     : 1;     
+            uint32_t PCLK2S     : 3;     
+            uint32_t resvd2     : 1;     
+            uint32_t PCLK3S     : 3;     
+            uint32_t resvd3     : 1;     
+            uint32_t PCLK4S     : 3;     
+            uint32_t resvd4     : 1;     
+            uint32_t EXCKS      : 3;     
+            uint32_t resvd5     : 1;     
+            uint32_t HCLKS      : 3;     
+            uint32_t resvd6     : 5;     
+        } SCFGR_f;
+    };
+} stc_clock_scale_t;
+
+
+
+
+ 
+typedef struct {
+    uint8_t u8PLLState;          
+    union {
+        uint32_t PLLCFGR;        
+        struct {
+            uint32_t PLLM   : 5;  
+            uint32_t resvd0 : 2;  
+            uint32_t PLLSRC : 1;  
+            uint32_t PLLN   : 9;  
+            uint32_t resvd1 : 3;  
+            uint32_t PLLR   : 4;  
+            uint32_t PLLQ   : 4;  
+            uint32_t PLLP   : 4;  
+        } PLLCFGR_f;
+    };
+} stc_clock_pll_init_t;
+
+
+
+
+ 
+typedef struct {
+    uint8_t u8PLLState;           
+    union {
+        uint32_t PLLCFGR;         
+        struct {
+            uint32_t PLLM   : 5;  
+            uint32_t resvd0 : 3;  
+            uint32_t PLLN   : 9;  
+            uint32_t resvd1 : 3;  
+            uint32_t PLLR   : 4;  
+            uint32_t PLLQ   : 4;  
+            uint32_t PLLP   : 4;  
+        } PLLCFGR_f;
+    };
+} stc_clock_pllx_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32SysclkFreq;         
+    uint32_t u32HclkFreq;           
+    uint32_t u32Pclk0Freq;          
+    uint32_t u32Pclk1Freq;          
+    uint32_t u32Pclk2Freq;          
+    uint32_t u32Pclk3Freq;          
+    uint32_t u32Pclk4Freq;          
+    uint32_t u32ExclkFreq;          
+} stc_clock_freq_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32PllVcin;                
+    uint32_t u32PllVco;                 
+    uint32_t u32PllP;                   
+    uint32_t u32PllQ;                   
+    uint32_t u32PllR;                   
+    uint32_t u32PllxVcin;               
+    uint32_t u32PllxVco;                
+    uint32_t u32PllxP;                  
+    uint32_t u32PllxQ;                  
+    uint32_t u32PllxR;                  
+} stc_pll_clock_freq_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+#line 296 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 372 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 386 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 403 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 423 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 438 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 453 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 468 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 483 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 498 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 513 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 528 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+ 
+
+
+
+
+ 
+#line 548 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+
+ 
+ 
+#line 565 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 616 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+
+ 
+#line 632 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_clk.h"
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+int32_t CLK_HrcCmd(en_functional_state_t enNewState);
+int32_t CLK_MrcCmd(en_functional_state_t enNewState);
+int32_t CLK_LrcCmd(en_functional_state_t enNewState);
+
+void CLK_HrcTrim(int8_t i8TrimVal);
+void CLK_MrcTrim(int8_t i8TrimVal);
+void CLK_LrcTrim(int8_t i8TrimVal);
+
+int32_t CLK_XtalStructInit(stc_clock_xtal_init_t *pstcXtalInit);
+int32_t CLK_XtalInit(const stc_clock_xtal_init_t *pstcXtalInit);
+int32_t CLK_XtalCmd(en_functional_state_t enNewState);
+
+void CLK_XtalStdCmd(en_functional_state_t enNewState);
+int32_t CLK_XtalStdInit(uint8_t u8State, uint8_t u8ExceptionType);
+int32_t CLK_SetXtalStdExceptionType(uint8_t u8ExceptionType);
+void CLK_ClearXtalStdStatus(void);
+en_flag_status_t CLK_GetXtalStdStatus(void);
+
+int32_t CLK_Xtal32StructInit(stc_clock_xtal32_init_t *pstcXtal32Init);
+int32_t CLK_Xtal32Init(const stc_clock_xtal32_init_t *pstcXtal32Init);
+int32_t CLK_Xtal32Cmd(en_functional_state_t enNewState);
+
+void CLK_SetPLLSrc(uint32_t u32PllSrc);
+int32_t CLK_PLLStructInit(stc_clock_pll_init_t *pstcPLLInit);
+int32_t CLK_PLLInit(const stc_clock_pll_init_t *pstcPLLInit);
+int32_t CLK_PLLCmd(en_functional_state_t enNewState);
+int32_t CLK_GetPLLClockFreq(stc_pll_clock_freq_t *pstcPllClkFreq);
+int32_t CLK_PLLxStructInit(stc_clock_pllx_init_t *pstcPLLxInit);
+int32_t CLK_PLLxInit(const stc_clock_pllx_init_t *pstcPLLxInit);
+int32_t CLK_PLLxCmd(en_functional_state_t enNewState);
+
+void CLK_MCOConfig(uint8_t u8Ch, uint8_t u8Src, uint8_t u8Div);
+void CLK_MCOCmd(uint8_t u8Ch, en_functional_state_t enNewState);
+
+en_flag_status_t CLK_GetStableStatus(uint8_t u8Flag);
+void CLK_SetSysClockSrc(uint8_t u8Src);
+void CLK_SetClockDiv(uint32_t u32Clock, uint32_t u32Div);
+int32_t CLK_GetClockFreq(stc_clock_freq_t *pstcClockFreq);
+uint32_t CLK_GetBusClockFreq(uint32_t u32Clock);
+
+void CLK_SetPeriClockSrc(uint16_t u16Src);
+void CLK_SetUSBClockSrc(uint8_t u8Src);
+void CLK_SetI2SClockSrc(uint8_t u8Unit, uint8_t u8Src);
+
+void CLK_TpiuClockCmd(en_functional_state_t enNewState);
+void CLK_SetTpiuClockDiv(uint8_t u8Div);
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 133 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_crc.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_crc.h"
+
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_crc.h"
+#line 43 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_crc.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+typedef struct {
+    uint32_t u32Protocol;   
+ 
+    uint32_t u32InitValue;  
+ 
+    uint32_t u32RefIn;      
+ 
+    uint32_t u32RefOut;     
+ 
+    uint32_t u32XorOut;     
+ 
+} stc_crc_init_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+int32_t CRC_StructInit(stc_crc_init_t *pstcCrcInit);
+int32_t CRC_Init(const stc_crc_init_t *pstcCrcInit);
+int32_t CRC_DeInit(void);
+
+uint32_t CRC_GetResult(void);
+void CRC_SetInitValue(uint32_t u32Value);
+
+en_flag_status_t CRC_GetResultStatus(void);
+
+int32_t CRC_CRC16_AccumulateData(uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint16_t *pu16Out);
+int32_t CRC_CRC16_Calculate(uint16_t u16InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint16_t *pu16Out);
+en_flag_status_t CRC_CRC16_CheckData(uint16_t u16InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint16_t u16ExpectValue);
+en_flag_status_t CRC_CRC16_GetCheckResult(uint16_t u16ExpectValue);
+
+int32_t CRC_CRC32_AccumulateData(uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint32_t *pu32Out);
+int32_t CRC_CRC32_Calculate(uint32_t u32InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint32_t *pu32Out);
+en_flag_status_t CRC_CRC32_CheckData(uint32_t u32InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint32_t u32ExpectValue);
+en_flag_status_t CRC_CRC32_GetCheckResult(uint32_t u32ExpectValue);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 141 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_dma.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 39 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_dma.h"
+
+#line 41 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_dma.h"
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_dma.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+typedef struct {
+    uint32_t u32IntEn;          
+ 
+    uint32_t u32SrcAddr;         
+    uint32_t u32DestAddr;        
+    uint32_t u32DataWidth;      
+ 
+    uint32_t u32BlockSize;       
+    uint32_t u32TransCount;      
+    uint32_t u32SrcAddrInc;     
+ 
+    uint32_t u32DestAddrInc;    
+ 
+} stc_dma_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32Mode;       
+ 
+    uint32_t u32SrcCount;    
+    uint32_t u32DestCount;   
+} stc_dma_repeat_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32Mode;        
+ 
+    uint32_t u32SrcCount;      
+    uint32_t u32SrcOffset;     
+    uint32_t u32DestCount;     
+    uint32_t u32DestOffset;    
+} stc_dma_nonseq_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32State;      
+ 
+    uint32_t u32Mode;       
+ 
+    uint32_t u32Addr;        
+} stc_dma_llp_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32CountMode;          
+ 
+    uint32_t u32DestAddrMode;       
+ 
+    uint32_t u32SrcAddrMode;        
+ 
+} stc_dma_reconfig_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32Mode;           
+ 
+    uint32_t u32SrcCount;        
+    uint32_t u32SrcDist;         
+    uint32_t u32DestCount;       
+    uint32_t u32DestDist;        
+} stc_dma_rc_nonseq_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t SARx;               
+    uint32_t DARx;               
+    uint32_t DTCTLx;             
+    uint32_t RPTx;               
+    uint32_t SNSEQCTLx;          
+    uint32_t DNSEQCTLx;          
+    uint32_t LLPx;               
+    uint32_t CHCTLx;             
+} stc_dma_llp_descriptor_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 330 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_dma.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+void DMA_Cmd(CM_DMA_TypeDef *DMAx, en_functional_state_t enNewState);
+
+void DMA_ErrIntCmd(CM_DMA_TypeDef *DMAx, uint32_t u32ErrInt, en_functional_state_t enNewState);
+en_flag_status_t DMA_GetErrStatus(const CM_DMA_TypeDef *DMAx, uint32_t u32Flag);
+void DMA_ClearErrStatus(CM_DMA_TypeDef *DMAx, uint32_t u32Flag);
+
+void DMA_TransCompleteIntCmd(CM_DMA_TypeDef *DMAx, uint32_t u32TransCompleteInt, en_functional_state_t enNewState);
+en_flag_status_t DMA_GetTransCompleteStatus(const CM_DMA_TypeDef *DMAx, uint32_t u32Flag);
+void DMA_ClearTransCompleteStatus(CM_DMA_TypeDef *DMAx, uint32_t u32Flag);
+
+int32_t DMA_ChCmd(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, en_functional_state_t enNewState);
+
+en_flag_status_t DMA_GetRequestStatus(const CM_DMA_TypeDef *DMAx, uint32_t u32Status);
+en_flag_status_t DMA_GetTransStatus(const CM_DMA_TypeDef *DMAx, uint32_t u32Status);
+
+int32_t DMA_SetSrcAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr);
+int32_t DMA_SetDestAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr);
+int32_t DMA_SetTransCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Count);
+int32_t DMA_SetBlockSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Size);
+int32_t DMA_SetDataWidth(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32DataWidth);
+
+int32_t DMA_SetSrcRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Size);
+int32_t DMA_SetDestRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Size);
+int32_t DMA_SetNonSeqSrcCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Count);
+int32_t DMA_SetNonSeqDestCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Count);
+int32_t DMA_SetNonSeqSrcOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Offset);
+int32_t DMA_SetNonSeqDestOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Offset);
+
+void DMA_SetLlpAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr);
+
+int32_t DMA_StructInit(stc_dma_init_t *pstcDmaInit);
+int32_t DMA_Init(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_init_t *pstcDmaInit);
+void DMA_DeInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+
+int32_t DMA_RepeatStructInit(stc_dma_repeat_init_t *pstcDmaRepeatInit);
+int32_t DMA_RepeatInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_repeat_init_t *pstcDmaRepeatInit);
+
+int32_t DMA_NonSeqStructInit(stc_dma_nonseq_init_t *pstcDmaNonSeqInit);
+int32_t DMA_NonSeqInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_nonseq_init_t *pstcDmaNonSeqInit);
+
+int32_t DMA_LlpStructInit(stc_dma_llp_init_t *pstcDmaLlpInit);
+int32_t DMA_LlpInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_llp_init_t *pstcDmaLlpInit);
+
+void DMA_LlpCmd(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, en_functional_state_t enNewState);
+
+int32_t DMA_ReconfigStructInit(stc_dma_reconfig_init_t *pstcDmaRCInit);
+int32_t DMA_ReconfigInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_reconfig_init_t *pstcDmaRCInit);
+void DMA_ReconfigCmd(CM_DMA_TypeDef *DMAx, en_functional_state_t enNewState);
+void DMA_ReconfigLlpCmd(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, en_functional_state_t enNewState);
+int32_t DMA_ReconfigNonSeqStructInit(stc_dma_rc_nonseq_init_t *pstcDmaRcNonSeqInit);
+int32_t DMA_ReconfigNonSeqInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_rc_nonseq_init_t *pstcDmaRcNonSeqInit);
+
+uint32_t DMA_GetSrcAddr(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetDestAddr(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetTransCount(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetBlockSize(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetSrcRepeatSize(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetDestRepeatSize(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetNonSeqSrcCount(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetNonSeqDestCount(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetNonSeqSrcOffset(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+uint32_t DMA_GetNonSeqDestOffset(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch);
+
+void DMA_MxChSWTrigger(CM_DMA_TypeDef *DMAx, uint8_t u8MxCh);
+void DMA_SWReconfig(CM_DMA_TypeDef *DMAx);
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 153 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_efm.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_efm.h"
+
 #line 44 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_efm.h"
 #line 45 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_efm.h"
 
@@ -12847,6 +15482,5740 @@ int32_t EFM_WriteSecurityCode(const uint8_t *pu8Buf, uint32_t u32Len);
 
 
  
+#line 157 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_fcg.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 34 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_fcg.h"
+
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_fcg.h"
+#line 37 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_fcg.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+#line 80 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_fcg.h"
+
+
+ 
+
+
+
+
+ 
+#line 108 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_fcg.h"
+
+
+ 
+
+
+
+
+ 
+#line 131 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_fcg.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+void FCG_Fcg0PeriphClockCmd(uint32_t u32Fcg0Periph, en_functional_state_t enNewState);
+
+void FCG_Fcg1PeriphClockCmd(uint32_t u32Fcg1Periph, en_functional_state_t enNewState);
+void FCG_Fcg2PeriphClockCmd(uint32_t u32Fcg2Periph, en_functional_state_t enNewState);
+void FCG_Fcg3PeriphClockCmd(uint32_t u32Fcg3Periph, en_functional_state_t enNewState);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 169 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+#line 38 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+#line 39 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+typedef enum {
+    PIN_RESET = 0U,            
+    PIN_SET   = 1U             
+} en_pin_state_t;
+
+
+
+ 
+typedef struct {
+    uint16_t u16PinState;        
+    uint16_t u16PinDir;          
+    uint16_t u16PinOutputType;   
+    uint16_t u16PinDrv;          
+    uint16_t u16Latch;           
+    uint16_t u16PullUp;          
+    uint16_t u16Invert;          
+    uint16_t u16ExtInt;          
+    uint16_t u16PinAttr;         
+} stc_gpio_init_t;
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 115 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+
+ 
+
+
+
+
+ 
+#line 129 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+
+ 
+
+
+
+
+ 
+#line 143 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+
+ 
+
+
+
+
+ 
+#line 195 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+
+ 
+
+
+
+
+ 
+#line 214 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_gpio.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+static __inline void GPIO_REG_Lock(void)
+{
+    ((((CM_GPIO_TypeDef *)(0x40053800UL))->PWPR) = ((uint16_t)((0xA500U))));
+}
+
+
+
+
+
+ 
+static __inline void GPIO_REG_Unlock(void)
+{
+    ((((CM_GPIO_TypeDef *)(0x40053800UL))->PWPR) = ((uint16_t)((0xA501U))));
+}
+
+int32_t GPIO_Init(uint8_t u8Port, uint16_t u16Pin, const stc_gpio_init_t *pstcGpioInit);
+void GPIO_DeInit(void);
+int32_t GPIO_StructInit(stc_gpio_init_t *pstcGpioInit);
+void GPIO_SetDebugPort(uint8_t u8DebugPort, en_functional_state_t enNewState);
+void GPIO_SetFunc(uint8_t u8Port, uint16_t u16Pin, uint16_t u16Func);
+void GPIO_SubFuncCmd(uint8_t u8Port, uint16_t u16Pin, en_functional_state_t enNewState);
+void GPIO_SetSubFunc(uint8_t u8Func);
+void GPIO_SetReadWaitCycle(uint16_t u16ReadWait);
+void GPIO_InputMOSCmd(uint8_t u8Port, en_functional_state_t enNewState);
+void GPIO_OutputCmd(uint8_t u8Port, uint16_t u16Pin, en_functional_state_t enNewState);
+en_pin_state_t GPIO_ReadInputPins(uint8_t u8Port, uint16_t u16Pin);
+uint16_t GPIO_ReadInputPort(uint8_t u8Port);
+en_pin_state_t GPIO_ReadOutputPins(uint8_t u8Port, uint16_t u16Pin);
+uint16_t GPIO_ReadOutputPort(uint8_t u8Port);
+void GPIO_SetPins(uint8_t u8Port, uint16_t u16Pin);
+void GPIO_ResetPins(uint8_t u8Port, uint16_t u16Pin);
+void GPIO_WritePort(uint8_t u8Port, uint16_t u16PortVal);
+void GPIO_TogglePins(uint8_t u8Port, uint16_t u16Pin);
+void GPIO_ExtIntCmd(uint8_t u8Port, uint16_t u16Pin, en_functional_state_t enNewState);
+void GPIO_AnalogCmd(uint8_t u8Port, uint16_t u16Pin, en_functional_state_t enNewState);
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 177 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 35 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+#line 37 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+#line 38 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 106 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+
+ 
+
+
+
+
+ 
+#line 129 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+#line 192 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+
+ 
+
+
+
+
+ 
+
+
+#line 217 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+ 
+#line 345 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+ 
+#line 364 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+ 
+#line 433 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_icg.h"
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 193 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 34 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+#line 37 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+typedef struct {
+    en_int_src_t enIntSrc;   
+    IRQn_Type enIRQn;        
+    func_ptr_t pfnCallback;  
+} stc_irq_signin_config_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32Src;             
+    uint32_t u32Edge;            
+    uint32_t u32Filter;          
+    uint32_t u32FilterClock;     
+} stc_nmi_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32Filter;          
+    uint32_t u32FilterClock;     
+    uint32_t u32Edge;            
+} stc_extint_init_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+#line 117 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 140 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 201 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+ 
+
+
+
+
+ 
+#line 242 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+ 
+
+
+
+
+ 
+#line 283 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+ 
+
+
+
+
+ 
+#line 324 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 399 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_interrupts.h"
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+int32_t INTC_IrqSignIn(const stc_irq_signin_config_t *pstcIrqSignConfig);
+int32_t INTC_IrqSignOut(IRQn_Type enIRQn);
+void INTC_WakeupSrcCmd(uint32_t u32WakeupSrc, en_functional_state_t enNewState);
+void INTC_EventCmd(uint32_t u32Event, en_functional_state_t enNewState);
+void INTC_IntCmd(uint32_t u32Int, en_functional_state_t enNewState);
+void INTC_SWIntInit(uint32_t u32Ch, const func_ptr_t pfnCallback, uint32_t u32Priority);
+void INTC_SWIntCmd(uint32_t u32SWInt, en_functional_state_t enNewState);
+
+int32_t NMI_Init(const stc_nmi_init_t *pstcNmiInit);
+int32_t NMI_StructInit(stc_nmi_init_t *pstcNmiInit);
+en_flag_status_t NMI_GetNmiStatus(uint32_t u32Src);
+void NMI_NmiSrcCmd(uint32_t u32Src, en_functional_state_t enNewState);
+void NMI_ClearNmiStatus(uint32_t u32Src);
+
+int32_t EXTINT_Init(uint32_t u32Ch, const stc_extint_init_t *pstcExtIntInit);
+int32_t EXTINT_StructInit(stc_extint_init_t *pstcExtIntInit);
+en_flag_status_t EXTINT_GetExtIntStatus(uint32_t u32ExtIntCh);
+void EXTINT_ClearExtIntStatus(uint32_t u32ExtIntCh);
+
+void IRQ000_Handler(void);
+void IRQ001_Handler(void);
+void IRQ002_Handler(void);
+void IRQ003_Handler(void);
+void IRQ004_Handler(void);
+void IRQ005_Handler(void);
+void IRQ006_Handler(void);
+void IRQ007_Handler(void);
+
+void IRQ008_Handler(void);
+void IRQ009_Handler(void);
+void IRQ010_Handler(void);
+void IRQ011_Handler(void);
+void IRQ012_Handler(void);
+void IRQ013_Handler(void);
+void IRQ014_Handler(void);
+void IRQ015_Handler(void);
+
+void IRQ016_Handler(void);
+void IRQ017_Handler(void);
+void IRQ018_Handler(void);
+void IRQ019_Handler(void);
+void IRQ020_Handler(void);
+void IRQ021_Handler(void);
+void IRQ022_Handler(void);
+void IRQ023_Handler(void);
+
+void IRQ024_Handler(void);
+void IRQ025_Handler(void);
+void IRQ026_Handler(void);
+void IRQ027_Handler(void);
+void IRQ028_Handler(void);
+void IRQ029_Handler(void);
+void IRQ030_Handler(void);
+void IRQ031_Handler(void);
+void IRQ032_Handler(void);
+void IRQ033_Handler(void);
+void IRQ034_Handler(void);
+void IRQ035_Handler(void);
+void IRQ036_Handler(void);
+void IRQ037_Handler(void);
+void IRQ038_Handler(void);
+void IRQ039_Handler(void);
+void IRQ040_Handler(void);
+void IRQ041_Handler(void);
+void IRQ042_Handler(void);
+void IRQ043_Handler(void);
+void IRQ044_Handler(void);
+void IRQ045_Handler(void);
+void IRQ046_Handler(void);
+void IRQ047_Handler(void);
+void IRQ048_Handler(void);
+void IRQ049_Handler(void);
+void IRQ050_Handler(void);
+void IRQ051_Handler(void);
+void IRQ052_Handler(void);
+void IRQ053_Handler(void);
+void IRQ054_Handler(void);
+void IRQ055_Handler(void);
+void IRQ056_Handler(void);
+void IRQ057_Handler(void);
+void IRQ058_Handler(void);
+void IRQ059_Handler(void);
+void IRQ060_Handler(void);
+void IRQ061_Handler(void);
+void IRQ062_Handler(void);
+void IRQ063_Handler(void);
+void IRQ064_Handler(void);
+void IRQ065_Handler(void);
+void IRQ066_Handler(void);
+void IRQ067_Handler(void);
+void IRQ068_Handler(void);
+void IRQ069_Handler(void);
+void IRQ070_Handler(void);
+void IRQ071_Handler(void);
+void IRQ072_Handler(void);
+void IRQ073_Handler(void);
+void IRQ074_Handler(void);
+void IRQ075_Handler(void);
+void IRQ076_Handler(void);
+void IRQ077_Handler(void);
+void IRQ078_Handler(void);
+void IRQ079_Handler(void);
+void IRQ080_Handler(void);
+void IRQ081_Handler(void);
+void IRQ082_Handler(void);
+void IRQ083_Handler(void);
+void IRQ084_Handler(void);
+void IRQ085_Handler(void);
+void IRQ086_Handler(void);
+void IRQ087_Handler(void);
+void IRQ088_Handler(void);
+void IRQ089_Handler(void);
+void IRQ090_Handler(void);
+void IRQ091_Handler(void);
+void IRQ092_Handler(void);
+void IRQ093_Handler(void);
+void IRQ094_Handler(void);
+void IRQ095_Handler(void);
+void IRQ096_Handler(void);
+void IRQ097_Handler(void);
+void IRQ098_Handler(void);
+void IRQ099_Handler(void);
+void IRQ100_Handler(void);
+void IRQ101_Handler(void);
+void IRQ102_Handler(void);
+void IRQ103_Handler(void);
+void IRQ104_Handler(void);
+void IRQ105_Handler(void);
+void IRQ106_Handler(void);
+void IRQ107_Handler(void);
+void IRQ108_Handler(void);
+void IRQ109_Handler(void);
+void IRQ110_Handler(void);
+void IRQ111_Handler(void);
+void IRQ112_Handler(void);
+void IRQ113_Handler(void);
+void IRQ114_Handler(void);
+void IRQ115_Handler(void);
+void IRQ116_Handler(void);
+void IRQ117_Handler(void);
+void IRQ118_Handler(void);
+void IRQ119_Handler(void);
+void IRQ120_Handler(void);
+void IRQ121_Handler(void);
+void IRQ122_Handler(void);
+void IRQ123_Handler(void);
+void IRQ124_Handler(void);
+void IRQ125_Handler(void);
+void IRQ126_Handler(void);
+void IRQ127_Handler(void);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 197 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+#line 43 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+ 
+typedef struct {
+    uint32_t u32State;               
+    uint32_t u32CompareOutputState;  
+    uint32_t u32ExceptionType;       
+    uint32_t u32Filter;              
+    uint32_t u32FilterClock;         
+    uint32_t u32ThresholdVoltage;    
+} stc_pwc_lvd_init_t;
+
+
+
+ 
+typedef struct {
+    uint8_t u8Mode;          
+    uint8_t u8IOState;       
+    uint8_t u8VcapCtrl;      
+} stc_pwc_pd_mode_config_t;
+
+
+
+ 
+typedef struct {
+    uint16_t u16Clock;          
+ 
+    uint8_t u8StopDrv;          
+ 
+    uint16_t u16FlashWait;      
+ 
+} stc_pwc_stop_mode_config_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 217 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+ 
+#line 309 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 356 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+
+ 
+
+
+
+
+ 
+#line 370 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 405 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_pwc.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+static __inline void PWC_REG_Lock(uint16_t u16Module)
+{
+    ((CM_PWC_TypeDef *)(0x40048000UL))->FPRC = ((0xA500U) | (uint16_t)((uint16_t)(~u16Module) & (((CM_PWC_TypeDef *)(0x40048000UL))->FPRC)));
+}
+
+
+
+
+
+
+
+
+ 
+static __inline void PWC_REG_Unlock(uint16_t u16Module)
+{
+    ((((CM_PWC_TypeDef *)(0x40048000UL))->FPRC) |= ((uint16_t)(u16Module)));
+}
+
+
+
+
+
+ 
+static __inline void PWC_FCG0_REG_Lock(void)
+{
+    ((((CM_PWC_TypeDef *)(0x40048000UL))->FCG0PC) = ((uint32_t)((0xA5A50000UL))));
+}
+
+
+
+
+
+
+ 
+static __inline void PWC_FCG0_REG_Unlock(void)
+{
+    ((((CM_PWC_TypeDef *)(0x40048000UL))->FCG0PC) = ((uint32_t)((0xA5A50001UL))));
+}
+
+ 
+int32_t PWC_PD_Enter(void);
+int32_t PWC_PD_StructInit(stc_pwc_pd_mode_config_t *pstcPDModeConfig);
+int32_t PWC_PD_Config(const stc_pwc_pd_mode_config_t *pstcPDModeConfig);
+void PWC_PD_SetIoState(uint8_t u8IoState);
+void PWC_PD_SetMode(uint8_t u8PdMode);
+void PWC_PD_WakeupCmd(uint32_t u32Event, en_functional_state_t enNewState);
+void PWC_PD_SetWakeupTriggerEdge(uint8_t u8Event, uint8_t u8TrigEdge);
+en_flag_status_t PWC_PD_GetWakeupStatus(uint16_t u16Flag);
+void PWC_PD_ClearWakeupStatus(uint16_t u16Flag);
+void PWC_PD_PeriphRamCmd(uint32_t u32PeriphRam, en_functional_state_t enNewState);
+void PWC_PD_VdrCmd(en_functional_state_t enNewState);
+
+ 
+void PWC_WKT_Config(uint16_t u16ClkSrc, uint16_t u16CmpVal);
+void PWC_WKT_SetCompareValue(uint16_t u16CmpVal);
+uint16_t PWC_WKT_GetCompareValue(void);
+void PWC_WKT_Cmd(en_functional_state_t enNewState);
+en_flag_status_t PWC_WKT_GetStatus(void);
+void PWC_WKT_ClearStatus(void);
+
+void PWC_RamModeConfig(uint16_t u16Mode);
+
+ 
+void PWC_SLEEP_Enter(uint8_t u8SleepType);
+
+ 
+void PWC_STOP_Enter(uint8_t u8StopType);
+int32_t PWC_STOP_StructInit(stc_pwc_stop_mode_config_t *pstcStopConfig);
+int32_t PWC_STOP_Config(const stc_pwc_stop_mode_config_t *pstcStopConfig);
+void PWC_STOP_ClockSelect(uint8_t u8Clock);
+void PWC_STOP_NvicBackup(void);
+void PWC_STOP_NvicRecover(void);
+void PWC_STOP_ClockBackup(void);
+void PWC_STOP_ClockRecover(void);
+void PWC_STOP_IrqClockBackup(void);
+void PWC_STOP_IrqClockRecover(void);
+void PWC_STOP_SetDrv(uint8_t u8StopDrv);
+void PWC_STOP_FlashWaitCmd(en_functional_state_t enNewState);
+
+ 
+int32_t PWC_HighSpeedToLowSpeed(void);
+int32_t PWC_LowSpeedToHighSpeed(void);
+int32_t PWC_HighSpeedToHighPerformance(void);
+int32_t PWC_HighPerformanceToHighSpeed(void);
+int32_t PWC_LowSpeedToHighPerformance(void);
+int32_t PWC_HighPerformanceToLowSpeed(void);
+
+ 
+void PWC_LDO_Cmd(uint16_t u16Ldo, en_functional_state_t enNewState);
+
+ 
+int32_t PWC_LVD_Init(uint8_t u8Ch, const stc_pwc_lvd_init_t *pstcLvdInit);
+void PWC_LVD_DeInit(uint8_t u8Ch);
+int32_t PWC_LVD_StructInit(stc_pwc_lvd_init_t *pstcLvdInit);
+void PWC_LVD_Cmd(uint8_t u8Ch, en_functional_state_t enNewState);
+void PWC_LVD_ExtInputCmd(en_functional_state_t enNewState);
+void PWC_LVD_CompareOutputCmd(uint8_t u8Ch, en_functional_state_t enNewState);
+void PWC_LVD_DigitalFilterCmd(uint8_t u8Ch, en_functional_state_t enNewState);
+void PWC_LVD_SetFilterClock(uint8_t u8Ch, uint32_t u32Clock);
+void PWC_LVD_SetThresholdVoltage(uint8_t u8Ch, uint32_t u32Voltage);
+void PWC_LVD_ClearStatus(uint8_t u8Flag);
+en_flag_status_t PWC_LVD_GetStatus(uint8_t u8Flag);
+
+ 
+void PWC_PowerMonitorCmd(en_functional_state_t enNewState);
+
+ 
+
+void PWC_XTAL32_PowerCmd(en_functional_state_t enNewState);
+void PWC_RetSram_PowerCmd(en_functional_state_t enNewState);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 217 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_rmu.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+ 
+#line 33 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_rmu.h"
+
+#line 35 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_rmu.h"
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_rmu.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 82 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_rmu.h"
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+en_flag_status_t RMU_GetStatus(uint32_t u32RmuResetCause);
+void RMU_ClearStatus(void);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+#line 225 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 38 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h"
+
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h"
+#line 41 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 75 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 101 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h"
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 157 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_sram.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+ 
+static __inline void SRAM_REG_Lock(void)
+{
+    ((((CM_SRAMC_TypeDef *)(0x40050800UL))->WTPR) = ((uint32_t)((0x76U))));
+    ((((CM_SRAMC_TypeDef *)(0x40050800UL))->CKPR) = ((uint32_t)((0x76U))));
+}
+
+
+
+
+
+ 
+static __inline void SRAM_REG_Unlock(void)
+{
+    ((((CM_SRAMC_TypeDef *)(0x40050800UL))->WTPR) = ((uint32_t)((0x77U))));
+    ((((CM_SRAMC_TypeDef *)(0x40050800UL))->CKPR) = ((uint32_t)((0x77U))));
+}
+
+void SRAM_Init(void);
+void SRAM_DeInit(void);
+
+void SRAM_REG_Lock(void);
+void SRAM_REG_Unlock(void);
+
+void SRAM_SetWaitCycle(uint32_t u32SramSel, uint32_t u32WriteCycle, uint32_t u32ReadCycle);
+void SRAM_SetEccMode(uint32_t u32EccSram, uint32_t u32EccMode);
+void SRAM_SetExceptionType(uint32_t u32CheckSram, uint32_t u32ExceptionType);
+
+en_flag_status_t SRAM_GetStatus(uint32_t u32Flag);
+void SRAM_ClearStatus(uint32_t u32Flag);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 241 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_swdt.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 34 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_swdt.h"
+
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_swdt.h"
+#line 37 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_swdt.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+ 
+static __inline uint16_t SWDT_GetCountValue(void)
+{
+    return (uint16_t)((((CM_SWDT_TypeDef *)(0x40049400UL))->SR) & (0x0000FFFFUL));
+}
+
+ 
+void SWDT_FeedDog(void);
+uint16_t SWDT_GetCountValue(void);
+
+ 
+en_flag_status_t SWDT_GetStatus(uint32_t u32Flag);
+int32_t SWDT_ClearStatus(uint32_t u32Flag);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 245 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr0.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr0.h"
+
+#line 38 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr0.h"
+#line 39 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr0.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+typedef struct {
+    uint32_t u32ClockSrc;               
+ 
+    uint32_t u32ClockDiv;               
+ 
+    uint32_t u32Func;                   
+ 
+    uint16_t u16CompareValue;           
+ 
+} stc_tmr0_init_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 125 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr0.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+ 
+int32_t TMR0_DeInit(CM_TMR0_TypeDef *TMR0x);
+int32_t TMR0_Init(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, const stc_tmr0_init_t *pstcTmr0Init);
+int32_t TMR0_StructInit(stc_tmr0_init_t *pstcTmr0Init);
+void TMR0_Start(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch);
+void TMR0_Stop(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch);
+
+ 
+void TMR0_SetCountValue(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, uint16_t u16Value);
+uint16_t TMR0_GetCountValue(const CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch);
+void TMR0_SetCompareValue(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, uint16_t u16Value);
+uint16_t TMR0_GetCompareValue(const CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch);
+void TMR0_SetClockSrc(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, uint32_t u32Src);
+void TMR0_SetClockDiv(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, uint32_t u32Div);
+void TMR0_SetFunc(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, uint32_t u32Func);
+
+ 
+void TMR0_HWCaptureCondCmd(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR0_HWStartCondCmd(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR0_HWStopCondCmd(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR0_HWClearCondCmd(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, en_functional_state_t enNewState);
+
+ 
+void TMR0_IntCmd(CM_TMR0_TypeDef *TMR0x, uint32_t u32IntType, en_functional_state_t enNewState);
+en_flag_status_t TMR0_GetStatus(const CM_TMR0_TypeDef *TMR0x, uint32_t u32Flag);
+void TMR0_ClearStatus(CM_TMR0_TypeDef *TMR0x, uint32_t u32Flag);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 249 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 40 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+#line 43 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+typedef struct {
+    uint16_t u16ClockSrc;       
+ 
+    uint16_t u16ClockDiv;       
+ 
+    uint16_t u16CountMode;      
+ 
+    uint16_t u16PeriodValue;    
+ 
+} stc_tmr4_init_t;
+
+
+
+ 
+typedef union {
+    uint16_t OCMRx;              
+
+    struct {                     
+        uint16_t OCFDCH : 1;    
+ 
+        uint16_t OCFPKH : 1;    
+ 
+        uint16_t OCFUCH : 1;    
+ 
+        uint16_t OCFZRH : 1;    
+ 
+        uint16_t OPDCH  : 2;    
+ 
+        uint16_t OPPKH  : 2;    
+ 
+        uint16_t OPUCH  : 2;    
+ 
+        uint16_t OPZRH  : 2;    
+ 
+        uint16_t OPNPKH : 2;    
+ 
+        uint16_t OPNZRH : 2;    
+ 
+    } OCMRx_f;
+} un_tmr4_oc_ocmrh_t;
+
+
+
+ 
+typedef union {
+    uint32_t OCMRx;              
+
+    struct {                     
+        uint32_t OCFDCL  : 1;   
+ 
+        uint32_t OCFPKL  : 1;   
+ 
+        uint32_t OCFUCL  : 1;   
+ 
+        uint32_t OCFZRL  : 1;   
+ 
+        uint32_t OPDCL   : 2;   
+ 
+        uint32_t OPPKL   : 2;   
+ 
+        uint32_t OPUCL   : 2;   
+ 
+        uint32_t OPZRL   : 2;   
+ 
+        uint32_t OPNPKL  : 2;   
+ 
+        uint32_t OPNZRL  : 2;   
+ 
+        uint32_t EOPNDCL : 2;   
+ 
+        uint32_t EOPNUCL : 2;   
+ 
+        uint32_t EOPDCL  : 2;   
+ 
+        uint32_t EOPPKL  : 2;   
+ 
+        uint32_t EOPUCL  : 2;   
+ 
+        uint32_t EOPZRL  : 2;   
+ 
+        uint32_t EOPNPKL : 2;   
+ 
+        uint32_t EOPNZRL : 2;   
+ 
+    } OCMRx_f;
+} un_tmr4_oc_ocmrl_t;
+
+
+
+ 
+typedef struct {
+    uint16_t u16CompareValue;           
+ 
+    uint16_t u16OcInvalidPolarity;      
+ 
+    uint16_t u16CompareModeBufCond;     
+ 
+    uint16_t u16CompareValueBufCond;    
+ 
+    uint16_t u16BufLinkTransObject;     
+ 
+} stc_tmr4_oc_init_t;
+
+
+
+
+ 
+typedef struct {
+    uint16_t u16Mode;                   
+ 
+    uint16_t u16ClockDiv;               
+ 
+    uint16_t u16Polarity;               
+ 
+} stc_tmr4_pwm_init_t;
+
+
+
+ 
+typedef struct {
+    uint16_t u16Mode;                   
+ 
+    uint16_t u16CompareValue;           
+ 
+    uint16_t u16OutputEvent;            
+ 
+    uint16_t u16MatchCond;              
+ 
+} stc_tmr4_evt_init_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 240 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 269 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 293 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 322 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 345 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 444 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+#line 460 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 529 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+#line 543 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 610 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+#line 624 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+
+ 
+#line 639 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr4.h"
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+ 
+int32_t TMR4_StructInit(stc_tmr4_init_t *pstcTmr4Init);
+int32_t TMR4_Init(CM_TMR4_TypeDef *TMR4x, const stc_tmr4_init_t *pstcTmr4Init);
+int32_t TMR4_DeInit(CM_TMR4_TypeDef *TMR4x);
+void TMR4_SetClockSrc(CM_TMR4_TypeDef *TMR4x, uint16_t u16Src);
+void TMR4_SetClockDiv(CM_TMR4_TypeDef *TMR4x, uint16_t u16Div);
+void TMR4_SetCountMode(CM_TMR4_TypeDef *TMR4x, uint16_t u16Mode);
+uint16_t TMR4_GetPeriodValue(const CM_TMR4_TypeDef *TMR4x);
+void TMR4_SetPeriodValue(CM_TMR4_TypeDef *TMR4x, uint16_t u16Value);
+uint16_t TMR4_GetCountValue(const CM_TMR4_TypeDef *TMR4x);
+void TMR4_SetCountValue(CM_TMR4_TypeDef *TMR4x, uint16_t u16Value);
+void TMR4_ClearCountValue(CM_TMR4_TypeDef *TMR4x);
+void TMR4_Start(CM_TMR4_TypeDef *TMR4x);
+void TMR4_Stop(CM_TMR4_TypeDef *TMR4x);
+void TMR4_ClearStatus(CM_TMR4_TypeDef *TMR4x, uint32_t u32Flag);
+en_flag_status_t TMR4_GetStatus(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Flag);
+void TMR4_IntCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType, en_functional_state_t enNewState);
+void TMR4_PeriodBufCmd(CM_TMR4_TypeDef *TMR4x, en_functional_state_t enNewState);
+uint16_t TMR4_GetCountIntMaskTime(const CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType);
+void TMR4_SetCountIntMaskTime(CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType, uint16_t u16MaskTime);
+uint16_t TMR4_GetCurrentCountIntMaskTime(const CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType);
+
+
+ 
+
+
+
+
+ 
+
+ 
+int32_t TMR4_OC_StructInit(stc_tmr4_oc_init_t *pstcTmr4OcInit);
+int32_t TMR4_OC_Init(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, const stc_tmr4_oc_init_t *pstcTmr4OcInit);
+void TMR4_OC_DeInit(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+uint16_t TMR4_OC_GetCompareValue(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_OC_SetCompareValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Value);
+void TMR4_OC_Cmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR4_OC_ExtendControlCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR4_OC_BufIntervalResponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch,
+                                    uint16_t u16Object, en_functional_state_t enNewState);
+uint16_t TMR4_OC_GetPolarity(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_OC_SetOcInvalidPolarity(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Polarity);
+void TMR4_OC_SetCompareBufCond(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Object, uint16_t u16BufCond);
+uint16_t TMR4_OC_GetHighChCompareMode(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_OC_SetHighChCompareMode(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, un_tmr4_oc_ocmrh_t unTmr4Ocmrh);
+uint32_t TMR4_OC_GetLowChCompareMode(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_OC_SetLowChCompareMode(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, un_tmr4_oc_ocmrl_t unTmr4Ocmrl);
+
+
+ 
+
+
+
+
+ 
+
+ 
+int32_t TMR4_PWM_StructInit(stc_tmr4_pwm_init_t *pstcTmr4PwmInit);
+int32_t TMR4_PWM_Init(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, const stc_tmr4_pwm_init_t *pstcTmr4PwmInit);
+void TMR4_PWM_DeInit(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_PWM_SetClockDiv(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Div);
+void TMR4_PWM_SetPolarity(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Polarity);
+void TMR4_PWM_StartReloadTimer(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_PWM_StopReloadTimer(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_PWM_SetFilterCountValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Value);
+void TMR4_PWM_SetDeadTimeValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint32_t u32DeadTimeIndex, uint16_t u16Value);
+uint16_t TMR4_PWM_GetDeadTimeValue(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint32_t u32DeadTimeIndex);
+void TMR4_PWM_SetAbnormalPinStatus(CM_TMR4_TypeDef *TMR4x, uint32_t u32PwmPin, uint32_t u32PinStatus);
+
+
+
+ 
+
+
+
+
+ 
+
+ 
+int32_t TMR4_EVT_StructInit(stc_tmr4_evt_init_t *pstcTmr4EventInit);
+int32_t TMR4_EVT_Init(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, const stc_tmr4_evt_init_t *pstcTmr4EventInit);
+void TMR4_EVT_DeInit(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_EVT_SetDelayObject(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Object);
+void TMR4_EVT_SetMaskTime(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16MaskTime);
+uint16_t TMR4_EVT_GetMaskTime(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_EVT_SetCompareValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Value);
+uint16_t TMR4_EVT_GetCompareValue(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
+void TMR4_EVT_SetOutputEvent(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Event);
+void TMR4_EVT_SetCompareBufCond(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16BufCond);
+void TMR4_EVT_BufIntervalResponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR4_EVT_EventIntervalResponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch,
+                                       uint16_t u16MaskType, en_functional_state_t enNewState);
+void TMR4_EVT_MatchCondCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Cond, en_functional_state_t enNewState);
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 253 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 44 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+#line 46 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+#line 47 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+typedef struct {
+    uint8_t u8CountSrc;              
+    struct {
+        uint32_t u32ClockDiv;    
+        uint32_t u32CountMode;   
+        uint32_t u32CountDir;    
+    } sw_count;
+    struct {
+        uint32_t u32CountUpCond;    
+        uint32_t u32CountDownCond;  
+    } hw_count;
+    uint32_t u32PeriodValue;         
+} stc_tmr6_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32CompareValue;                
+    uint32_t u32StartPolarity;               
+    uint32_t u32StopPolarity;                
+    uint32_t u32CompareMatchPolarity;        
+    uint32_t u32PeriodMatchPolarity;         
+    uint32_t u32StartStopHold;               
+
+} stc_tmr6_pwm_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32BufNum;              
+
+    uint32_t u32BufTransCond;        
+
+} stc_tmr6_buf_config_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32CountCond;           
+
+    uint32_t u32PeriodInterval;      
+} stc_tmr6_valid_period_config_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32PinStatus;           
+} stc_tmr6_emb_config_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32EqualUpDown;         
+
+    uint32_t u32BufUp;               
+
+    uint32_t u32BufDown;             
+
+} stc_tmr6_deadtime_config_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32ZMaskCycle;          
+    uint32_t u32PosCountMaskFunc;    
+
+    uint32_t u32RevoCountMaskFunc;   
+
+
+} stc_tmr6_zmask_config_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 190 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+#line 198 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+#line 224 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 249 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 296 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+#line 312 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 465 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+#line 484 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+#line 503 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+#line 522 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+#line 546 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+#line 570 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 617 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmr6.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+static __inline uint32_t TMR6_GetSWSyncStartStatus(void)
+{
+    return (((CM_TMR6_COMMON_TypeDef *)(0x40018300UL))->SSTAR);
+}
+
+ 
+int32_t TMR6_StructInit(stc_tmr6_init_t *pstcTmr6Init);
+int32_t TMR6_Init(CM_TMR6_TypeDef *TMR6x, const stc_tmr6_init_t *pstcTmr6Init);
+
+void TMR6_SetCountMode(CM_TMR6_TypeDef *TMR6x, uint32_t u32Mode);
+void TMR6_SetCountDir(CM_TMR6_TypeDef *TMR6x, uint32_t u32Dir);
+uint32_t TMR6_GetCountDir(CM_TMR6_TypeDef *TMR6x);
+void TMR6_SetClockDiv(CM_TMR6_TypeDef *TMR6x, uint32_t u32Div);
+
+ 
+void TMR6_HWCountUpCondCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Cond, en_functional_state_t enNewState);
+void TMR6_HWCountDownCondCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Cond, en_functional_state_t enNewState);
+
+ 
+int32_t TMR6_PWM_StructInit(stc_tmr6_pwm_init_t *pstcPwmInit);
+int32_t TMR6_PWM_Init(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, const stc_tmr6_pwm_init_t *pstcPwmInit);
+void TMR6_PWM_OutputCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR6_PWM_SetPolarity(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t u32CountState, uint32_t u32Polarity);
+void TMR6_PWM_SetStartStopHold(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t u32HoldStatus);
+
+ 
+void TMR6_HWCaptureCondCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t u32Cond, en_functional_state_t enNewState);
+
+ 
+ 
+void TMR6_SetFilterClockDiv(CM_TMR6_TypeDef *TMR6x, uint32_t u32Pin, uint32_t u32Div);
+void TMR6_FilterCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Pin, en_functional_state_t enNewState);
+void TMR6_SetFunc(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t u32Func);
+
+ 
+void TMR6_IntCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32IntType, en_functional_state_t enNewState);
+en_flag_status_t TMR6_GetStatus(const CM_TMR6_TypeDef *TMR6x, uint32_t u32Flag);
+void TMR6_ClearStatus(CM_TMR6_TypeDef *TMR6x, uint32_t u32Flag);
+uint32_t TMR6_GetPeriodNum(const CM_TMR6_TypeDef *TMR6x);
+void TMR6_DeInit(CM_TMR6_TypeDef *TMR6x);
+void TMR6_Start(CM_TMR6_TypeDef *TMR6x);
+void TMR6_Stop(CM_TMR6_TypeDef *TMR6x);
+
+ 
+void TMR6_SetCountValue(CM_TMR6_TypeDef *TMR6x, uint32_t u32Value);
+void TMR6_SetPeriodValue(CM_TMR6_TypeDef *TMR6x, uint32_t u32Index, uint32_t u32Value);
+void TMR6_SetCompareValue(CM_TMR6_TypeDef *TMR6x, uint32_t u32Index, uint32_t u32Value);
+void TMR6_SetSpecialCompareValue(CM_TMR6_TypeDef *TMR6x, uint32_t u32Index, uint32_t u32Value);
+void TMR6_SetDeadTimeValue(CM_TMR6_TypeDef *TMR6x, uint32_t u32Index, uint32_t u32Value);
+
+ 
+uint32_t TMR6_GetCountValue(const CM_TMR6_TypeDef *TMR6x);
+uint32_t TMR6_GetPeriodValue(const CM_TMR6_TypeDef *TMR6x, uint32_t u32Index);
+uint32_t TMR6_GetCompareValue(const CM_TMR6_TypeDef *TMR6x, uint32_t u32Index);
+uint32_t TMR6_GetSpecialCompareValue(const CM_TMR6_TypeDef *TMR6x, uint32_t u32Index);
+uint32_t TMR6_GetDeadTimeValue(const CM_TMR6_TypeDef *TMR6x, uint32_t u32Index);
+
+ 
+void TMR6_SetGeneralBufNum(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t u32BufNum);
+void TMR6_SetPeriodBufNum(CM_TMR6_TypeDef *TMR6x, uint32_t u32BufNum);
+
+int32_t TMR6_SpecialBufConfig(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, const stc_tmr6_buf_config_t *pstcBufConfig);
+void TMR6_GeneralBufCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR6_SpecialBufCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR6_PeriodBufCmd(CM_TMR6_TypeDef *TMR6x, en_functional_state_t enNewState);
+
+ 
+int32_t TMR6_ValidPeriodConfig(CM_TMR6_TypeDef *TMR6x, const stc_tmr6_valid_period_config_t *pstcValidperiodConfig);
+void TMR6_ValidPeriodCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR6_DeadTimeFuncCmd(CM_TMR6_TypeDef *TMR6x, en_functional_state_t enNewState);
+int32_t TMR6_DeadTimeConfig(CM_TMR6_TypeDef *TMR6x, const stc_tmr6_deadtime_config_t *pstcDeadTimeConfig);
+int32_t TMR6_ZMaskConfig(CM_TMR6_TypeDef *TMR6x, const stc_tmr6_zmask_config_t *pstcZMaskConfig);
+int32_t TMR6_EMBConfig(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, const stc_tmr6_emb_config_t *pstcEmbConfig);
+int32_t TMR6_BufFuncStructInit(stc_tmr6_buf_config_t *pstcBufConfig);
+int32_t TMR6_ValidPeriodStructInit(stc_tmr6_valid_period_config_t *pstcValidperiodConfig);
+int32_t TMR6_EMBConfigStructInit(stc_tmr6_emb_config_t *pstcEmbConfig);
+int32_t TMR6_DeadTimeStructInit(stc_tmr6_deadtime_config_t *pstcDeadTimeConfig);
+int32_t TMR6_ZMaskConfigStructInit(stc_tmr6_zmask_config_t *pstcZMaskConfig);
+
+ 
+void TMR6_SWSyncStart(uint32_t u32Unit);
+void TMR6_SWSyncStop(uint32_t u32Unit);
+void TMR6_SWSyncClear(uint32_t u32Unit);
+
+ 
+void TMR6_HWStartCondCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Cond, en_functional_state_t enNewState);
+void TMR6_HWStartCmd(CM_TMR6_TypeDef *TMR6x, en_functional_state_t enNewState);
+void TMR6_HWStopCondCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Cond, en_functional_state_t enNewState);
+void TMR6_HWStopCmd(CM_TMR6_TypeDef *TMR6x, en_functional_state_t enNewState);
+void TMR6_HWClearCondCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Cond, en_functional_state_t enNewState);
+void TMR6_HWClearCmd(CM_TMR6_TypeDef *TMR6x, en_functional_state_t enNewState);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 257 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 41 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+#line 43 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+#line 44 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+ 
+typedef struct {
+    uint8_t u8CountSrc;                     
+ 
+    struct {
+        uint8_t u8ClockDiv;                 
+ 
+        uint8_t u8CountMode;                
+ 
+        uint8_t u8CountDir;                 
+ 
+    } sw_count;
+    struct {
+        uint16_t u16CountUpCond;            
+ 
+        uint16_t u16CountDownCond;          
+ 
+    } hw_count;
+    uint32_t u32PeriodValue;                
+ 
+} stc_tmra_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32CompareValue;               
+
+
+ 
+    uint16_t u16StartPolarity;              
+
+
+
+ 
+    uint16_t u16StopPolarity;               
+ 
+    uint16_t u16CompareMatchPolarity;       
+ 
+    uint16_t u16PeriodMatchPolarity;        
+ 
+} stc_tmra_pwm_init_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 142 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 191 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+#line 210 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+
+ 
+#line 234 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+
+ 
+#line 258 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+#line 277 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+#line 296 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+#line 315 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+
+ 
+#line 335 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+
+ 
+
+
+
+
+ 
+#line 354 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+#line 405 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+#line 421 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+ 
+#line 435 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+
+
+ 
+#line 456 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_tmra.h"
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+ 
+int32_t TMRA_Init(CM_TMRA_TypeDef *TMRAx, const stc_tmra_init_t *pstcTmraInit);
+int32_t TMRA_StructInit(stc_tmra_init_t *pstcTmraInit);
+void TMRA_SetCountMode(CM_TMRA_TypeDef *TMRAx, uint8_t u8Mode);
+void TMRA_SetCountDir(CM_TMRA_TypeDef *TMRAx, uint8_t u8Dir);
+void TMRA_SetClockDiv(CM_TMRA_TypeDef *TMRAx, uint8_t u8Div);
+
+ 
+void TMRA_HWCountUpCondCmd(CM_TMRA_TypeDef *TMRAx, uint16_t u16Cond, en_functional_state_t enNewState);
+void TMRA_HWCountDownCondCmd(CM_TMRA_TypeDef *TMRAx, uint16_t u16Cond, en_functional_state_t enNewState);
+ 
+void TMRA_SetFunc(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16Func);
+
+ 
+int32_t TMRA_PWM_Init(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, const stc_tmra_pwm_init_t *pstcPwmInit);
+int32_t TMRA_PWM_StructInit(stc_tmra_pwm_init_t *pstcPwmInit);
+void TMRA_PWM_OutputCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMRA_PWM_SetPolarity(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint8_t u8CountState, uint16_t u16Polarity);
+void TMRA_PWM_SetForcePolarity(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16Polarity);
+ 
+void TMRA_HWCaptureCondCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16Cond, en_functional_state_t enNewState);
+
+ 
+void TMRA_HWStartCondCmd(CM_TMRA_TypeDef *TMRAx, uint16_t u16Cond, en_functional_state_t enNewState);
+void TMRA_HWStopCondCmd(CM_TMRA_TypeDef *TMRAx, uint16_t u16Cond, en_functional_state_t enNewState);
+void TMRA_HWClearCondCmd(CM_TMRA_TypeDef *TMRAx, uint16_t u16Cond, en_functional_state_t enNewState);
+
+ 
+void TMRA_SetFilterClockDiv(CM_TMRA_TypeDef *TMRAx, uint32_t u32Pin, uint16_t u16Div);
+void TMRA_FilterCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Pin, en_functional_state_t enNewState);
+
+ 
+int32_t TMRA_DeInit(CM_TMRA_TypeDef *TMRAx);
+ 
+uint8_t TMRA_GetCountDir(const CM_TMRA_TypeDef *TMRAx);
+
+void TMRA_SetPeriodValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Value);
+uint32_t TMRA_GetPeriodValue(const CM_TMRA_TypeDef *TMRAx);
+void TMRA_SetCountValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Value);
+uint32_t TMRA_GetCountValue(const CM_TMRA_TypeDef *TMRAx);
+void TMRA_SetCompareValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint32_t u32Value);
+uint32_t TMRA_GetCompareValue(const CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch);
+
+ 
+void TMRA_SyncStartCmd(CM_TMRA_TypeDef *TMRAx, en_functional_state_t enNewState);
+
+void TMRA_SetCompareBufCond(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16Cond);
+void TMRA_CompareBufCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, en_functional_state_t enNewState);
+
+en_flag_status_t TMRA_GetStatus(const CM_TMRA_TypeDef *TMRAx, uint32_t u32Flag);
+void TMRA_ClearStatus(CM_TMRA_TypeDef *TMRAx, uint32_t u32Flag);
+void TMRA_IntCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32IntType, en_functional_state_t enNewState);
+void TMRA_EventCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32EventType, en_functional_state_t enNewState);
+void TMRA_Start(CM_TMRA_TypeDef *TMRAx);
+void TMRA_Stop(CM_TMRA_TypeDef *TMRAx);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 261 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_usart.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 42 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_usart.h"
+
+#line 44 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_usart.h"
+#line 45 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_usart.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+typedef struct {
+    uint32_t u32ClockSrc;               
+ 
+    uint32_t u32ClockDiv;               
+ 
+    uint32_t u32Baudrate;               
+ 
+    uint32_t u32FirstBit;               
+ 
+    uint32_t u32HWFlowControl;          
+ 
+} stc_usart_clocksync_init_t;
+
+
+
+
+ 
+typedef struct {
+    uint32_t u32ClockSrc;               
+ 
+    uint32_t u32ClockDiv;               
+ 
+    uint32_t u32CKOutput;               
+ 
+    uint32_t u32Baudrate;               
+ 
+    uint32_t u32DataWidth;              
+ 
+    uint32_t u32StopBit;                
+ 
+    uint32_t u32OverSampleBit;          
+ 
+    uint32_t u32FirstBit;               
+ 
+    uint32_t u32StartBitPolarity;       
+ 
+    uint32_t u32HWFlowControl;          
+ 
+} stc_usart_multiprocessor_init_t;
+
+
+
+
+ 
+typedef struct {
+    uint32_t u32ClockSrc;               
+ 
+    uint32_t u32ClockDiv;               
+ 
+    uint32_t u32CKOutput;               
+ 
+    uint32_t u32Baudrate;               
+ 
+    uint32_t u32DataWidth;              
+ 
+    uint32_t u32StopBit;                
+ 
+    uint32_t u32Parity;                 
+ 
+    uint32_t u32OverSampleBit;          
+ 
+    uint32_t u32FirstBit;               
+ 
+    uint32_t u32StartBitPolarity;       
+ 
+    uint32_t u32HWFlowControl;          
+ 
+} stc_usart_uart_init_t;
+
+
+
+ 
+typedef struct {
+    uint32_t u32ClockDiv;               
+ 
+    uint32_t u32CKOutput;               
+ 
+    uint32_t u32Baudrate;               
+ 
+    uint32_t u32FirstBit;               
+ 
+} stc_usart_smartcard_init_t;
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+#line 177 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_usart.h"
+
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+#line 207 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_usart.h"
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+int32_t USART_ClockSync_StructInit(stc_usart_clocksync_init_t *pstcClockSyncInit);
+int32_t USART_ClockSync_Init(CM_USART_TypeDef *USARTx,
+                             const stc_usart_clocksync_init_t *pstcClockSyncInit, float32_t *pf32Error);
+int32_t USART_MultiProcessor_StructInit(stc_usart_multiprocessor_init_t *pstcMultiProcessorInit);
+int32_t USART_MultiProcessor_Init(CM_USART_TypeDef *USARTx,
+                                  const stc_usart_multiprocessor_init_t *pstcMultiProcessorInit, float32_t *pf32Error);
+int32_t USART_UART_StructInit(stc_usart_uart_init_t *pstcUartInit);
+int32_t USART_UART_Init(CM_USART_TypeDef *USARTx, const stc_usart_uart_init_t *pstcUartInit, float32_t *pf32Error);
+
+int32_t USART_SmartCard_StructInit(stc_usart_smartcard_init_t *pstcSmartCardInit);
+int32_t USART_SmartCard_Init(CM_USART_TypeDef *USARTx,
+                             const stc_usart_smartcard_init_t *pstcSmartCardInit, float32_t *pf32Error);
+
+int32_t USART_DeInit(CM_USART_TypeDef *USARTx);
+void USART_FuncCmd(CM_USART_TypeDef *USARTx, uint32_t u32Func, en_functional_state_t enNewState);
+en_functional_state_t USART_GetFuncState(CM_USART_TypeDef *USARTx, uint32_t u32Func);
+en_flag_status_t USART_GetStatus(const CM_USART_TypeDef *USARTx, uint32_t u32Flag);
+void USART_ClearStatus(CM_USART_TypeDef *USARTx, uint32_t u32Flag);
+void USART_SetParity(CM_USART_TypeDef *USARTx, uint32_t u32Parity);
+uint32_t USART_GetParity(CM_USART_TypeDef *USARTx);
+void USART_SetFirstBit(CM_USART_TypeDef *USARTx, uint32_t u32FirstBit);
+void USART_SetStopBit(CM_USART_TypeDef *USARTx, uint32_t u32StopBit);
+uint32_t USART_GetStopBit(CM_USART_TypeDef *USARTx);
+void USART_SetDataWidth(CM_USART_TypeDef *USARTx, uint32_t u32DataWidth);
+uint32_t USART_GetDataWidth(CM_USART_TypeDef *USARTx);
+void USART_SetOverSampleBit(CM_USART_TypeDef *USARTx, uint32_t u32OverSampleBit);
+void USART_SetStartBitPolarity(CM_USART_TypeDef *USARTx, uint32_t u32Polarity);
+void USART_SetTransType(CM_USART_TypeDef *USARTx, uint16_t u16Type);
+void USART_SetClockDiv(CM_USART_TypeDef *USARTx, uint32_t u32ClockDiv);
+uint32_t USART_GetClockDiv(const CM_USART_TypeDef *USARTx);
+void USART_SetClockSrc(CM_USART_TypeDef *USARTx, uint32_t u32ClockSrc);
+uint32_t USART_GetClockSrc(const CM_USART_TypeDef *USARTx);
+void USART_FilterCmd(CM_USART_TypeDef *USARTx, en_functional_state_t enNewState);
+void USART_SilenceCmd(CM_USART_TypeDef *USARTx, en_functional_state_t enNewState);
+void USART_SetHWFlowControl(CM_USART_TypeDef *USARTx, uint32_t u32HWFlowControl);
+uint32_t USART_GetHWFlowControl(CM_USART_TypeDef *USARTx);
+uint16_t USART_ReadData(const CM_USART_TypeDef *USARTx);
+void USART_WriteData(CM_USART_TypeDef *USARTx, uint16_t u16Data);
+void USART_WriteID(CM_USART_TypeDef *USARTx, uint16_t u16ID);
+
+int32_t USART_SetBaudrate(CM_USART_TypeDef *USARTx, uint32_t u32Baudrate, float32_t *pf32Error);
+
+void USART_SmartCard_SetEtuClock(CM_USART_TypeDef *USARTx, uint32_t u32EtuClock);
+
+int32_t USART_UART_Trans(CM_USART_TypeDef *USARTx, const void *pvBuf, uint32_t u32Len, uint32_t u32Timeout);
+int32_t USART_UART_Receive(const CM_USART_TypeDef *USARTx, void *pvBuf, uint32_t u32Len, uint32_t u32Timeout);
+int32_t USART_ClockSync_Trans(CM_USART_TypeDef *USARTx, const uint8_t au8Buf[], uint32_t u32Len, uint32_t u32Timeout);
+int32_t USART_ClockSync_Receive(CM_USART_TypeDef *USARTx, uint8_t au8Buf[], uint32_t u32Len, uint32_t u32Timeout);
+int32_t USART_ClockSync_TransReceive(CM_USART_TypeDef *USARTx, const uint8_t au8TxBuf[], uint8_t au8RxBuf[],
+                                     uint32_t u32Len, uint32_t u32Timeout);
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 269 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+#line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+ 
+#line 33 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h"
+
+#line 35 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h"
+#line 36 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h"
+
+
+
+
+ 
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+ 
+void DDL_DelayMS(uint32_t u32Count);
+void DDL_DelayUS(uint32_t u32Count);
+
+ 
+int32_t SysTick_Init(uint32_t u32Freq);
+void SysTick_Delay(uint32_t u32Delay);
+void SysTick_IncTick(void);
+uint32_t SysTick_GetTick(void);
+void SysTick_Suspend(void);
+void SysTick_Resume(void);
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+void DDL_AssertHandler(const char *file, int line);
+
+
+
+
+#line 108 "../../../../drivers/hc32_ll_driver/inc/hc32_ll_utility.h"
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 273 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+void LL_PERIPH_WE(uint32_t u32Peripheral);
+void LL_PERIPH_WP(uint32_t u32Peripheral);
+
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+ 
+#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+#line 170 "../../../../drivers/cmsis/Include/core_cm4.h"
+
+
+
+#line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
+
+#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+ 
+ 
+ 
+ 
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+#line 38 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+  
+
+
+
+    typedef unsigned int size_t;    
+#line 54 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+
+extern __declspec(__nothrow) void *memcpy(void * __restrict  ,
+                    const void * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) void *memmove(void *  ,
+                    const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+#line 193 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+
+ 
+
+#line 209 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+
+#line 232 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+ 
+
+#line 247 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+ 
+
+#line 270 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
+extern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+extern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) char *strerror(int  );
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+#line 502 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+ 
+
+#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+ 
+
+
+
+
+
+
+
+   
+#line 63 "..\\..\\Bootloader_App\\Bootloader_App.h"
+ 
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+typedef uint32_t en_slot_type_t;
+
+
+
+
+typedef enum {
+    APP_STATE_AVAILABLE = 0,
+    APP_STATE_DISABLED = 1
+} en_app_state_t;
+
+typedef enum {
+    WDT_RESET_NONE = 0,
+    WDT_RESET_SWDT = 1,
+    WDT_RESET_WDT = 2
+} en_wdt_reset_type_t;
+
+typedef enum {
+    BOOT_STATUS_NORMAL = 0,
+    BOOT_STATUS_APP1_DISABLED = 1,
+    BOOT_STATUS_APP2_DISABLED = 2,
+    BOOT_STATUS_BOTH_DISABLED = 3
+} en_boot_status_t;
+
+typedef struct {
+    en_slot_type_t eSlot;
+    uint32_t u32WdtCount;
+    en_app_state_t eState;
+    uint32_t u32StartAddr;
+} stc_app_info_t;
+
+typedef struct {
+    en_wdt_reset_type_t eWdtResetType;
+    en_slot_type_t eCurrentSlot;
+    en_slot_type_t eTargetSlot;
+    stc_app_info_t stcApp1;
+    stc_app_info_t stcApp2;
+    uint8_t u8NeedUpdateSlotFlag;
+} stc_boot_context_t;
+
+
+
+
+
+
+
+
+
+
+typedef struct {
+    volatile uint32_t app1_feed_ctrl;
+    volatile uint32_t app2_feed_ctrl;
+    volatile uint32_t debug_flag;
+    volatile uint32_t reserved[5];
+} stc_shared_ctrl_t;
+
+static inline stc_shared_ctrl_t* GetSharedCtrl(void)
+{
+    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
+}
+
+
+
+
+
+
+
+
+
+typedef enum {
+    UDS_PHASE_IDLE              = 0,   
+    UDS_PHASE_ENTER_BOOTLOADER  = 1,   
+    UDS_PHASE_PROGRAMMING_DONE  = 2,   
+} en_uds_phase_t;
+
+typedef struct {
+    uint32_t magic;             
+    uint32_t phase;             
+    uint32_t target_slot;       
+    uint32_t fw_size;           
+    uint32_t fw_crc;            
+    uint32_t result;            
+    uint32_t pending_sid;       
+    uint32_t reserved[7];       
+} stc_uds_shared_t;             
+
+
+void UdsShared_Read(stc_uds_shared_t *pState);
+void UdsShared_Write(const stc_uds_shared_t *pState);
+void UdsShared_Clear(void);
+void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot);
+void App_CheckPendingUdsAck(void);
+
+
+void Bootloader_UdsMain(void);
+
+
+
+
+
+void Boot_StartupSequence(void);                
+
+void InitSharedCtrl(void);
+void Bootloader_Init(void);
+int32_t Bootloader_FlashEraseSector(uint32_t u32Addr);
+void DisableAllNVICInterrupts(void);
+void Bootloader_JumpToApp(uint32_t u32AppAddr);
+void Boot_SwitchAndRunOther(void);
+void Boot_SetRunSlotToAddr(uint32_t u32Addr);
+void Bootloader_Delay(uint32_t u32Count);
+
+uint32_t GetWdtResetCount(uint32_t u32Addr);
+void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount);
+void ClearWdtResetCount(uint32_t u32Addr);
+
+void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value);
+uint32_t GetWdtFeedControl(uint32_t u32Addr);
+void ClearAppStateBySlot(en_slot_type_t eSlot);
+uint32_t READ_FLASH_DIRECT(uint32_t addr);
+
+
+void ClearAllRAM(void);
+
+#line 3 "..\\..\\UDS\\flash_download.c"
+#line 1 "..\\..\\Adp\\flash_advanced.h"
+
+
+
+#line 5 "..\\..\\Adp\\flash_advanced.h"
+#line 6 "..\\..\\Adp\\flash_advanced.h"
+#line 1 "..\\..\\Adp\\hc32f46x_flash.h"
+
+
+
 #line 5 "..\\..\\Adp\\hc32f46x_flash.h"
 
 
@@ -13142,7 +21511,7 @@ static inline uint8_t FlashAdv_IsAddressProtectedByMacro(uint32_t address)
     return ((((address) / 0x2000) >= 0 && ((address) / 0x2000) <= 12) || ((address) / 0x2000) == 63);
 }
 
-#line 3 "..\\..\\UDS\\flash_download.c"
+#line 4 "..\\..\\UDS\\flash_download.c"
 #line 1 "..\\..\\RTT\\rtt_log.h"
 
 
@@ -14598,431 +22967,9 @@ typedef enum {
 
 
 
-#line 4 "..\\..\\UDS\\flash_download.c"
-#line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
- 
- 
- 
- 
-
-
-
-
- 
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-#line 38 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-  
-
-
-
-    typedef unsigned int size_t;    
-#line 54 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-
-
-extern __declspec(__nothrow) void *memcpy(void * __restrict  ,
-                    const void * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) void *memmove(void *  ,
-                    const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-extern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
- 
-extern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-#line 193 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
-
- 
-
-#line 209 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
- 
-
-#line 232 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-
-   
-
-
-
-
- 
-
-#line 247 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
-
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
- 
-
-#line 270 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-extern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
-
-   
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
-extern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
-
-extern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
-   
-
-
-
- 
-extern __declspec(__nothrow) char *strerror(int  );
-   
-
-
-
-
-
- 
-extern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
-   
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-extern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-#line 502 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
-
-
-
- 
-
 #line 5 "..\\..\\UDS\\flash_download.c"
 #line 6 "..\\..\\UDS\\flash_download.c"
+#line 7 "..\\..\\UDS\\flash_download.c"
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdio.h"
  
  
@@ -15922,7 +23869,7 @@ extern __declspec(__nothrow) void __use_no_semihosting(void);
 
  
 
-#line 7 "..\\..\\UDS\\flash_download.c"
+#line 8 "..\\..\\UDS\\flash_download.c"
 
 
 
@@ -16023,9 +23970,15 @@ static _Bool fw_is_address_valid(uint32_t address)
 {
 
      
-    uint32_t mapped_addr = (((address) >= 0x08004000 && (address) < 0x08018000) ? ((address) - 0x08004000 + 0x0004C000) : (address));
-    return (mapped_addr >= 0x0004C000 && 
-            mapped_addr < (0x0004C000 + 0x00014000));
+    uint32_t mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
+
+
+
+
+
+     
+    return (mapped_addr >= 0x0004C000 && mapped_addr < (0x0004C000 + 0x00014000));
+
 
 
 
@@ -16231,7 +24184,7 @@ FlashDownloadResult_t FlashDownload_OnRequestDownload(uint32_t address, uint32_t
     }
     
      
-    mapped_addr = (((address) >= 0x08004000 && (address) < 0x08018000) ? ((address) - 0x08004000 + 0x0004C000) : (address));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
     
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[32m" "[%s] " ">>> OnRequestDownload: orig_addr=0x%08X, mapped_addr=0x%08X, size=%d bytes" "\033[0m" "\r\n", "FW",address, mapped_addr, size);
 
@@ -16446,7 +24399,7 @@ FlashDownloadResult_t FlashDownload_OnTransferExit(void)
     g_fw_ctx.rx_crc = ~g_fw_ctx.rx_crc;
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[32m" "[%s] " "Calculated CRC: 0x%08X" "\033[0m" "\r\n", "FW",g_fw_ctx . rx_crc);
     
-#line 536 "..\\..\\UDS\\flash_download.c"
+#line 543 "..\\..\\UDS\\flash_download.c"
     
     
     fw_set_state(FW_UPDATE_COMPLETE);
@@ -16563,7 +24516,7 @@ FlashDownloadResult_t FlashDownload_Erase(uint32_t address, uint32_t size)
     }
     
      
-    mapped_addr = (((address) >= 0x08004000 && (address) < 0x08018000) ? ((address) - 0x08004000 + 0x0004C000) : (address));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "Erase: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);
@@ -16588,7 +24541,7 @@ FlashDownloadResult_t FlashDownload_CalculateCRC(uint32_t address, uint32_t size
     }
     
      
-    mapped_addr = (((address) >= 0x08004000 && (address) < 0x08018000) ? ((address) - 0x08004000 + 0x0004C000) : (address));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "CRC: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);
