@@ -32,8 +32,6 @@ static void UpdateAppState(stc_app_info_t *pstcApp);
 static void HandleWatchdogReset(stc_boot_context_t *pstcCtx);
 static void SelectTargetSlot(stc_boot_context_t *pstcCtx);
 static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx);
-static en_boot_status_t GetBootStatus(stc_boot_context_t *pstcCtx);
-static void ShowBootStatus(en_boot_status_t eStatus);
 static void RunBootloaderForever(void);
 static void CheckAndClearAppState(void);
 
@@ -400,8 +398,6 @@ void Boot_StartupSequence(void)
            (int)stcCtx.stcApp1.eState, (int)stcCtx.stcApp1.u32WdtCount,
            (int)stcCtx.stcApp2.eState, (int)stcCtx.stcApp2.u32WdtCount);
 
-    ShowBootStatus(GetBootStatus(&stcCtx));
-
     if (stcCtx.eTargetSlot == SLOT_APP1)      Bootloader_JumpToApp(APP1_START_ADDR);
     else if (stcCtx.eTargetSlot == SLOT_APP2) Bootloader_JumpToApp(APP2_START_ADDR);
     else {
@@ -483,37 +479,6 @@ static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx) {
     EFM_ProgramWord(APP_RUN_SLOT_ADDR, val);
     EFM_REG_Lock();
     pstcCtx->u8NeedUpdateSlotFlag = 0;
-}
-
-static en_boot_status_t GetBootStatus(stc_boot_context_t *pstcCtx) {
-    uint8_t aok = (pstcCtx->stcApp1.eState == APP_STATE_AVAILABLE);
-    uint8_t bok = (pstcCtx->stcApp2.eState == APP_STATE_AVAILABLE);
-    if (!aok && !bok) return BOOT_STATUS_BOTH_DISABLED;
-    if (!aok) return BOOT_STATUS_APP1_DISABLED;
-    if (!bok) return BOOT_STATUS_APP2_DISABLED;
-    return BOOT_STATUS_NORMAL;
-}
-
-static void ShowBootStatus(en_boot_status_t eStatus) {
-    stc_gpio_init_t stcPortInit;
-    MEM_ZERO_STRUCT(stcPortInit);
-    stcPortInit.u16PinDir = PIN_DIR_OUT;
-    LL_PERIPH_WE(LL_PERIPH_GPIO);
-    GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
-    LL_PERIPH_WP(LL_PERIPH_GPIO);
-    uint8_t cnt; uint32_t dly;
-
-    switch(eStatus) {
-        case BOOT_STATUS_NORMAL: cnt=2; dly=50; break;
-        case BOOT_STATUS_APP1_DISABLED: cnt=3; dly=50; break;
-        case BOOT_STATUS_APP2_DISABLED: cnt=4; dly=50; break;
-        default: cnt=5; dly=200000; break;
-    }
-
-    for (uint8_t i=0; i<cnt; i++) {
-        GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_06); Bootloader_Delay(dly);
-        GPIO_TogglePins(GPIO_PORT_B, GPIO_PIN_06); Bootloader_Delay(dly);
-    }
 }
 
 static void RunBootloaderForever(void) {
@@ -633,22 +598,7 @@ void Bootloader_UdsMain(void)
 
     MAIN_D("===== Bootloader UDS Main Start =====\r\n");
 
-    /* ==== Phase 2: PB6 blink 3 times (500ms) - Bootloader UDS download mode ==== */
-    {
-        uint8_t _pb6_i;
-        stc_gpio_init_t stcPortInit;
-        MEM_ZERO_STRUCT(stcPortInit);
-        stcPortInit.u16PinDir = PIN_DIR_OUT;
-        LL_PERIPH_WE(LL_PERIPH_GPIO);
-        GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
-        LL_PERIPH_WP(LL_PERIPH_GPIO);
-        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-            GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
-            tickTimer_DelayMs(200);
-            GPIO_ResetPins(GPIO_PORT_B, GPIO_PIN_06);
-            tickTimer_DelayMs(200);
-        }
-    }
+    
 
     /* ==== 1. 检查是否需要发送 31 服务的肯定响应 ==== */
     {
@@ -748,23 +698,7 @@ void App_CheckPendingUdsAck(void)
         CanIf_Send(&stcMsg);
     }
 
-    /* ==== Phase 3: PB6 quick blink 3 times - APP sent deferred 51 01 ACK ==== */
-    {
-        uint8_t _pb6_i;
-        stc_gpio_init_t stcPortInit;
-        MEM_ZERO_STRUCT(stcPortInit);
-        stcPortInit.u16PinDir = PIN_DIR_OUT;
-        LL_PERIPH_WE(LL_PERIPH_GPIO);
-        GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
-        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-            GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
-            tickTimer_DelayMs(300);
-            GPIO_ResetPins(GPIO_PORT_B, GPIO_PIN_06);
-            tickTimer_DelayMs(300);
-        }
-        GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
-        LL_PERIPH_WP(LL_PERIPH_GPIO);
-    }
+    
 
     /* 清除共享�? */
     UdsShared_Clear();

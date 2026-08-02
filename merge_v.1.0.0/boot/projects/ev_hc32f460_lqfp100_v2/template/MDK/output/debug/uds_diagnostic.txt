@@ -108,17 +108,17 @@
                           AREA ||i.uds_get_routine_result||, CODE, READONLY, ALIGN=2
 
                   uds_get_routine_result PROC
-;;;876    
-;;;877    static uint32_t uds_get_routine_result(uint16_t rid)
+;;;861    
+;;;862    static uint32_t uds_get_routine_result(uint16_t rid)
 000000  4601              MOV      r1,r0
-;;;878    {
-;;;879        UDS_I("Get routine result: RID=0x%04X", rid);
-;;;880        return g_uds_ctrl.routine.result;
+;;;863    {
+;;;864        UDS_I("Get routine result: RID=0x%04X", rid);
+;;;865        return g_uds_ctrl.routine.result;
 000002  4801              LDR      r0,|L3.8|
 000004  6980              LDR      r0,[r0,#0x18]
-;;;881    }
+;;;866    }
 000006  4770              BX       lr
-;;;882    
+;;;867    
                           ENDP
 
                   |L3.8|
@@ -127,15 +127,15 @@
                           AREA ||i.uds_get_security_state||, CODE, READONLY, ALIGN=2
 
                   uds_get_security_state PROC
-;;;1264   /* 获取当前安全状态 */
-;;;1265   uds_security_state_t uds_get_security_state(void)
+;;;1249   /* 获取当前安全状态 */
+;;;1250   uds_security_state_t uds_get_security_state(void)
 000000  4801              LDR      r0,|L4.8|
-;;;1266   {
-;;;1267       return g_uds_ctrl.security_state;
+;;;1251   {
+;;;1252       return g_uds_ctrl.security_state;
 000002  7840              LDRB     r0,[r0,#1]  ; g_uds_ctrl
-;;;1268   }
+;;;1253   }
 000004  4770              BX       lr
-;;;1269   
+;;;1254   
                           ENDP
 
 000006  0000              DCW      0x0000
@@ -145,15 +145,15 @@
                           AREA ||i.uds_get_session_mode||, CODE, READONLY, ALIGN=2
 
                   uds_get_session_mode PROC
-;;;1258   /* 获取当前会话模式 */
-;;;1259   uds_session_mode_t uds_get_session_mode(void)
+;;;1243   /* 获取当前会话模式 */
+;;;1244   uds_session_mode_t uds_get_session_mode(void)
 000000  4801              LDR      r0,|L5.8|
-;;;1260   {
-;;;1261       return g_uds_ctrl.session_mode;
+;;;1245   {
+;;;1246       return g_uds_ctrl.session_mode;
 000002  7800              LDRB     r0,[r0,#0]  ; g_uds_ctrl
-;;;1262   }
+;;;1247   }
 000004  4770              BX       lr
-;;;1263   
+;;;1248   
                           ENDP
 
 000006  0000              DCW      0x0000
@@ -785,205 +785,205 @@
                           AREA ||i.uds_handle_request_download||, CODE, READONLY, ALIGN=2
 
                   uds_handle_request_download PROC
-;;;883    /* 处理请求下载 (0x34) */
-;;;884    static void uds_handle_request_download(uint8_t* data, uint8_t len, uint8_t* resp, uint8_t* resp_len)
+;;;868    /* 处理请求下载 (0x34) */
+;;;869    static void uds_handle_request_download(uint8_t* data, uint8_t len, uint8_t* resp, uint8_t* resp_len)
 000000  e92d4fff          PUSH     {r0-r11,lr}
-;;;885    {
+;;;870    {
 000004  b083              SUB      sp,sp,#0xc
 000006  4604              MOV      r4,r0
 000008  4617              MOV      r7,r2
-;;;886        UDS_I(">>> Handle 0x34 (Request Download)");
-;;;887        
-;;;888        /* ========== 安全检查 ========== */
-;;;889        /* 检查1：必须在编程会话中 */
-;;;890        if (g_uds_ctrl.session_mode != UDS_SESSION_PROGRAMMING_MODE)
+;;;871        UDS_I(">>> Handle 0x34 (Request Download)");
+;;;872        
+;;;873        /* ========== 安全检查 ========== */
+;;;874        /* 检查1：必须在编程会话中 */
+;;;875        if (g_uds_ctrl.session_mode != UDS_SESSION_PROGRAMMING_MODE)
 00000a  483b              LDR      r0,|L11.248|
 00000c  7800              LDRB     r0,[r0,#0]  ; g_uds_ctrl
 00000e  2802              CMP      r0,#2
 000010  d007              BEQ      |L11.34|
-;;;891        {
-;;;892            UDS_W("Request Download rejected: not in PROGRAMMING session (session=%d)", 
-;;;893                  g_uds_ctrl.session_mode);
-;;;894            uds_send_negative_response(0, data[0], UDS_NRC_SERVICE_NOT_SUPPORTED_IN_ACTIVE_SESSION);
+;;;876        {
+;;;877            UDS_W("Request Download rejected: not in PROGRAMMING session (session=%d)", 
+;;;878                  g_uds_ctrl.session_mode);
+;;;879            uds_send_negative_response(0, data[0], UDS_NRC_SERVICE_NOT_SUPPORTED_IN_ACTIVE_SESSION);
 000012  7821              LDRB     r1,[r4,#0]
 000014  227f              MOVS     r2,#0x7f
 000016  2000              MOVS     r0,#0
 000018  f7fffffe          BL       uds_send_negative_response
                   |L11.28|
-;;;895            return;
-;;;896        }
-;;;897        
-;;;898        /* 检查2：必须已安全解锁 */
-;;;899        if (g_uds_ctrl.security_state != UDS_SECURITY_UNLOCKED)
-;;;900        {
-;;;901            UDS_W("Request Download rejected: security not unlocked (state=%d)", 
-;;;902                  g_uds_ctrl.security_state);
-;;;903            uds_send_negative_response(0, data[0], UDS_NRC_SECURITY_ACCESS_DENIED);
-;;;904            return;
-;;;905        }
-;;;906        /* ========== 安全检查结束 ========== */
-;;;907        
-;;;908        if (!uds_dl_is_registered())
-;;;909        {
-;;;910            UDS_W("Download interface not registered");
-;;;911            uds_send_negative_response(0, data[0], UDS_NRC_CONDITIONS_NOT_CORRECT);
-;;;912            return;
-;;;913        }
-;;;914        
-;;;915        /* UDS: SID + dataFormatIdentifier + addrSizeFmtIdentifier + addr[N] + size[N] */
-;;;916        uint8_t dfi  = data[1];
-;;;917        uint8_t alfi = data[2];
-;;;918        uint8_t addr_len = (alfi >> 4) & 0x0F;
-;;;919        uint8_t size_len = alfi & 0x0F;
-;;;920        
-;;;921        if (addr_len == 0 || addr_len > 4 || size_len == 0 || size_len > 4)
-;;;922        {
-;;;923            UDS_E("Invalid addr/size length: alfi=0x%02X", alfi);
-;;;924            uds_send_negative_response(0, data[0], UDS_NRC_REQUEST_OUT_OF_RANGE);
-;;;925            return;
-;;;926        }
-;;;927        
-;;;928        if (len < (uint8_t)(3 + addr_len + size_len))
-;;;929        {
-;;;930            UDS_E("Length error: len=%d < %d", len, 3 + addr_len + size_len);
-;;;931            uds_send_negative_response(0, data[0], UDS_NRC_INCORRECT_MESSAGE_LENGTH);
-;;;932            return;
-;;;933        }
-;;;934        
-;;;935        uint32_t address = 0;
-;;;936        for (uint8_t i = 0; i < addr_len; i++) {
-;;;937            address = (address << 8) | data[3 + i];
-;;;938        }
-;;;939        uint32_t size = 0;
-;;;940        for (uint8_t i = 0; i < size_len; i++) {
-;;;941            size = (size << 8) | data[3 + addr_len + i];
-;;;942        }
-;;;943    
-;;;944        UDS_I("Request download: addr=0x%08X, size=%d bytes", address, size);
-;;;945        
-;;;946        const uds_dl_if_t* dl = uds_dl_get_if();
-;;;947        uds_dl_result_t dl_result = dl->on_request_download(address, size);
-;;;948        
-;;;949        if (dl_result != UDS_DL_OK)
-;;;950        {
-;;;951            uint8_t nrc = uds_map_dl_result_to_nrc(dl_result);
-;;;952            UDS_W("Request download rejected: dl_result=%d, NRC=0x%02X", dl_result, nrc);
-;;;953            uds_send_negative_response(0, data[0], nrc);
-;;;954            return;
-;;;955        }
-;;;956        
-;;;957        /* 响应：最大块长度（2字节） */
-;;;958        resp[0] = 0x40;  /* 最大块长度高字节 */
-;;;959        resp[1] = 0x00;  /* 最大块长度低字节 */
-;;;960        *resp_len = 2;
-;;;961        
-;;;962        UDS_I("Download accepted, max block size=0x4000");
-;;;963    }
+;;;880            return;
+;;;881        }
+;;;882        
+;;;883        /* 检查2：必须已安全解锁 */
+;;;884        if (g_uds_ctrl.security_state != UDS_SECURITY_UNLOCKED)
+;;;885        {
+;;;886            UDS_W("Request Download rejected: security not unlocked (state=%d)", 
+;;;887                  g_uds_ctrl.security_state);
+;;;888            uds_send_negative_response(0, data[0], UDS_NRC_SECURITY_ACCESS_DENIED);
+;;;889            return;
+;;;890        }
+;;;891        /* ========== 安全检查结束 ========== */
+;;;892        
+;;;893        if (!uds_dl_is_registered())
+;;;894        {
+;;;895            UDS_W("Download interface not registered");
+;;;896            uds_send_negative_response(0, data[0], UDS_NRC_CONDITIONS_NOT_CORRECT);
+;;;897            return;
+;;;898        }
+;;;899        
+;;;900        /* UDS: SID + dataFormatIdentifier + addrSizeFmtIdentifier + addr[N] + size[N] */
+;;;901        uint8_t dfi  = data[1];
+;;;902        uint8_t alfi = data[2];
+;;;903        uint8_t addr_len = (alfi >> 4) & 0x0F;
+;;;904        uint8_t size_len = alfi & 0x0F;
+;;;905        
+;;;906        if (addr_len == 0 || addr_len > 4 || size_len == 0 || size_len > 4)
+;;;907        {
+;;;908            UDS_E("Invalid addr/size length: alfi=0x%02X", alfi);
+;;;909            uds_send_negative_response(0, data[0], UDS_NRC_REQUEST_OUT_OF_RANGE);
+;;;910            return;
+;;;911        }
+;;;912        
+;;;913        if (len < (uint8_t)(3 + addr_len + size_len))
+;;;914        {
+;;;915            UDS_E("Length error: len=%d < %d", len, 3 + addr_len + size_len);
+;;;916            uds_send_negative_response(0, data[0], UDS_NRC_INCORRECT_MESSAGE_LENGTH);
+;;;917            return;
+;;;918        }
+;;;919        
+;;;920        uint32_t address = 0;
+;;;921        for (uint8_t i = 0; i < addr_len; i++) {
+;;;922            address = (address << 8) | data[3 + i];
+;;;923        }
+;;;924        uint32_t size = 0;
+;;;925        for (uint8_t i = 0; i < size_len; i++) {
+;;;926            size = (size << 8) | data[3 + addr_len + i];
+;;;927        }
+;;;928    
+;;;929        UDS_I("Request download: addr=0x%08X, size=%d bytes", address, size);
+;;;930        
+;;;931        const uds_dl_if_t* dl = uds_dl_get_if();
+;;;932        uds_dl_result_t dl_result = dl->on_request_download(address, size);
+;;;933        
+;;;934        if (dl_result != UDS_DL_OK)
+;;;935        {
+;;;936            uint8_t nrc = uds_map_dl_result_to_nrc(dl_result);
+;;;937            UDS_W("Request download rejected: dl_result=%d, NRC=0x%02X", dl_result, nrc);
+;;;938            uds_send_negative_response(0, data[0], nrc);
+;;;939            return;
+;;;940        }
+;;;941        
+;;;942        /* 响应：最大块长度（2字节） */
+;;;943        resp[0] = 0x40;  /* 最大块长度高字节 */
+;;;944        resp[1] = 0x00;  /* 最大块长度低字节 */
+;;;945        *resp_len = 2;
+;;;946        
+;;;947        UDS_I("Download accepted, max block size=0x4000");
+;;;948    }
 00001c  b007              ADD      sp,sp,#0x1c
 00001e  e8bd8ff0          POP      {r4-r11,pc}
                   |L11.34|
 000022  4835              LDR      r0,|L11.248|
-000024  7840              LDRB     r0,[r0,#1]            ;899  ; g_uds_ctrl
-000026  2802              CMP      r0,#2                 ;899
+000024  7840              LDRB     r0,[r0,#1]            ;884  ; g_uds_ctrl
+000026  2802              CMP      r0,#2                 ;884
 000028  d005              BEQ      |L11.54|
-00002a  7821              LDRB     r1,[r4,#0]            ;903
-00002c  2233              MOVS     r2,#0x33              ;903
-00002e  2000              MOVS     r0,#0                 ;903
+00002a  7821              LDRB     r1,[r4,#0]            ;888
+00002c  2233              MOVS     r2,#0x33              ;888
+00002e  2000              MOVS     r0,#0                 ;888
 000030  f7fffffe          BL       uds_send_negative_response
 000034  e7f2              B        |L11.28|
                   |L11.54|
 000036  f7fffffe          BL       uds_dl_is_registered
 00003a  b928              CBNZ     r0,|L11.72|
-00003c  7821              LDRB     r1,[r4,#0]            ;911
-00003e  2222              MOVS     r2,#0x22              ;911
-000040  2000              MOVS     r0,#0                 ;911
+00003c  7821              LDRB     r1,[r4,#0]            ;896
+00003e  2222              MOVS     r2,#0x22              ;896
+000040  2000              MOVS     r0,#0                 ;896
 000042  f7fffffe          BL       uds_send_negative_response
 000046  e7e9              B        |L11.28|
                   |L11.72|
-000048  7860              LDRB     r0,[r4,#1]            ;916
-00004a  9002              STR      r0,[sp,#8]            ;916
-00004c  f8948002          LDRB     r8,[r4,#2]            ;917
-000050  ea4f1518          LSR      r5,r8,#4              ;918
-000054  f008060f          AND      r6,r8,#0xf            ;919
+000048  7860              LDRB     r0,[r4,#1]            ;901
+00004a  9002              STR      r0,[sp,#8]            ;901
+00004c  f8948002          LDRB     r8,[r4,#2]            ;902
+000050  ea4f1518          LSR      r5,r8,#4              ;903
+000054  f008060f          AND      r6,r8,#0xf            ;904
 000058  b125              CBZ      r5,|L11.100|
-00005a  2d04              CMP      r5,#4                 ;921
+00005a  2d04              CMP      r5,#4                 ;906
 00005c  dc02              BGT      |L11.100|
 00005e  b10e              CBZ      r6,|L11.100|
-000060  2e04              CMP      r6,#4                 ;921
+000060  2e04              CMP      r6,#4                 ;906
 000062  dd05              BLE      |L11.112|
                   |L11.100|
-000064  7821              LDRB     r1,[r4,#0]            ;924
-000066  2231              MOVS     r2,#0x31              ;924
-000068  2000              MOVS     r0,#0                 ;924
+000064  7821              LDRB     r1,[r4,#0]            ;909
+000066  2231              MOVS     r2,#0x31              ;909
+000068  2000              MOVS     r0,#0                 ;909
 00006a  f7fffffe          BL       uds_send_negative_response
 00006e  e7d5              B        |L11.28|
                   |L11.112|
-000070  1ce8              ADDS     r0,r5,#3              ;928
-000072  4430              ADD      r0,r0,r6              ;928
-000074  b2c1              UXTB     r1,r0                 ;928
-000076  9804              LDR      r0,[sp,#0x10]         ;928
-000078  4281              CMP      r1,r0                 ;928
+000070  1ce8              ADDS     r0,r5,#3              ;913
+000072  4430              ADD      r0,r0,r6              ;913
+000074  b2c1              UXTB     r1,r0                 ;913
+000076  9804              LDR      r0,[sp,#0x10]         ;913
+000078  4281              CMP      r1,r0                 ;913
 00007a  dd05              BLE      |L11.136|
-00007c  7821              LDRB     r1,[r4,#0]            ;931
-00007e  2213              MOVS     r2,#0x13              ;931
-000080  2000              MOVS     r0,#0                 ;931
+00007c  7821              LDRB     r1,[r4,#0]            ;916
+00007e  2213              MOVS     r2,#0x13              ;916
+000080  2000              MOVS     r0,#0                 ;916
 000082  f7fffffe          BL       uds_send_negative_response
 000086  e7c9              B        |L11.28|
                   |L11.136|
-000088  f04f0900          MOV      r9,#0                 ;935
-00008c  2000              MOVS     r0,#0                 ;936
+000088  f04f0900          MOV      r9,#0                 ;920
+00008c  2000              MOVS     r0,#0                 ;921
 00008e  e005              B        |L11.156|
                   |L11.144|
-000090  1cc1              ADDS     r1,r0,#3              ;937
-000092  5c61              LDRB     r1,[r4,r1]            ;937
-000094  ea412909          ORR      r9,r1,r9,LSL #8       ;937
-000098  1c41              ADDS     r1,r0,#1              ;936
-00009a  b2c8              UXTB     r0,r1                 ;936
+000090  1cc1              ADDS     r1,r0,#3              ;922
+000092  5c61              LDRB     r1,[r4,r1]            ;922
+000094  ea412909          ORR      r9,r1,r9,LSL #8       ;922
+000098  1c41              ADDS     r1,r0,#1              ;921
+00009a  b2c8              UXTB     r0,r1                 ;921
                   |L11.156|
-00009c  42a8              CMP      r0,r5                 ;936
+00009c  42a8              CMP      r0,r5                 ;921
 00009e  dbf7              BLT      |L11.144|
-0000a0  f04f0a00          MOV      r10,#0                ;939
-0000a4  2000              MOVS     r0,#0                 ;940
+0000a0  f04f0a00          MOV      r10,#0                ;924
+0000a4  2000              MOVS     r0,#0                 ;925
 0000a6  e006              B        |L11.182|
                   |L11.168|
-0000a8  1ce9              ADDS     r1,r5,#3              ;941
-0000aa  4401              ADD      r1,r1,r0              ;941
-0000ac  5c61              LDRB     r1,[r4,r1]            ;941
-0000ae  ea412a0a          ORR      r10,r1,r10,LSL #8     ;941
-0000b2  1c41              ADDS     r1,r0,#1              ;940
-0000b4  b2c8              UXTB     r0,r1                 ;940
+0000a8  1ce9              ADDS     r1,r5,#3              ;926
+0000aa  4401              ADD      r1,r1,r0              ;926
+0000ac  5c61              LDRB     r1,[r4,r1]            ;926
+0000ae  ea412a0a          ORR      r10,r1,r10,LSL #8     ;926
+0000b2  1c41              ADDS     r1,r0,#1              ;925
+0000b4  b2c8              UXTB     r0,r1                 ;925
                   |L11.182|
-0000b6  42b0              CMP      r0,r6                 ;940
+0000b6  42b0              CMP      r0,r6                 ;925
 0000b8  dbf6              BLT      |L11.168|
 0000ba  f7fffffe          BL       uds_dl_get_if
-0000be  9001              STR      r0,[sp,#4]            ;946
-0000c0  9801              LDR      r0,[sp,#4]            ;947
-0000c2  4651              MOV      r1,r10                ;947
-0000c4  6842              LDR      r2,[r0,#4]            ;947
-0000c6  4648              MOV      r0,r9                 ;947
-0000c8  4790              BLX      r2                    ;947
-0000ca  4683              MOV      r11,r0                ;947
-0000cc  f1bb0f00          CMP      r11,#0                ;949
+0000be  9001              STR      r0,[sp,#4]            ;931
+0000c0  9801              LDR      r0,[sp,#4]            ;932
+0000c2  4651              MOV      r1,r10                ;932
+0000c4  6842              LDR      r2,[r0,#4]            ;932
+0000c6  4648              MOV      r0,r9                 ;932
+0000c8  4790              BLX      r2                    ;932
+0000ca  4683              MOV      r11,r0                ;932
+0000cc  f1bb0f00          CMP      r11,#0                ;934
 0000d0  d009              BEQ      |L11.230|
-0000d2  4658              MOV      r0,r11                ;951
+0000d2  4658              MOV      r0,r11                ;936
 0000d4  f7fffffe          BL       uds_map_dl_result_to_nrc
-0000d8  9000              STR      r0,[sp,#0]            ;951
-0000da  7821              LDRB     r1,[r4,#0]            ;953
-0000dc  2000              MOVS     r0,#0                 ;953
-0000de  9a00              LDR      r2,[sp,#0]            ;953
+0000d8  9000              STR      r0,[sp,#0]            ;936
+0000da  7821              LDRB     r1,[r4,#0]            ;938
+0000dc  2000              MOVS     r0,#0                 ;938
+0000de  9a00              LDR      r2,[sp,#0]            ;938
 0000e0  f7fffffe          BL       uds_send_negative_response
 0000e4  e79a              B        |L11.28|
                   |L11.230|
-0000e6  2040              MOVS     r0,#0x40              ;958
-0000e8  7038              STRB     r0,[r7,#0]            ;958
-0000ea  2000              MOVS     r0,#0                 ;959
-0000ec  7078              STRB     r0,[r7,#1]            ;959
-0000ee  2102              MOVS     r1,#2                 ;960
-0000f0  9806              LDR      r0,[sp,#0x18]         ;960
-0000f2  7001              STRB     r1,[r0,#0]            ;960
+0000e6  2040              MOVS     r0,#0x40              ;943
+0000e8  7038              STRB     r0,[r7,#0]            ;943
+0000ea  2000              MOVS     r0,#0                 ;944
+0000ec  7078              STRB     r0,[r7,#1]            ;944
+0000ee  2102              MOVS     r1,#2                 ;945
+0000f0  9806              LDR      r0,[sp,#0x18]         ;945
+0000f2  7001              STRB     r1,[r0,#0]            ;945
 0000f4  bf00              NOP      
 0000f6  e791              B        |L11.28|
-;;;964    
+;;;949    
                           ENDP
 
                   |L11.248|
@@ -992,128 +992,128 @@
                           AREA ||i.uds_handle_request_transfer_exit||, CODE, READONLY, ALIGN=2
 
                   uds_handle_request_transfer_exit PROC
-;;;1034   /* 处理请求传输退出 (0x37) */
-;;;1035   static void uds_handle_request_transfer_exit(uint8_t* data, uint8_t len, uint8_t* resp, uint8_t* resp_len)
+;;;1019   /* 处理请求传输退出 (0x37) */
+;;;1020   static void uds_handle_request_transfer_exit(uint8_t* data, uint8_t len, uint8_t* resp, uint8_t* resp_len)
 000000  e92d47f0          PUSH     {r4-r10,lr}
-;;;1036   {
+;;;1021   {
 000004  4604              MOV      r4,r0
 000006  4688              MOV      r8,r1
 000008  4691              MOV      r9,r2
 00000a  461f              MOV      r7,r3
-;;;1037       UDS_I(">>> Handle 0x37 (Request Transfer Exit)");
-;;;1038       
-;;;1039       /* ========== 安全检查 ========== */
-;;;1040       /* 检查1：必须在编程会话中 */
-;;;1041       if (g_uds_ctrl.session_mode != UDS_SESSION_PROGRAMMING_MODE)
+;;;1022       UDS_I(">>> Handle 0x37 (Request Transfer Exit)");
+;;;1023       
+;;;1024       /* ========== 安全检查 ========== */
+;;;1025       /* 检查1：必须在编程会话中 */
+;;;1026       if (g_uds_ctrl.session_mode != UDS_SESSION_PROGRAMMING_MODE)
 00000c  4820              LDR      r0,|L12.144|
 00000e  7800              LDRB     r0,[r0,#0]  ; g_uds_ctrl
 000010  2802              CMP      r0,#2
 000012  d006              BEQ      |L12.34|
-;;;1042       {
-;;;1043           UDS_W("Transfer Exit rejected: not in PROGRAMMING session (session=%d)", 
-;;;1044                 g_uds_ctrl.session_mode);
-;;;1045           uds_send_negative_response(0, data[0], UDS_NRC_SERVICE_NOT_SUPPORTED_IN_ACTIVE_SESSION);
+;;;1027       {
+;;;1028           UDS_W("Transfer Exit rejected: not in PROGRAMMING session (session=%d)", 
+;;;1029                 g_uds_ctrl.session_mode);
+;;;1030           uds_send_negative_response(0, data[0], UDS_NRC_SERVICE_NOT_SUPPORTED_IN_ACTIVE_SESSION);
 000014  7821              LDRB     r1,[r4,#0]
 000016  227f              MOVS     r2,#0x7f
 000018  2000              MOVS     r0,#0
 00001a  f7fffffe          BL       uds_send_negative_response
                   |L12.30|
-;;;1046           return;
-;;;1047       }
-;;;1048       
-;;;1049       /* 检查2：必须已安全解锁 */
-;;;1050       if (g_uds_ctrl.security_state != UDS_SECURITY_UNLOCKED)
-;;;1051       {
-;;;1052           UDS_W("Transfer Exit rejected: security not unlocked (state=%d)", 
-;;;1053                 g_uds_ctrl.security_state);
-;;;1054           uds_send_negative_response(0, data[0], UDS_NRC_SECURITY_ACCESS_DENIED);
-;;;1055           return;
-;;;1056       }
-;;;1057       /* ========== 安全检查结束 ========== */
-;;;1058       
-;;;1059       if (!uds_dl_is_registered())
-;;;1060       {
-;;;1061           UDS_W("Download interface not registered");
-;;;1062           uds_send_negative_response(0, data[0], UDS_NRC_CONDITIONS_NOT_CORRECT);
-;;;1063           return;
-;;;1064       }
-;;;1065       
-;;;1066       const uds_dl_if_t* dl = uds_dl_get_if();
-;;;1067       uds_dl_result_t dl_result = dl->on_transfer_exit();
-;;;1068       
-;;;1069       if (dl_result != UDS_DL_OK)
-;;;1070       {
-;;;1071           uint8_t nrc = uds_map_dl_result_to_nrc(dl_result);
-;;;1072           UDS_W("Transfer exit rejected: dl_result=%d, NRC=0x%02X", dl_result, nrc);
-;;;1073           uds_send_negative_response(0, data[0], nrc);
-;;;1074           return;
-;;;1075       }
-;;;1076       
-;;;1077       /* 检查是否需要响应等待（NRC 0x78） */
-;;;1078       if (dl->is_pending())
-;;;1079       {
-;;;1080           UDS_I("Transfer exit: pending response (NRC 0x78)");
-;;;1081           uds_send_response_pending(0, data[0]);
-;;;1082           return;
-;;;1083       }
-;;;1084       
-;;;1085       uds_send_response(0, data[0], NULL, 0);
-;;;1086       *resp_len = 0;
-;;;1087       UDS_I("Transfer exit accepted");
-;;;1088   }
+;;;1031           return;
+;;;1032       }
+;;;1033       
+;;;1034       /* 检查2：必须已安全解锁 */
+;;;1035       if (g_uds_ctrl.security_state != UDS_SECURITY_UNLOCKED)
+;;;1036       {
+;;;1037           UDS_W("Transfer Exit rejected: security not unlocked (state=%d)", 
+;;;1038                 g_uds_ctrl.security_state);
+;;;1039           uds_send_negative_response(0, data[0], UDS_NRC_SECURITY_ACCESS_DENIED);
+;;;1040           return;
+;;;1041       }
+;;;1042       /* ========== 安全检查结束 ========== */
+;;;1043       
+;;;1044       if (!uds_dl_is_registered())
+;;;1045       {
+;;;1046           UDS_W("Download interface not registered");
+;;;1047           uds_send_negative_response(0, data[0], UDS_NRC_CONDITIONS_NOT_CORRECT);
+;;;1048           return;
+;;;1049       }
+;;;1050       
+;;;1051       const uds_dl_if_t* dl = uds_dl_get_if();
+;;;1052       uds_dl_result_t dl_result = dl->on_transfer_exit();
+;;;1053       
+;;;1054       if (dl_result != UDS_DL_OK)
+;;;1055       {
+;;;1056           uint8_t nrc = uds_map_dl_result_to_nrc(dl_result);
+;;;1057           UDS_W("Transfer exit rejected: dl_result=%d, NRC=0x%02X", dl_result, nrc);
+;;;1058           uds_send_negative_response(0, data[0], nrc);
+;;;1059           return;
+;;;1060       }
+;;;1061       
+;;;1062       /* 检查是否需要响应等待（NRC 0x78） */
+;;;1063       if (dl->is_pending())
+;;;1064       {
+;;;1065           UDS_I("Transfer exit: pending response (NRC 0x78)");
+;;;1066           uds_send_response_pending(0, data[0]);
+;;;1067           return;
+;;;1068       }
+;;;1069       
+;;;1070       uds_send_response(0, data[0], NULL, 0);
+;;;1071       *resp_len = 0;
+;;;1072       UDS_I("Transfer exit accepted");
+;;;1073   }
 00001e  e8bd87f0          POP      {r4-r10,pc}
                   |L12.34|
 000022  481b              LDR      r0,|L12.144|
-000024  7840              LDRB     r0,[r0,#1]            ;1050  ; g_uds_ctrl
-000026  2802              CMP      r0,#2                 ;1050
+000024  7840              LDRB     r0,[r0,#1]            ;1035  ; g_uds_ctrl
+000026  2802              CMP      r0,#2                 ;1035
 000028  d005              BEQ      |L12.54|
-00002a  7821              LDRB     r1,[r4,#0]            ;1054
-00002c  2233              MOVS     r2,#0x33              ;1054
-00002e  2000              MOVS     r0,#0                 ;1054
+00002a  7821              LDRB     r1,[r4,#0]            ;1039
+00002c  2233              MOVS     r2,#0x33              ;1039
+00002e  2000              MOVS     r0,#0                 ;1039
 000030  f7fffffe          BL       uds_send_negative_response
 000034  e7f3              B        |L12.30|
                   |L12.54|
 000036  f7fffffe          BL       uds_dl_is_registered
 00003a  b928              CBNZ     r0,|L12.72|
-00003c  7821              LDRB     r1,[r4,#0]            ;1062
-00003e  2222              MOVS     r2,#0x22              ;1062
-000040  2000              MOVS     r0,#0                 ;1062
+00003c  7821              LDRB     r1,[r4,#0]            ;1047
+00003e  2222              MOVS     r2,#0x22              ;1047
+000040  2000              MOVS     r0,#0                 ;1047
 000042  f7fffffe          BL       uds_send_negative_response
 000046  e7ea              B        |L12.30|
                   |L12.72|
 000048  f7fffffe          BL       uds_dl_get_if
-00004c  4605              MOV      r5,r0                 ;1066
-00004e  68e8              LDR      r0,[r5,#0xc]          ;1067
-000050  4780              BLX      r0                    ;1067
-000052  4606              MOV      r6,r0                 ;1067
+00004c  4605              MOV      r5,r0                 ;1051
+00004e  68e8              LDR      r0,[r5,#0xc]          ;1052
+000050  4780              BLX      r0                    ;1052
+000052  4606              MOV      r6,r0                 ;1052
 000054  b14e              CBZ      r6,|L12.106|
-000056  4630              MOV      r0,r6                 ;1071
+000056  4630              MOV      r0,r6                 ;1056
 000058  f7fffffe          BL       uds_map_dl_result_to_nrc
-00005c  4682              MOV      r10,r0                ;1071
-00005e  7821              LDRB     r1,[r4,#0]            ;1073
-000060  4652              MOV      r2,r10                ;1073
-000062  2000              MOVS     r0,#0                 ;1073
+00005c  4682              MOV      r10,r0                ;1056
+00005e  7821              LDRB     r1,[r4,#0]            ;1058
+000060  4652              MOV      r2,r10                ;1058
+000062  2000              MOVS     r0,#0                 ;1058
 000064  f7fffffe          BL       uds_send_negative_response
 000068  e7d9              B        |L12.30|
                   |L12.106|
-00006a  6b28              LDR      r0,[r5,#0x30]         ;1078
-00006c  4780              BLX      r0                    ;1078
+00006a  6b28              LDR      r0,[r5,#0x30]         ;1063
+00006c  4780              BLX      r0                    ;1063
 00006e  b120              CBZ      r0,|L12.122|
-000070  7821              LDRB     r1,[r4,#0]            ;1081
-000072  2000              MOVS     r0,#0                 ;1081
+000070  7821              LDRB     r1,[r4,#0]            ;1066
+000072  2000              MOVS     r0,#0                 ;1066
 000074  f7fffffe          BL       uds_send_response_pending
 000078  e7d1              B        |L12.30|
                   |L12.122|
-00007a  7821              LDRB     r1,[r4,#0]            ;1085
-00007c  2300              MOVS     r3,#0                 ;1085
-00007e  461a              MOV      r2,r3                 ;1085
-000080  4618              MOV      r0,r3                 ;1085
+00007a  7821              LDRB     r1,[r4,#0]            ;1070
+00007c  2300              MOVS     r3,#0                 ;1070
+00007e  461a              MOV      r2,r3                 ;1070
+000080  4618              MOV      r0,r3                 ;1070
 000082  f7fffffe          BL       uds_send_response
-000086  2000              MOVS     r0,#0                 ;1086
-000088  7038              STRB     r0,[r7,#0]            ;1086
+000086  2000              MOVS     r0,#0                 ;1071
+000088  7038              STRB     r0,[r7,#0]            ;1071
 00008a  bf00              NOP      
 00008c  e7c7              B        |L12.30|
-;;;1089   
+;;;1074   
                           ENDP
 
 00008e  0000              DCW      0x0000
@@ -1125,9 +1125,9 @@
                   uds_handle_routine_control PROC
 ;;;718    /* 处理例程控制 (0x31) */
 ;;;719    static void uds_handle_routine_control(uint8_t* data, uint8_t len, uint8_t* resp, uint8_t* resp_len)
-000000  e92d47f0          PUSH     {r4-r10,lr}
+000000  e92d43f0          PUSH     {r4-r9,lr}
 ;;;720    {
-000004  b08e              SUB      sp,sp,#0x38
+000004  b08f              SUB      sp,sp,#0x3c
 000006  4604              MOV      r4,r0
 000008  460e              MOV      r6,r1
 00000a  4617              MOV      r7,r2
@@ -1166,48 +1166,33 @@
 ;;;745        
 ;;;746        /* 强制肯定响应 */
 ;;;747        if (SCB->VTOR == APP1_START_ADDR || SCB->VTOR == APP2_START_ADDR) {
-;;;748                /* ==== Phase 1: PB6 blink 3 times (300ms) - APP received 0x31, entering bootloader ==== */
+;;;748                
 ;;;749            {
-;;;750                uint8_t _pb6_i;
-;;;751                stc_gpio_init_t stcPortInit;
-;;;752                MEM_ZERO_STRUCT(stcPortInit);
-;;;753                stcPortInit.u16PinDir = PIN_DIR_OUT;
-;;;754                LL_PERIPH_WE(LL_PERIPH_GPIO);
-;;;755                GPIO_Init(GPIO_PORT_B, GPIO_PIN_06, &stcPortInit);
-;;;756                LL_PERIPH_WP(LL_PERIPH_GPIO);
-;;;757                for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-;;;758                    GPIO_SetPins(GPIO_PORT_B, GPIO_PIN_06);
-;;;759                    tickTimer_DelayMs(100);
-;;;760                    GPIO_ResetPins(GPIO_PORT_B, GPIO_PIN_06);
-;;;761                    tickTimer_DelayMs(100);
-;;;762                }
-;;;763            }
-;;;764            {
-;;;765                stc_uds_shared_t _st;
-;;;766                MEM_ZERO_STRUCT(_st);
-;;;767                _st.magic = UDS_SHARED_MAGIC;
-;;;768                _st.phase = UDS_PHASE_ENTER_BOOTLOADER;
-;;;769                _st.pending_sid = 0x31;
-;;;770                UdsShared_Write(&_st);
-;;;771            }
-;;;772            *resp_len = 0;
-;;;773            UDS_I("Routine Control: APP -> Bootloader, scheduled delayed reset");
-;;;774            g_delayed_reset_ms = DELAYED_RESET_MS;
-;;;775        } else {
-;;;776            Boot_SetRunSlotToAddr(UDS_POST_FLASH_BOOT_ADDR);
-;;;777            resp[0] = routine_ctrl_type;
-;;;778            *resp_len = 1;
-;;;779            UDS_I("Routine Control: Boot slot set to 0x%08X", UDS_POST_FLASH_BOOT_ADDR);
-;;;780        }
-;;;781    }
-00001c  b00e              ADD      sp,sp,#0x38
-00001e  e8bd87f0          POP      {r4-r10,pc}
+;;;750                stc_uds_shared_t _st;
+;;;751                MEM_ZERO_STRUCT(_st);
+;;;752                _st.magic = UDS_SHARED_MAGIC;
+;;;753                _st.phase = UDS_PHASE_ENTER_BOOTLOADER;
+;;;754                _st.pending_sid = 0x31;
+;;;755                UdsShared_Write(&_st);
+;;;756            }
+;;;757            *resp_len = 0;
+;;;758            UDS_I("Routine Control: APP -> Bootloader, scheduled delayed reset");
+;;;759            g_delayed_reset_ms = DELAYED_RESET_MS;
+;;;760        } else {
+;;;761            Boot_SetRunSlotToAddr(UDS_POST_FLASH_BOOT_ADDR);
+;;;762            resp[0] = routine_ctrl_type;
+;;;763            *resp_len = 1;
+;;;764            UDS_I("Routine Control: Boot slot set to 0x%08X", UDS_POST_FLASH_BOOT_ADDR);
+;;;765        }
+;;;766    }
+00001c  b00f              ADD      sp,sp,#0x3c
+00001e  e8bd83f0          POP      {r4-r9,pc}
                   |L13.34|
 000022  78a0              LDRB     r0,[r4,#2]            ;731
 000024  7861              LDRB     r1,[r4,#1]            ;731
-000026  ea402a01          ORR      r10,r0,r1,LSL #8      ;731
+000026  ea402901          ORR      r9,r0,r1,LSL #8       ;731
 00002a  f8948003          LDRB     r8,[r4,#3]            ;732
-00002e  482f              LDR      r0,|L13.236|
+00002e  4819              LDR      r0,|L13.148|
 000030  7840              LDRB     r0,[r0,#1]            ;737  ; g_uds_ctrl
 000032  2802              CMP      r0,#2                 ;737
 000034  d005              BEQ      |L13.66|
@@ -1217,86 +1202,53 @@
 00003c  f7fffffe          BL       uds_send_negative_response
 000040  e7ec              B        |L13.28|
                   |L13.66|
-000042  482b              LDR      r0,|L13.240|
+000042  4815              LDR      r0,|L13.152|
 000044  6800              LDR      r0,[r0,#0]            ;747
 000046  f5b03fd0          CMP      r0,#0x1a000           ;747
 00004a  d004              BEQ      |L13.86|
-00004c  4828              LDR      r0,|L13.240|
+00004c  4812              LDR      r0,|L13.152|
 00004e  6800              LDR      r0,[r0,#0]            ;747
 000050  f5b02f98          CMP      r0,#0x4c000           ;747
-000054  d13e              BNE      |L13.212|
+000054  d112              BNE      |L13.124|
                   |L13.86|
-000056  2114              MOVS     r1,#0x14              ;752
-000058  a809              ADD      r0,sp,#0x24           ;752
+000056  2138              MOVS     r1,#0x38              ;751
+000058  a801              ADD      r0,sp,#4              ;751
 00005a  f7fffffe          BL       __aeabi_memclr4
-00005e  2002              MOVS     r0,#2                 ;753
-000060  f8ad0026          STRH     r0,[sp,#0x26]         ;753
-000064  2004              MOVS     r0,#4                 ;754
-000066  f7fffffe          BL       LL_PERIPH_WE
-00006a  aa09              ADD      r2,sp,#0x24           ;755
-00006c  2140              MOVS     r1,#0x40              ;755
-00006e  2001              MOVS     r0,#1                 ;755
-000070  f7fffffe          BL       GPIO_Init
-000074  2004              MOVS     r0,#4                 ;756
-000076  f7fffffe          BL       LL_PERIPH_WP
-00007a  f04f0900          MOV      r9,#0                 ;757
-00007e  e013              B        |L13.168|
-                  |L13.128|
-000080  2140              MOVS     r1,#0x40              ;758
-000082  2001              MOVS     r0,#1                 ;758
-000084  f7fffffe          BL       GPIO_SetPins
-000088  2064              MOVS     r0,#0x64              ;759
-00008a  2100              MOVS     r1,#0                 ;759
-00008c  f7fffffe          BL       tickTimer_DelayMs
-000090  2140              MOVS     r1,#0x40              ;760
-000092  2001              MOVS     r0,#1                 ;760
-000094  f7fffffe          BL       GPIO_ResetPins
-000098  2064              MOVS     r0,#0x64              ;761
-00009a  2100              MOVS     r1,#0                 ;761
-00009c  f7fffffe          BL       tickTimer_DelayMs
-0000a0  f1090001          ADD      r0,r9,#1              ;757
-0000a4  f00009ff          AND      r9,r0,#0xff           ;757
-                  |L13.168|
-0000a8  f1b90f03          CMP      r9,#3                 ;757
-0000ac  dbe8              BLT      |L13.128|
-0000ae  2138              MOVS     r1,#0x38              ;766
-0000b0  4668              MOV      r0,sp                 ;766
-0000b2  f7fffffe          BL       __aeabi_memclr4
-0000b6  480f              LDR      r0,|L13.244|
-0000b8  9000              STR      r0,[sp,#0]            ;767
-0000ba  2001              MOVS     r0,#1                 ;768
-0000bc  9001              STR      r0,[sp,#4]            ;768
-0000be  2031              MOVS     r0,#0x31              ;769
-0000c0  9006              STR      r0,[sp,#0x18]         ;769
-0000c2  4668              MOV      r0,sp                 ;770
-0000c4  f7fffffe          BL       UdsShared_Write
-0000c8  2000              MOVS     r0,#0                 ;772
-0000ca  7028              STRB     r0,[r5,#0]            ;772
-0000cc  2064              MOVS     r0,#0x64              ;774
-0000ce  490a              LDR      r1,|L13.248|
-0000d0  6008              STR      r0,[r1,#0]            ;774  ; g_delayed_reset_ms
-0000d2  e008              B        |L13.230|
-                  |L13.212|
-0000d4  f44f30d0          MOV      r0,#0x1a000           ;776
-0000d8  f7fffffe          BL       Boot_SetRunSlotToAddr
-0000dc  f8878000          STRB     r8,[r7,#0]            ;777
-0000e0  2001              MOVS     r0,#1                 ;778
-0000e2  7028              STRB     r0,[r5,#0]            ;778
-0000e4  bf00              NOP                            ;779
-                  |L13.230|
-0000e6  bf00              NOP      
-0000e8  e798              B        |L13.28|
-;;;782    
+00005e  480f              LDR      r0,|L13.156|
+000060  9001              STR      r0,[sp,#4]            ;752
+000062  2001              MOVS     r0,#1                 ;753
+000064  9002              STR      r0,[sp,#8]            ;753
+000066  2031              MOVS     r0,#0x31              ;754
+000068  9007              STR      r0,[sp,#0x1c]         ;754
+00006a  a801              ADD      r0,sp,#4              ;755
+00006c  f7fffffe          BL       UdsShared_Write
+000070  2000              MOVS     r0,#0                 ;757
+000072  7028              STRB     r0,[r5,#0]            ;757
+000074  2064              MOVS     r0,#0x64              ;759
+000076  490a              LDR      r1,|L13.160|
+000078  6008              STR      r0,[r1,#0]            ;759  ; g_delayed_reset_ms
+00007a  e008              B        |L13.142|
+                  |L13.124|
+00007c  f44f30d0          MOV      r0,#0x1a000           ;761
+000080  f7fffffe          BL       Boot_SetRunSlotToAddr
+000084  f8878000          STRB     r8,[r7,#0]            ;762
+000088  2001              MOVS     r0,#1                 ;763
+00008a  7028              STRB     r0,[r5,#0]            ;763
+00008c  bf00              NOP                            ;764
+                  |L13.142|
+00008e  bf00              NOP      
+000090  e7c4              B        |L13.28|
+;;;767    
                           ENDP
 
-0000ea  0000              DCW      0x0000
-                  |L13.236|
+000092  0000              DCW      0x0000
+                  |L13.148|
                           DCD      g_uds_ctrl
-                  |L13.240|
+                  |L13.152|
                           DCD      0xe000ed08
-                  |L13.244|
+                  |L13.156|
                           DCD      0x55445300
-                  |L13.248|
+                  |L13.160|
                           DCD      g_delayed_reset_ms
 
                           AREA ||i.uds_handle_security_access||, CODE, READONLY, ALIGN=2
@@ -1699,154 +1651,154 @@
                           AREA ||i.uds_handle_transfer_data||, CODE, READONLY, ALIGN=2
 
                   uds_handle_transfer_data PROC
-;;;965    /* 处理传输数据 (0x36) */
-;;;966    static void uds_handle_transfer_data(uint8_t* data, uint16_t len, uint8_t* resp, uint8_t* resp_len)
+;;;950    /* 处理传输数据 (0x36) */
+;;;951    static void uds_handle_transfer_data(uint8_t* data, uint16_t len, uint8_t* resp, uint8_t* resp_len)
 000000  e92d4ff8          PUSH     {r3-r11,lr}
-;;;967    {
+;;;952    {
 000004  4604              MOV      r4,r0
 000006  460d              MOV      r5,r1
 000008  4616              MOV      r6,r2
 00000a  469a              MOV      r10,r3
-;;;968        UDS_D(">>> Handle 0x36 (Transfer Data)");
-;;;969        
-;;;970        /* ========== 安全检查 ========== */
-;;;971        /* 检查1：必须在编程会话中 */
-;;;972        if (g_uds_ctrl.session_mode != UDS_SESSION_PROGRAMMING_MODE)
+;;;953        UDS_D(">>> Handle 0x36 (Transfer Data)");
+;;;954        
+;;;955        /* ========== 安全检查 ========== */
+;;;956        /* 检查1：必须在编程会话中 */
+;;;957        if (g_uds_ctrl.session_mode != UDS_SESSION_PROGRAMMING_MODE)
 00000c  4828              LDR      r0,|L16.176|
 00000e  7800              LDRB     r0,[r0,#0]  ; g_uds_ctrl
 000010  2802              CMP      r0,#2
 000012  d006              BEQ      |L16.34|
-;;;973        {
-;;;974            UDS_W("Transfer Data rejected: not in PROGRAMMING session (session=%d)", 
-;;;975                  g_uds_ctrl.session_mode);
-;;;976            uds_send_negative_response(0, data[0], UDS_NRC_SERVICE_NOT_SUPPORTED_IN_ACTIVE_SESSION);
+;;;958        {
+;;;959            UDS_W("Transfer Data rejected: not in PROGRAMMING session (session=%d)", 
+;;;960                  g_uds_ctrl.session_mode);
+;;;961            uds_send_negative_response(0, data[0], UDS_NRC_SERVICE_NOT_SUPPORTED_IN_ACTIVE_SESSION);
 000014  7821              LDRB     r1,[r4,#0]
 000016  227f              MOVS     r2,#0x7f
 000018  2000              MOVS     r0,#0
 00001a  f7fffffe          BL       uds_send_negative_response
                   |L16.30|
-;;;977            return;
-;;;978        }
-;;;979        
-;;;980        /* 检查2：必须已安全解锁 */
-;;;981        if (g_uds_ctrl.security_state != UDS_SECURITY_UNLOCKED)
-;;;982        {
-;;;983            UDS_W("Transfer Data rejected: security not unlocked (state=%d)", 
-;;;984                  g_uds_ctrl.security_state);
-;;;985            uds_send_negative_response(0, data[0], UDS_NRC_SECURITY_ACCESS_DENIED);
+;;;962            return;
+;;;963        }
+;;;964        
+;;;965        /* 检查2：必须已安全解锁 */
+;;;966        if (g_uds_ctrl.security_state != UDS_SECURITY_UNLOCKED)
+;;;967        {
+;;;968            UDS_W("Transfer Data rejected: security not unlocked (state=%d)", 
+;;;969                  g_uds_ctrl.security_state);
+;;;970            uds_send_negative_response(0, data[0], UDS_NRC_SECURITY_ACCESS_DENIED);
+;;;971            return;
+;;;972        }
+;;;973        /* ========== 安全检查结束 ========== */
+;;;974        
+;;;975        if (!uds_dl_is_registered())
+;;;976        {
+;;;977            UDS_W("Download interface not registered");
+;;;978            uds_send_negative_response(0, data[0], UDS_NRC_CONDITIONS_NOT_CORRECT);
+;;;979            return;
+;;;980        }
+;;;981        
+;;;982        if (len < 2)
+;;;983        {
+;;;984            UDS_E("Length error: len=%d < 2", len);
+;;;985            uds_send_negative_response(0, data[0], UDS_NRC_INCORRECT_MESSAGE_LENGTH);
 ;;;986            return;
 ;;;987        }
-;;;988        /* ========== 安全检查结束 ========== */
-;;;989        
-;;;990        if (!uds_dl_is_registered())
-;;;991        {
-;;;992            UDS_W("Download interface not registered");
-;;;993            uds_send_negative_response(0, data[0], UDS_NRC_CONDITIONS_NOT_CORRECT);
-;;;994            return;
-;;;995        }
+;;;988        
+;;;989        uint8_t block_seq = data[1];
+;;;990        uint16_t data_len = len - 2;
+;;;991        
+;;;992        UDS_D("Transfer data: seq=%d, data_len=%d", block_seq, data_len);
+;;;993        
+;;;994        const uds_dl_if_t* dl = uds_dl_get_if();
+;;;995        uds_dl_result_t dl_result = dl->on_transfer_data(block_seq, &data[2], data_len);
 ;;;996        
-;;;997        if (len < 2)
+;;;997        if (dl_result != UDS_DL_OK)
 ;;;998        {
-;;;999            UDS_E("Length error: len=%d < 2", len);
-;;;1000           uds_send_negative_response(0, data[0], UDS_NRC_INCORRECT_MESSAGE_LENGTH);
-;;;1001           return;
-;;;1002       }
-;;;1003       
-;;;1004       uint8_t block_seq = data[1];
-;;;1005       uint16_t data_len = len - 2;
-;;;1006       
-;;;1007       UDS_D("Transfer data: seq=%d, data_len=%d", block_seq, data_len);
-;;;1008       
-;;;1009       const uds_dl_if_t* dl = uds_dl_get_if();
-;;;1010       uds_dl_result_t dl_result = dl->on_transfer_data(block_seq, &data[2], data_len);
-;;;1011       
-;;;1012       if (dl_result != UDS_DL_OK)
-;;;1013       {
-;;;1014           uint8_t nrc = uds_map_dl_result_to_nrc(dl_result);
-;;;1015           UDS_W("Transfer data rejected: dl_result=%d, NRC=0x%02X", dl_result, nrc);
-;;;1016           uds_send_negative_response(0, data[0], nrc);
-;;;1017           return;
-;;;1018       }
-;;;1019       
-;;;1020       /* 检查是否需要响应等待（NRC 0x78） */
-;;;1021       if (dl->is_pending())
-;;;1022       {
-;;;1023           UDS_I("Transfer data: pending response (NRC 0x78)");
-;;;1024           uds_send_response_pending(0, data[0]);
-;;;1025           return;
-;;;1026       }
-;;;1027       
-;;;1028       resp[0] = 0x76;
-;;;1029       resp[1] = block_seq;
-;;;1030       *resp_len = 2;
-;;;1031       UDS_D("Transfer data accepted, positive response sent");
-;;;1032   }
+;;;999            uint8_t nrc = uds_map_dl_result_to_nrc(dl_result);
+;;;1000           UDS_W("Transfer data rejected: dl_result=%d, NRC=0x%02X", dl_result, nrc);
+;;;1001           uds_send_negative_response(0, data[0], nrc);
+;;;1002           return;
+;;;1003       }
+;;;1004       
+;;;1005       /* 检查是否需要响应等待（NRC 0x78） */
+;;;1006       if (dl->is_pending())
+;;;1007       {
+;;;1008           UDS_I("Transfer data: pending response (NRC 0x78)");
+;;;1009           uds_send_response_pending(0, data[0]);
+;;;1010           return;
+;;;1011       }
+;;;1012       
+;;;1013       resp[0] = 0x76;
+;;;1014       resp[1] = block_seq;
+;;;1015       *resp_len = 2;
+;;;1016       UDS_D("Transfer data accepted, positive response sent");
+;;;1017   }
 00001e  e8bd8ff8          POP      {r3-r11,pc}
                   |L16.34|
 000022  4823              LDR      r0,|L16.176|
-000024  7840              LDRB     r0,[r0,#1]            ;981  ; g_uds_ctrl
-000026  2802              CMP      r0,#2                 ;981
+000024  7840              LDRB     r0,[r0,#1]            ;966  ; g_uds_ctrl
+000026  2802              CMP      r0,#2                 ;966
 000028  d005              BEQ      |L16.54|
-00002a  7821              LDRB     r1,[r4,#0]            ;985
-00002c  2233              MOVS     r2,#0x33              ;985
-00002e  2000              MOVS     r0,#0                 ;985
+00002a  7821              LDRB     r1,[r4,#0]            ;970
+00002c  2233              MOVS     r2,#0x33              ;970
+00002e  2000              MOVS     r0,#0                 ;970
 000030  f7fffffe          BL       uds_send_negative_response
 000034  e7f3              B        |L16.30|
                   |L16.54|
 000036  f7fffffe          BL       uds_dl_is_registered
 00003a  b928              CBNZ     r0,|L16.72|
-00003c  7821              LDRB     r1,[r4,#0]            ;993
-00003e  2222              MOVS     r2,#0x22              ;993
-000040  2000              MOVS     r0,#0                 ;993
+00003c  7821              LDRB     r1,[r4,#0]            ;978
+00003e  2222              MOVS     r2,#0x22              ;978
+000040  2000              MOVS     r0,#0                 ;978
 000042  f7fffffe          BL       uds_send_negative_response
 000046  e7ea              B        |L16.30|
                   |L16.72|
-000048  2d02              CMP      r5,#2                 ;997
+000048  2d02              CMP      r5,#2                 ;982
 00004a  da05              BGE      |L16.88|
-00004c  7821              LDRB     r1,[r4,#0]            ;1000
-00004e  2213              MOVS     r2,#0x13              ;1000
-000050  2000              MOVS     r0,#0                 ;1000
+00004c  7821              LDRB     r1,[r4,#0]            ;985
+00004e  2213              MOVS     r2,#0x13              ;985
+000050  2000              MOVS     r0,#0                 ;985
 000052  f7fffffe          BL       uds_send_negative_response
 000056  e7e2              B        |L16.30|
                   |L16.88|
-000058  7867              LDRB     r7,[r4,#1]            ;1004
-00005a  1ea8              SUBS     r0,r5,#2              ;1005
-00005c  fa1ffb80          UXTH     r11,r0                ;1005
+000058  7867              LDRB     r7,[r4,#1]            ;989
+00005a  1ea8              SUBS     r0,r5,#2              ;990
+00005c  fa1ffb80          UXTH     r11,r0                ;990
 000060  f7fffffe          BL       uds_dl_get_if
-000064  4680              MOV      r8,r0                 ;1009
-000066  465a              MOV      r2,r11                ;1010
-000068  1ca1              ADDS     r1,r4,#2              ;1010
-00006a  4638              MOV      r0,r7                 ;1010
-00006c  f8d83008          LDR      r3,[r8,#8]            ;1010
-000070  4798              BLX      r3                    ;1010
-000072  4681              MOV      r9,r0                 ;1010
-000074  f1b90f00          CMP      r9,#0                 ;1012
+000064  4680              MOV      r8,r0                 ;994
+000066  465a              MOV      r2,r11                ;995
+000068  1ca1              ADDS     r1,r4,#2              ;995
+00006a  4638              MOV      r0,r7                 ;995
+00006c  f8d83008          LDR      r3,[r8,#8]            ;995
+000070  4798              BLX      r3                    ;995
+000072  4681              MOV      r9,r0                 ;995
+000074  f1b90f00          CMP      r9,#0                 ;997
 000078  d009              BEQ      |L16.142|
-00007a  4648              MOV      r0,r9                 ;1014
+00007a  4648              MOV      r0,r9                 ;999
 00007c  f7fffffe          BL       uds_map_dl_result_to_nrc
-000080  9000              STR      r0,[sp,#0]            ;1014
-000082  7821              LDRB     r1,[r4,#0]            ;1016
-000084  2000              MOVS     r0,#0                 ;1016
-000086  9a00              LDR      r2,[sp,#0]            ;1016
+000080  9000              STR      r0,[sp,#0]            ;999
+000082  7821              LDRB     r1,[r4,#0]            ;1001
+000084  2000              MOVS     r0,#0                 ;1001
+000086  9a00              LDR      r2,[sp,#0]            ;1001
 000088  f7fffffe          BL       uds_send_negative_response
 00008c  e7c7              B        |L16.30|
                   |L16.142|
-00008e  f8d80030          LDR      r0,[r8,#0x30]         ;1021
-000092  4780              BLX      r0                    ;1021
+00008e  f8d80030          LDR      r0,[r8,#0x30]         ;1006
+000092  4780              BLX      r0                    ;1006
 000094  b120              CBZ      r0,|L16.160|
-000096  7821              LDRB     r1,[r4,#0]            ;1024
-000098  2000              MOVS     r0,#0                 ;1024
+000096  7821              LDRB     r1,[r4,#0]            ;1009
+000098  2000              MOVS     r0,#0                 ;1009
 00009a  f7fffffe          BL       uds_send_response_pending
 00009e  e7be              B        |L16.30|
                   |L16.160|
-0000a0  2076              MOVS     r0,#0x76              ;1028
-0000a2  7030              STRB     r0,[r6,#0]            ;1028
-0000a4  7077              STRB     r7,[r6,#1]            ;1029
-0000a6  2002              MOVS     r0,#2                 ;1030
-0000a8  f88a0000          STRB     r0,[r10,#0]           ;1030
+0000a0  2076              MOVS     r0,#0x76              ;1013
+0000a2  7030              STRB     r0,[r6,#0]            ;1013
+0000a4  7077              STRB     r7,[r6,#1]            ;1014
+0000a6  2002              MOVS     r0,#2                 ;1015
+0000a8  f88a0000          STRB     r0,[r10,#0]           ;1015
 0000ac  bf00              NOP      
 0000ae  e7b6              B        |L16.30|
-;;;1033   
+;;;1018   
                           ENDP
 
                   |L16.176|
@@ -2384,279 +2336,279 @@
                           AREA ||i.uds_receive_handler||, CODE, READONLY, ALIGN=2
 
                   uds_receive_handler PROC
-;;;1092   /* UDS 接收处理入口 */
-;;;1093   int8_t uds_receive_handler(uint8_t channel, uint32_t can_id, uint8_t* data, uint16_t len)
+;;;1077   /* UDS 接收处理入口 */
+;;;1078   int8_t uds_receive_handler(uint8_t channel, uint32_t can_id, uint8_t* data, uint16_t len)
 000000  e92d41f0          PUSH     {r4-r8,lr}
-;;;1094   {
+;;;1079   {
 000004  b0a2              SUB      sp,sp,#0x88
 000006  4680              MOV      r8,r0
 000008  460e              MOV      r6,r1
 00000a  4615              MOV      r5,r2
 00000c  461c              MOV      r4,r3
-;;;1095       uint8_t response_buf[UDS_MAX_RESPONSE_LEN];
-;;;1096       uint8_t response_len = 0;
+;;;1080       uint8_t response_buf[UDS_MAX_RESPONSE_LEN];
+;;;1081       uint8_t response_len = 0;
 00000e  2000              MOVS     r0,#0
 000010  9001              STR      r0,[sp,#4]
-;;;1097       uint8_t sid;
-;;;1098       
-;;;1099       /* ==================== CAN ID 过滤（可选） ==================== */
-;;;1100   #if (UDS_ENABLE_CAN_ID_FILTER == 1)
-;;;1101       /* 只处理物理寻址请求和功能寻址请求 */
-;;;1102       if (can_id != UDS_PHYSICAL_REQUEST_ID && can_id != UDS_FUNCTIONAL_REQUEST_ID)
+;;;1082       uint8_t sid;
+;;;1083       
+;;;1084       /* ==================== CAN ID 过滤（可选） ==================== */
+;;;1085   #if (UDS_ENABLE_CAN_ID_FILTER == 1)
+;;;1086       /* 只处理物理寻址请求和功能寻址请求 */
+;;;1087       if (can_id != UDS_PHYSICAL_REQUEST_ID && can_id != UDS_FUNCTIONAL_REQUEST_ID)
 000012  484e              LDR      r0,|L23.332|
 000014  4286              CMP      r6,r0
 000016  d007              BEQ      |L23.40|
 000018  484d              LDR      r0,|L23.336|
 00001a  4286              CMP      r6,r0
 00001c  d004              BEQ      |L23.40|
-;;;1103       {
-;;;1104           UDS_D("CAN ID filtered: 0x%08X (expected 0x%08X or 0x%08X)", 
-;;;1105                 can_id, UDS_PHYSICAL_REQUEST_ID, UDS_FUNCTIONAL_REQUEST_ID);
-;;;1106           return -1;  /* 不是发给本 ECU 的报文，直接丢弃 */
+;;;1088       {
+;;;1089           UDS_D("CAN ID filtered: 0x%08X (expected 0x%08X or 0x%08X)", 
+;;;1090                 can_id, UDS_PHYSICAL_REQUEST_ID, UDS_FUNCTIONAL_REQUEST_ID);
+;;;1091           return -1;  /* 不是发给本 ECU 的报文，直接丢弃 */
 00001e  f04f30ff          MOV      r0,#0xffffffff
                   |L23.34|
-;;;1107       }
-;;;1108   #endif
-;;;1109       
-;;;1110       if (data == NULL || len < 1)
-;;;1111       {
-;;;1112           UDS_E("Invalid receive data");
-;;;1113           return -1;
-;;;1114       }
-;;;1115       
-;;;1116       sid = data[0];
-;;;1117   
-;;;1118       UDS_D("RX raw[0..7]: %02X %02X %02X %02X %02X %02X %02X %02X",
-;;;1119             data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-;;;1120   
-;;;1121       /* 刷新会话计时器 */
-;;;1122       uds_refresh_session_timer();
-;;;1123       
-;;;1124       UDS_I("=== UDS Receive: SID=0x%02X, len=%d ===", sid, len);
-;;;1125       
-;;;1126       /* 打印 CAN ID 信息（调试用） */
-;;;1127   #if (UDS_ENABLE_CAN_ID_FILTER == 1)
-;;;1128       UDS_D("CAN ID: 0x%08X (matched)", can_id);
-;;;1129   #else
-;;;1130       UDS_D("CAN ID: 0x%08X (filter disabled)", can_id);
-;;;1131   #endif
-;;;1132       
-;;;1133       /* 根据 SID 分发到对应的处理函数 */
-;;;1134       switch (sid)
-;;;1135       {
-;;;1136           case UDS_SID_DIAGNOSTIC_SESSION_CONTROL:
-;;;1137               uds_handle_diagnostic_session_control(data, len, response_buf, &response_len);
-;;;1138               break;
-;;;1139               
-;;;1140           case UDS_SID_ECU_RESET:
-;;;1141               uds_handle_ecu_reset(data, len, response_buf, &response_len);
-;;;1142               break;
-;;;1143               
-;;;1144           case UDS_SID_CLEAR_DIAGNOSTIC_INFORMATION:
-;;;1145               uds_handle_clear_dtc(data, len, response_buf, &response_len);
-;;;1146               break;
-;;;1147               
-;;;1148           case UDS_SID_READ_DTC_INFORMATION:
-;;;1149               uds_handle_read_dtc_info(data, len, response_buf, &response_len);
-;;;1150               break;
-;;;1151               
-;;;1152           case UDS_SID_READ_DATA_BY_IDENTIFIER:
-;;;1153               uds_handle_read_data_by_id(data, len, response_buf, &response_len);
-;;;1154               break;
-;;;1155               
-;;;1156           case UDS_SID_SECURITY_ACCESS:
-;;;1157               uds_handle_security_access(data, len, response_buf, &response_len);
-;;;1158               break;
-;;;1159               
-;;;1160           case UDS_SID_WRITE_DATA_BY_IDENTIFIER:
-;;;1161               uds_handle_write_data_by_id(data, len, response_buf, &response_len);
-;;;1162               break;
-;;;1163               
-;;;1164           case UDS_SID_ROUTINE_CONTROL:
-;;;1165               uds_handle_routine_control(data, len, response_buf, &response_len);
-;;;1166               break;
-;;;1167               
-;;;1168           case UDS_SID_REQUEST_DOWNLOAD:
-;;;1169               uds_handle_request_download(data, len, response_buf, &response_len);
-;;;1170               break;
-;;;1171               
-;;;1172           case UDS_SID_TRANSFER_DATA:
-;;;1173               uds_handle_transfer_data(data, len, response_buf, &response_len);
-;;;1174               break;
-;;;1175               
-;;;1176           case UDS_SID_REQUEST_TRANSFER_EXIT:
-;;;1177               uds_handle_request_transfer_exit(data, len, response_buf, &response_len);
-;;;1178               break;
-;;;1179               
-;;;1180           case UDS_SID_TESTER_PRESENT:
-;;;1181               uds_handle_tester_present(data, len, response_buf, &response_len);
-;;;1182               break;
-;;;1183               
-;;;1184           default:
-;;;1185               UDS_W("SID not supported: 0x%02X", sid);
-;;;1186               uds_send_negative_response(channel, sid, UDS_NRC_SERVICE_NOT_SUPPORTED);
-;;;1187               return 0;
-;;;1188       }
-;;;1189       
-;;;1190       /* 发送响应 */
-;;;1191       if (response_len > 0)
-;;;1192       {
-;;;1193           uds_send_response(channel, sid, response_buf, response_len);
-;;;1194       }
-;;;1195       
-;;;1196       return 0;
-;;;1197   }
+;;;1092       }
+;;;1093   #endif
+;;;1094       
+;;;1095       if (data == NULL || len < 1)
+;;;1096       {
+;;;1097           UDS_E("Invalid receive data");
+;;;1098           return -1;
+;;;1099       }
+;;;1100       
+;;;1101       sid = data[0];
+;;;1102   
+;;;1103       UDS_D("RX raw[0..7]: %02X %02X %02X %02X %02X %02X %02X %02X",
+;;;1104             data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+;;;1105   
+;;;1106       /* 刷新会话计时器 */
+;;;1107       uds_refresh_session_timer();
+;;;1108       
+;;;1109       UDS_I("=== UDS Receive: SID=0x%02X, len=%d ===", sid, len);
+;;;1110       
+;;;1111       /* 打印 CAN ID 信息（调试用） */
+;;;1112   #if (UDS_ENABLE_CAN_ID_FILTER == 1)
+;;;1113       UDS_D("CAN ID: 0x%08X (matched)", can_id);
+;;;1114   #else
+;;;1115       UDS_D("CAN ID: 0x%08X (filter disabled)", can_id);
+;;;1116   #endif
+;;;1117       
+;;;1118       /* 根据 SID 分发到对应的处理函数 */
+;;;1119       switch (sid)
+;;;1120       {
+;;;1121           case UDS_SID_DIAGNOSTIC_SESSION_CONTROL:
+;;;1122               uds_handle_diagnostic_session_control(data, len, response_buf, &response_len);
+;;;1123               break;
+;;;1124               
+;;;1125           case UDS_SID_ECU_RESET:
+;;;1126               uds_handle_ecu_reset(data, len, response_buf, &response_len);
+;;;1127               break;
+;;;1128               
+;;;1129           case UDS_SID_CLEAR_DIAGNOSTIC_INFORMATION:
+;;;1130               uds_handle_clear_dtc(data, len, response_buf, &response_len);
+;;;1131               break;
+;;;1132               
+;;;1133           case UDS_SID_READ_DTC_INFORMATION:
+;;;1134               uds_handle_read_dtc_info(data, len, response_buf, &response_len);
+;;;1135               break;
+;;;1136               
+;;;1137           case UDS_SID_READ_DATA_BY_IDENTIFIER:
+;;;1138               uds_handle_read_data_by_id(data, len, response_buf, &response_len);
+;;;1139               break;
+;;;1140               
+;;;1141           case UDS_SID_SECURITY_ACCESS:
+;;;1142               uds_handle_security_access(data, len, response_buf, &response_len);
+;;;1143               break;
+;;;1144               
+;;;1145           case UDS_SID_WRITE_DATA_BY_IDENTIFIER:
+;;;1146               uds_handle_write_data_by_id(data, len, response_buf, &response_len);
+;;;1147               break;
+;;;1148               
+;;;1149           case UDS_SID_ROUTINE_CONTROL:
+;;;1150               uds_handle_routine_control(data, len, response_buf, &response_len);
+;;;1151               break;
+;;;1152               
+;;;1153           case UDS_SID_REQUEST_DOWNLOAD:
+;;;1154               uds_handle_request_download(data, len, response_buf, &response_len);
+;;;1155               break;
+;;;1156               
+;;;1157           case UDS_SID_TRANSFER_DATA:
+;;;1158               uds_handle_transfer_data(data, len, response_buf, &response_len);
+;;;1159               break;
+;;;1160               
+;;;1161           case UDS_SID_REQUEST_TRANSFER_EXIT:
+;;;1162               uds_handle_request_transfer_exit(data, len, response_buf, &response_len);
+;;;1163               break;
+;;;1164               
+;;;1165           case UDS_SID_TESTER_PRESENT:
+;;;1166               uds_handle_tester_present(data, len, response_buf, &response_len);
+;;;1167               break;
+;;;1168               
+;;;1169           default:
+;;;1170               UDS_W("SID not supported: 0x%02X", sid);
+;;;1171               uds_send_negative_response(channel, sid, UDS_NRC_SERVICE_NOT_SUPPORTED);
+;;;1172               return 0;
+;;;1173       }
+;;;1174       
+;;;1175       /* 发送响应 */
+;;;1176       if (response_len > 0)
+;;;1177       {
+;;;1178           uds_send_response(channel, sid, response_buf, response_len);
+;;;1179       }
+;;;1180       
+;;;1181       return 0;
+;;;1182   }
 000022  b022              ADD      sp,sp,#0x88
 000024  e8bd81f0          POP      {r4-r8,pc}
                   |L23.40|
 000028  b10d              CBZ      r5,|L23.46|
-00002a  2c01              CMP      r4,#1                 ;1110
+00002a  2c01              CMP      r4,#1                 ;1095
 00002c  da02              BGE      |L23.52|
                   |L23.46|
-00002e  f04f30ff          MOV      r0,#0xffffffff        ;1113
+00002e  f04f30ff          MOV      r0,#0xffffffff        ;1098
 000032  e7f6              B        |L23.34|
                   |L23.52|
-000034  782f              LDRB     r7,[r5,#0]            ;1116
+000034  782f              LDRB     r7,[r5,#0]            ;1101
 000036  f7fffffe          BL       uds_refresh_session_timer
-00003a  2f2e              CMP      r7,#0x2e              ;1134
+00003a  2f2e              CMP      r7,#0x2e              ;1119
 00003c  d046              BEQ      |L23.204|
 00003e  dc0e              BGT      |L23.94|
-000040  2f19              CMP      r7,#0x19              ;1134
+000040  2f19              CMP      r7,#0x19              ;1119
 000042  d02e              BEQ      |L23.162|
 000044  dc06              BGT      |L23.84|
-000046  2f10              CMP      r7,#0x10              ;1134
+000046  2f10              CMP      r7,#0x10              ;1119
 000048  d016              BEQ      |L23.120|
-00004a  2f11              CMP      r7,#0x11              ;1134
+00004a  2f11              CMP      r7,#0x11              ;1119
 00004c  d01b              BEQ      |L23.134|
-00004e  2f14              CMP      r7,#0x14              ;1134
+00004e  2f14              CMP      r7,#0x14              ;1119
 000050  d166              BNE      |L23.288|
 000052  e01f              B        |L23.148|
                   |L23.84|
-000054  2f22              CMP      r7,#0x22              ;1134
+000054  2f22              CMP      r7,#0x22              ;1119
 000056  d02b              BEQ      |L23.176|
-000058  2f27              CMP      r7,#0x27              ;1134
+000058  2f27              CMP      r7,#0x27              ;1119
 00005a  d161              BNE      |L23.288|
 00005c  e02f              B        |L23.190|
                   |L23.94|
-00005e  2f36              CMP      r7,#0x36              ;1134
+00005e  2f36              CMP      r7,#0x36              ;1119
 000060  d049              BEQ      |L23.246|
 000062  dc04              BGT      |L23.110|
-000064  2f31              CMP      r7,#0x31              ;1134
+000064  2f31              CMP      r7,#0x31              ;1119
 000066  d038              BEQ      |L23.218|
-000068  2f34              CMP      r7,#0x34              ;1134
+000068  2f34              CMP      r7,#0x34              ;1119
 00006a  d159              BNE      |L23.288|
 00006c  e03c              B        |L23.232|
                   |L23.110|
-00006e  2f37              CMP      r7,#0x37              ;1134
+00006e  2f37              CMP      r7,#0x37              ;1119
 000070  d048              BEQ      |L23.260|
-000072  2f3e              CMP      r7,#0x3e              ;1134
+000072  2f3e              CMP      r7,#0x3e              ;1119
 000074  d154              BNE      |L23.288|
 000076  e04c              B        |L23.274|
                   |L23.120|
-000078  b2e1              UXTB     r1,r4                 ;1137
-00007a  ab01              ADD      r3,sp,#4              ;1137
-00007c  aa02              ADD      r2,sp,#8              ;1137
-00007e  4628              MOV      r0,r5                 ;1137
+000078  b2e1              UXTB     r1,r4                 ;1122
+00007a  ab01              ADD      r3,sp,#4              ;1122
+00007c  aa02              ADD      r2,sp,#8              ;1122
+00007e  4628              MOV      r0,r5                 ;1122
 000080  f7fffffe          BL       uds_handle_diagnostic_session_control
 000084  e053              B        |L23.302|
                   |L23.134|
-000086  b2e1              UXTB     r1,r4                 ;1141
-000088  ab01              ADD      r3,sp,#4              ;1141
-00008a  aa02              ADD      r2,sp,#8              ;1141
-00008c  4628              MOV      r0,r5                 ;1141
+000086  b2e1              UXTB     r1,r4                 ;1126
+000088  ab01              ADD      r3,sp,#4              ;1126
+00008a  aa02              ADD      r2,sp,#8              ;1126
+00008c  4628              MOV      r0,r5                 ;1126
 00008e  f7fffffe          BL       uds_handle_ecu_reset
 000092  e04c              B        |L23.302|
                   |L23.148|
-000094  b2e1              UXTB     r1,r4                 ;1145
-000096  ab01              ADD      r3,sp,#4              ;1145
-000098  aa02              ADD      r2,sp,#8              ;1145
-00009a  4628              MOV      r0,r5                 ;1145
+000094  b2e1              UXTB     r1,r4                 ;1130
+000096  ab01              ADD      r3,sp,#4              ;1130
+000098  aa02              ADD      r2,sp,#8              ;1130
+00009a  4628              MOV      r0,r5                 ;1130
 00009c  f7fffffe          BL       uds_handle_clear_dtc
 0000a0  e045              B        |L23.302|
                   |L23.162|
-0000a2  b2e1              UXTB     r1,r4                 ;1149
-0000a4  ab01              ADD      r3,sp,#4              ;1149
-0000a6  aa02              ADD      r2,sp,#8              ;1149
-0000a8  4628              MOV      r0,r5                 ;1149
+0000a2  b2e1              UXTB     r1,r4                 ;1134
+0000a4  ab01              ADD      r3,sp,#4              ;1134
+0000a6  aa02              ADD      r2,sp,#8              ;1134
+0000a8  4628              MOV      r0,r5                 ;1134
 0000aa  f7fffffe          BL       uds_handle_read_dtc_info
 0000ae  e03e              B        |L23.302|
                   |L23.176|
-0000b0  b2e1              UXTB     r1,r4                 ;1153
-0000b2  ab01              ADD      r3,sp,#4              ;1153
-0000b4  aa02              ADD      r2,sp,#8              ;1153
-0000b6  4628              MOV      r0,r5                 ;1153
+0000b0  b2e1              UXTB     r1,r4                 ;1138
+0000b2  ab01              ADD      r3,sp,#4              ;1138
+0000b4  aa02              ADD      r2,sp,#8              ;1138
+0000b6  4628              MOV      r0,r5                 ;1138
 0000b8  f7fffffe          BL       uds_handle_read_data_by_id
 0000bc  e037              B        |L23.302|
                   |L23.190|
-0000be  b2e1              UXTB     r1,r4                 ;1157
-0000c0  ab01              ADD      r3,sp,#4              ;1157
-0000c2  aa02              ADD      r2,sp,#8              ;1157
-0000c4  4628              MOV      r0,r5                 ;1157
+0000be  b2e1              UXTB     r1,r4                 ;1142
+0000c0  ab01              ADD      r3,sp,#4              ;1142
+0000c2  aa02              ADD      r2,sp,#8              ;1142
+0000c4  4628              MOV      r0,r5                 ;1142
 0000c6  f7fffffe          BL       uds_handle_security_access
 0000ca  e030              B        |L23.302|
                   |L23.204|
-0000cc  b2e1              UXTB     r1,r4                 ;1161
-0000ce  ab01              ADD      r3,sp,#4              ;1161
-0000d0  aa02              ADD      r2,sp,#8              ;1161
-0000d2  4628              MOV      r0,r5                 ;1161
+0000cc  b2e1              UXTB     r1,r4                 ;1146
+0000ce  ab01              ADD      r3,sp,#4              ;1146
+0000d0  aa02              ADD      r2,sp,#8              ;1146
+0000d2  4628              MOV      r0,r5                 ;1146
 0000d4  f7fffffe          BL       uds_handle_write_data_by_id
 0000d8  e029              B        |L23.302|
                   |L23.218|
-0000da  b2e1              UXTB     r1,r4                 ;1165
-0000dc  ab01              ADD      r3,sp,#4              ;1165
-0000de  aa02              ADD      r2,sp,#8              ;1165
-0000e0  4628              MOV      r0,r5                 ;1165
+0000da  b2e1              UXTB     r1,r4                 ;1150
+0000dc  ab01              ADD      r3,sp,#4              ;1150
+0000de  aa02              ADD      r2,sp,#8              ;1150
+0000e0  4628              MOV      r0,r5                 ;1150
 0000e2  f7fffffe          BL       uds_handle_routine_control
 0000e6  e022              B        |L23.302|
                   |L23.232|
-0000e8  b2e1              UXTB     r1,r4                 ;1169
-0000ea  ab01              ADD      r3,sp,#4              ;1169
-0000ec  aa02              ADD      r2,sp,#8              ;1169
-0000ee  4628              MOV      r0,r5                 ;1169
+0000e8  b2e1              UXTB     r1,r4                 ;1154
+0000ea  ab01              ADD      r3,sp,#4              ;1154
+0000ec  aa02              ADD      r2,sp,#8              ;1154
+0000ee  4628              MOV      r0,r5                 ;1154
 0000f0  f7fffffe          BL       uds_handle_request_download
 0000f4  e01b              B        |L23.302|
                   |L23.246|
-0000f6  ab01              ADD      r3,sp,#4              ;1173
-0000f8  aa02              ADD      r2,sp,#8              ;1173
-0000fa  4621              MOV      r1,r4                 ;1173
-0000fc  4628              MOV      r0,r5                 ;1173
+0000f6  ab01              ADD      r3,sp,#4              ;1158
+0000f8  aa02              ADD      r2,sp,#8              ;1158
+0000fa  4621              MOV      r1,r4                 ;1158
+0000fc  4628              MOV      r0,r5                 ;1158
 0000fe  f7fffffe          BL       uds_handle_transfer_data
 000102  e014              B        |L23.302|
                   |L23.260|
-000104  b2e1              UXTB     r1,r4                 ;1177
-000106  ab01              ADD      r3,sp,#4              ;1177
-000108  aa02              ADD      r2,sp,#8              ;1177
-00010a  4628              MOV      r0,r5                 ;1177
+000104  b2e1              UXTB     r1,r4                 ;1162
+000106  ab01              ADD      r3,sp,#4              ;1162
+000108  aa02              ADD      r2,sp,#8              ;1162
+00010a  4628              MOV      r0,r5                 ;1162
 00010c  f7fffffe          BL       uds_handle_request_transfer_exit
 000110  e00d              B        |L23.302|
                   |L23.274|
-000112  b2e1              UXTB     r1,r4                 ;1181
-000114  ab01              ADD      r3,sp,#4              ;1181
-000116  aa02              ADD      r2,sp,#8              ;1181
-000118  4628              MOV      r0,r5                 ;1181
+000112  b2e1              UXTB     r1,r4                 ;1166
+000114  ab01              ADD      r3,sp,#4              ;1166
+000116  aa02              ADD      r2,sp,#8              ;1166
+000118  4628              MOV      r0,r5                 ;1166
 00011a  f7fffffe          BL       uds_handle_tester_present
 00011e  e006              B        |L23.302|
                   |L23.288|
-000120  2211              MOVS     r2,#0x11              ;1186
-000122  4639              MOV      r1,r7                 ;1186
-000124  4640              MOV      r0,r8                 ;1186
+000120  2211              MOVS     r2,#0x11              ;1171
+000122  4639              MOV      r1,r7                 ;1171
+000124  4640              MOV      r0,r8                 ;1171
 000126  f7fffffe          BL       uds_send_negative_response
-00012a  2000              MOVS     r0,#0                 ;1187
+00012a  2000              MOVS     r0,#0                 ;1172
 00012c  e779              B        |L23.34|
                   |L23.302|
-00012e  bf00              NOP                            ;1138
-000130  f89d0004          LDRB     r0,[sp,#4]            ;1191
-000134  2800              CMP      r0,#0                 ;1191
+00012e  bf00              NOP                            ;1123
+000130  f89d0004          LDRB     r0,[sp,#4]            ;1176
+000134  2800              CMP      r0,#0                 ;1176
 000136  dd06              BLE      |L23.326|
-000138  f89d3004          LDRB     r3,[sp,#4]            ;1193
-00013c  aa02              ADD      r2,sp,#8              ;1193
-00013e  4639              MOV      r1,r7                 ;1193
-000140  4640              MOV      r0,r8                 ;1193
+000138  f89d3004          LDRB     r3,[sp,#4]            ;1178
+00013c  aa02              ADD      r2,sp,#8              ;1178
+00013e  4639              MOV      r1,r7                 ;1178
+000140  4640              MOV      r0,r8                 ;1178
 000142  f7fffffe          BL       uds_send_response
                   |L23.326|
-000146  2000              MOVS     r0,#0                 ;1196
+000146  2000              MOVS     r0,#0                 ;1181
 000148  e76b              B        |L23.34|
-;;;1198   
+;;;1183   
                           ENDP
 
 00014a  0000              DCW      0x0000
@@ -2690,11 +2642,11 @@
                           AREA ||i.uds_security_to_string||, CODE, READONLY, ALIGN=2
 
                   uds_security_to_string PROC
-;;;1282   /* 安全状态转字符串 */
-;;;1283   const char* uds_security_to_string(uds_security_state_t state)
+;;;1267   /* 安全状态转字符串 */
+;;;1268   const char* uds_security_to_string(uds_security_state_t state)
 000000  4601              MOV      r1,r0
-;;;1284   {
-;;;1285       switch (state)
+;;;1269   {
+;;;1270       switch (state)
 000002  b121              CBZ      r1,|L25.14|
 000004  2901              CMP      r1,#1
 000006  d004              BEQ      |L25.18|
@@ -2702,15 +2654,15 @@
 00000a  d106              BNE      |L25.26|
 00000c  e003              B        |L25.22|
                   |L25.14|
-;;;1286       {
-;;;1287           case UDS_SECURITY_LOCKED:       return "LOCKED";
+;;;1271       {
+;;;1272           case UDS_SECURITY_LOCKED:       return "LOCKED";
 00000e  a004              ADR      r0,|L25.32|
                   |L25.16|
-;;;1288           case UDS_SECURITY_SEED_SENT:    return "SEED_SENT";
-;;;1289           case UDS_SECURITY_UNLOCKED:     return "UNLOCKED";
-;;;1290           default:                        return "UNKNOWN";
-;;;1291       }
-;;;1292   }
+;;;1273           case UDS_SECURITY_SEED_SENT:    return "SEED_SENT";
+;;;1274           case UDS_SECURITY_UNLOCKED:     return "UNLOCKED";
+;;;1275           default:                        return "UNKNOWN";
+;;;1276       }
+;;;1277   }
 000010  4770              BX       lr
                   |L25.18|
 000012  a005              ADR      r0,|L25.40|
@@ -2748,37 +2700,37 @@
                           AREA ||i.uds_send_negative_response||, CODE, READONLY, ALIGN=2
 
                   uds_send_negative_response PROC
-;;;1226   /* 发送否定响应 */
-;;;1227   int8_t uds_send_negative_response(uint8_t channel, uint8_t sid, uint8_t nrc)
+;;;1211   /* 发送否定响应 */
+;;;1212   int8_t uds_send_negative_response(uint8_t channel, uint8_t sid, uint8_t nrc)
 000000  b5f8              PUSH     {r3-r7,lr}
-;;;1228   {
+;;;1213   {
 000002  4606              MOV      r6,r0
 000004  460c              MOV      r4,r1
 000006  4615              MOV      r5,r2
-;;;1229       uint8_t response[3];
-;;;1230       
-;;;1231       response[0] = 0x7F;  /* 否定响应标识 */
+;;;1214       uint8_t response[3];
+;;;1215       
+;;;1216       response[0] = 0x7F;  /* 否定响应标识 */
 000008  207f              MOVS     r0,#0x7f
 00000a  f88d0000          STRB     r0,[sp,#0]
-;;;1232       response[1] = sid;    /* 请求的 SID */
+;;;1217       response[1] = sid;    /* 请求的 SID */
 00000e  f88d4001          STRB     r4,[sp,#1]
-;;;1233       response[2] = nrc;    /* 否定响应码 */
+;;;1218       response[2] = nrc;    /* 否定响应码 */
 000012  f88d5002          STRB     r5,[sp,#2]
-;;;1234       
-;;;1235       UDS_W("Send NRC: SID=0x%02X, NRC=0x%02X", sid, nrc);
-;;;1236       
-;;;1237       isotp_send_message(channel, UDS_PHYSICAL_RESPONSE_ID, response, 3);
+;;;1219       
+;;;1220       UDS_W("Send NRC: SID=0x%02X, NRC=0x%02X", sid, nrc);
+;;;1221       
+;;;1222       isotp_send_message(channel, UDS_PHYSICAL_RESPONSE_ID, response, 3);
 000016  2303              MOVS     r3,#3
 000018  466a              MOV      r2,sp
 00001a  4903              LDR      r1,|L26.40|
 00001c  4630              MOV      r0,r6
 00001e  f7fffffe          BL       isotp_send_message
-;;;1238       
-;;;1239       return 0;
+;;;1223       
+;;;1224       return 0;
 000022  2000              MOVS     r0,#0
-;;;1240   }
+;;;1225   }
 000024  bdf8              POP      {r3-r7,pc}
-;;;1241   
+;;;1226   
                           ENDP
 
 000026  0000              DCW      0x0000
@@ -2788,65 +2740,65 @@
                           AREA ||i.uds_send_response||, CODE, READONLY, ALIGN=2
 
                   uds_send_response PROC
-;;;1199   /* 发送肯定响应 */
-;;;1200   int8_t uds_send_response(uint8_t channel, uint8_t sid, uint8_t* data, uint8_t len)
+;;;1184   /* 发送肯定响应 */
+;;;1185   int8_t uds_send_response(uint8_t channel, uint8_t sid, uint8_t* data, uint8_t len)
 000000  e92d41f0          PUSH     {r4-r8,lr}
-;;;1201   {
+;;;1186   {
 000004  b0a0              SUB      sp,sp,#0x80
 000006  4680              MOV      r8,r0
 000008  460d              MOV      r5,r1
 00000a  4616              MOV      r6,r2
 00000c  461c              MOV      r4,r3
-;;;1202       uint8_t response[UDS_MAX_RESPONSE_LEN];
-;;;1203       uint8_t response_len;
-;;;1204       
-;;;1205       if (len > UDS_MAX_RESPONSE_LEN - 1)
+;;;1187       uint8_t response[UDS_MAX_RESPONSE_LEN];
+;;;1188       uint8_t response_len;
+;;;1189       
+;;;1190       if (len > UDS_MAX_RESPONSE_LEN - 1)
 00000e  2c7f              CMP      r4,#0x7f
 000010  dd04              BLE      |L27.28|
-;;;1206       {
-;;;1207           UDS_E("Response too long: %d", len);
-;;;1208           return -1;
+;;;1191       {
+;;;1192           UDS_E("Response too long: %d", len);
+;;;1193           return -1;
 000012  f04f30ff          MOV      r0,#0xffffffff
                   |L27.22|
-;;;1209       }
-;;;1210       
-;;;1211       response[0] = sid + 0x40;  /* 肯定响应 = SID + 0x40 */
-;;;1212       if (len > 0)
-;;;1213       {
-;;;1214           memcpy(&response[1], data, len);
-;;;1215       }
-;;;1216       response_len = len + 1;
-;;;1217       
-;;;1218       UDS_D("Send response: SID=0x%02X, len=%d", sid + 0x40, response_len);
-;;;1219       
-;;;1220       /* 通过 ISO-TP 发送 */
-;;;1221       isotp_send_message(channel, UDS_PHYSICAL_RESPONSE_ID, response, response_len);
-;;;1222       
-;;;1223       return 0;
-;;;1224   }
+;;;1194       }
+;;;1195       
+;;;1196       response[0] = sid + 0x40;  /* 肯定响应 = SID + 0x40 */
+;;;1197       if (len > 0)
+;;;1198       {
+;;;1199           memcpy(&response[1], data, len);
+;;;1200       }
+;;;1201       response_len = len + 1;
+;;;1202       
+;;;1203       UDS_D("Send response: SID=0x%02X, len=%d", sid + 0x40, response_len);
+;;;1204       
+;;;1205       /* 通过 ISO-TP 发送 */
+;;;1206       isotp_send_message(channel, UDS_PHYSICAL_RESPONSE_ID, response, response_len);
+;;;1207       
+;;;1208       return 0;
+;;;1209   }
 000016  b020              ADD      sp,sp,#0x80
 000018  e8bd81f0          POP      {r4-r8,pc}
                   |L27.28|
-00001c  f1050040          ADD      r0,r5,#0x40           ;1211
-000020  b2c0              UXTB     r0,r0                 ;1211
-000022  f88d0000          STRB     r0,[sp,#0]            ;1211
-000026  2c00              CMP      r4,#0                 ;1212
+00001c  f1050040          ADD      r0,r5,#0x40           ;1196
+000020  b2c0              UXTB     r0,r0                 ;1196
+000022  f88d0000          STRB     r0,[sp,#0]            ;1196
+000026  2c00              CMP      r4,#0                 ;1197
 000028  dd05              BLE      |L27.54|
-00002a  4622              MOV      r2,r4                 ;1214
-00002c  4631              MOV      r1,r6                 ;1214
-00002e  f10d0001          ADD      r0,sp,#1              ;1214
+00002a  4622              MOV      r2,r4                 ;1199
+00002c  4631              MOV      r1,r6                 ;1199
+00002e  f10d0001          ADD      r0,sp,#1              ;1199
 000032  f7fffffe          BL       __aeabi_memcpy
                   |L27.54|
-000036  1c60              ADDS     r0,r4,#1              ;1216
-000038  b2c7              UXTB     r7,r0                 ;1216
-00003a  463b              MOV      r3,r7                 ;1221
-00003c  466a              MOV      r2,sp                 ;1221
+000036  1c60              ADDS     r0,r4,#1              ;1201
+000038  b2c7              UXTB     r7,r0                 ;1201
+00003a  463b              MOV      r3,r7                 ;1206
+00003c  466a              MOV      r2,sp                 ;1206
 00003e  4903              LDR      r1,|L27.76|
-000040  4640              MOV      r0,r8                 ;1221
+000040  4640              MOV      r0,r8                 ;1206
 000042  f7fffffe          BL       isotp_send_message
-000046  2000              MOVS     r0,#0                 ;1223
+000046  2000              MOVS     r0,#0                 ;1208
 000048  e7e5              B        |L27.22|
-;;;1225   
+;;;1210   
                           ENDP
 
 00004a  0000              DCW      0x0000
@@ -2856,37 +2808,37 @@
                           AREA ||i.uds_send_response_pending||, CODE, READONLY, ALIGN=2
 
                   uds_send_response_pending PROC
-;;;1242   /* 发送响应等待 (NRC 0x78) */
-;;;1243   int8_t uds_send_response_pending(uint8_t channel, uint8_t sid)
+;;;1227   /* 发送响应等待 (NRC 0x78) */
+;;;1228   int8_t uds_send_response_pending(uint8_t channel, uint8_t sid)
 000000  b538              PUSH     {r3-r5,lr}
-;;;1244   {
+;;;1229   {
 000002  4605              MOV      r5,r0
 000004  460c              MOV      r4,r1
-;;;1245       uint8_t response[3];
-;;;1246       
-;;;1247       response[0] = 0x7F;
+;;;1230       uint8_t response[3];
+;;;1231       
+;;;1232       response[0] = 0x7F;
 000006  207f              MOVS     r0,#0x7f
 000008  f88d0000          STRB     r0,[sp,#0]
-;;;1248       response[1] = sid;
+;;;1233       response[1] = sid;
 00000c  f88d4001          STRB     r4,[sp,#1]
-;;;1249       response[2] = UDS_NRC_RESPONSE_PENDING;
+;;;1234       response[2] = UDS_NRC_RESPONSE_PENDING;
 000010  2078              MOVS     r0,#0x78
 000012  f88d0002          STRB     r0,[sp,#2]
-;;;1250       
-;;;1251       UDS_I("Send response pending: SID=0x%02X", sid);
-;;;1252       
-;;;1253       isotp_send_message(channel, UDS_PHYSICAL_RESPONSE_ID, response, 3);
+;;;1235       
+;;;1236       UDS_I("Send response pending: SID=0x%02X", sid);
+;;;1237       
+;;;1238       isotp_send_message(channel, UDS_PHYSICAL_RESPONSE_ID, response, 3);
 000016  2303              MOVS     r3,#3
 000018  466a              MOV      r2,sp
 00001a  4903              LDR      r1,|L28.40|
 00001c  4628              MOV      r0,r5
 00001e  f7fffffe          BL       isotp_send_message
-;;;1254       
-;;;1255       return 0;
+;;;1239       
+;;;1240       return 0;
 000022  2000              MOVS     r0,#0
-;;;1256   }
+;;;1241   }
 000024  bd38              POP      {r3-r5,pc}
-;;;1257   
+;;;1242   
                           ENDP
 
 000026  0000              DCW      0x0000
@@ -2896,11 +2848,11 @@
                           AREA ||i.uds_session_to_string||, CODE, READONLY, ALIGN=2
 
                   uds_session_to_string PROC
-;;;1270   /* 会话模式转字符串 */
-;;;1271   const char* uds_session_to_string(uds_session_mode_t session)
+;;;1255   /* 会话模式转字符串 */
+;;;1256   const char* uds_session_to_string(uds_session_mode_t session)
 000000  4601              MOV      r1,r0
-;;;1272   {
-;;;1273       switch (session)
+;;;1257   {
+;;;1258       switch (session)
 000002  2901              CMP      r1,#1
 000004  d004              BEQ      |L29.16|
 000006  2902              CMP      r1,#2
@@ -2909,15 +2861,15 @@
 00000c  d106              BNE      |L29.28|
 00000e  e001              B        |L29.20|
                   |L29.16|
-;;;1274       {
-;;;1275           case UDS_SESSION_DEFAULT_MODE:      return "DEFAULT";
+;;;1259       {
+;;;1260           case UDS_SESSION_DEFAULT_MODE:      return "DEFAULT";
 000010  a003              ADR      r0,|L29.32|
                   |L29.18|
-;;;1276           case UDS_SESSION_EXTENDED_MODE:     return "EXTENDED";
-;;;1277           case UDS_SESSION_PROGRAMMING_MODE:  return "PROGRAMMING";
-;;;1278           default:                            return "UNKNOWN";
-;;;1279       }
-;;;1280   }
+;;;1261           case UDS_SESSION_EXTENDED_MODE:     return "EXTENDED";
+;;;1262           case UDS_SESSION_PROGRAMMING_MODE:  return "PROGRAMMING";
+;;;1263           default:                            return "UNKNOWN";
+;;;1264       }
+;;;1265   }
 000012  4770              BX       lr
                   |L29.20|
 000014  a004              ADR      r0,|L29.40|
@@ -2928,7 +2880,7 @@
                   |L29.28|
 00001c  a008              ADR      r0,|L29.64|
 00001e  e7f8              B        |L29.18|
-;;;1281   
+;;;1266   
                           ENDP
 
                   |L29.32|
@@ -2952,228 +2904,228 @@
                           AREA ||i.uds_start_routine||, CODE, READONLY, ALIGN=1
 
                   uds_start_routine PROC
-;;;783    /* 例程执行函数实现（通过抽象接口调用） */
-;;;784    static void uds_start_routine(uint16_t rid, uint8_t* data, uint8_t len, uint32_t* result)
+;;;768    /* 例程执行函数实现（通过抽象接口调用） */
+;;;769    static void uds_start_routine(uint16_t rid, uint8_t* data, uint8_t len, uint32_t* result)
 000000  e92d4ff8          PUSH     {r3-r11,lr}
-;;;785    {
+;;;770    {
 000004  4681              MOV      r9,r0
 000006  460c              MOV      r4,r1
 000008  4617              MOV      r7,r2
 00000a  461d              MOV      r5,r3
-;;;786        UDS_I("Start routine: RID=0x%04X", rid);
-;;;787        
-;;;788        if (!uds_dl_is_registered())
+;;;771        UDS_I("Start routine: RID=0x%04X", rid);
+;;;772        
+;;;773        if (!uds_dl_is_registered())
 00000c  f7fffffe          BL       uds_dl_is_registered
 000010  b918              CBNZ     r0,|L30.26|
-;;;789        {
-;;;790            UDS_W("Download interface not registered");
-;;;791            *result = 0;
+;;;774        {
+;;;775            UDS_W("Download interface not registered");
+;;;776            *result = 0;
 000012  2000              MOVS     r0,#0
 000014  6028              STR      r0,[r5,#0]
                   |L30.22|
-;;;792            return;
-;;;793        }
-;;;794        
-;;;795        const uds_dl_if_t* dl = uds_dl_get_if();
-;;;796        
-;;;797        switch (rid)
-;;;798        {
-;;;799            case RID_ERASE_FIRMWARE:
-;;;800            {
-;;;801                if (len < 8)
-;;;802                {
-;;;803                    UDS_E("Erase routine: insufficient data, len=%d", len);
-;;;804                    *result = 0;
-;;;805                    return;
-;;;806                }
-;;;807                
-;;;808                uint32_t address = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
-;;;809                uint32_t size = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7];
-;;;810                
-;;;811                UDS_I("Erase firmware: addr=0x%08X, size=%d", address, size);
-;;;812                
-;;;813                uds_dl_result_t dl_result = dl->erase(address, size);
-;;;814                if (dl_result != UDS_DL_OK)
-;;;815                {
-;;;816                    UDS_E("Erase failed: %d", dl_result);
-;;;817                    *result = 0;
+;;;777            return;
+;;;778        }
+;;;779        
+;;;780        const uds_dl_if_t* dl = uds_dl_get_if();
+;;;781        
+;;;782        switch (rid)
+;;;783        {
+;;;784            case RID_ERASE_FIRMWARE:
+;;;785            {
+;;;786                if (len < 8)
+;;;787                {
+;;;788                    UDS_E("Erase routine: insufficient data, len=%d", len);
+;;;789                    *result = 0;
+;;;790                    return;
+;;;791                }
+;;;792                
+;;;793                uint32_t address = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+;;;794                uint32_t size = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7];
+;;;795                
+;;;796                UDS_I("Erase firmware: addr=0x%08X, size=%d", address, size);
+;;;797                
+;;;798                uds_dl_result_t dl_result = dl->erase(address, size);
+;;;799                if (dl_result != UDS_DL_OK)
+;;;800                {
+;;;801                    UDS_E("Erase failed: %d", dl_result);
+;;;802                    *result = 0;
+;;;803                }
+;;;804                else
+;;;805                {
+;;;806                    *result = 1;
+;;;807                }
+;;;808                break;
+;;;809            }
+;;;810            
+;;;811            case RID_CALCULATE_CRC:
+;;;812            {
+;;;813                if (len < 8)
+;;;814                {
+;;;815                    UDS_E("CRC routine: insufficient data, len=%d", len);
+;;;816                    *result = 0;
+;;;817                    return;
 ;;;818                }
-;;;819                else
-;;;820                {
-;;;821                    *result = 1;
-;;;822                }
-;;;823                break;
-;;;824            }
-;;;825            
-;;;826            case RID_CALCULATE_CRC:
-;;;827            {
-;;;828                if (len < 8)
-;;;829                {
-;;;830                    UDS_E("CRC routine: insufficient data, len=%d", len);
-;;;831                    *result = 0;
-;;;832                    return;
-;;;833                }
-;;;834                
-;;;835                uint32_t address = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
-;;;836                uint32_t size = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7];
-;;;837                
-;;;838                UDS_I("Calculate CRC: addr=0x%08X, size=%d", address, size);
-;;;839                
-;;;840                uint32_t crc_value = 0;
-;;;841                uds_dl_result_t dl_result = dl->calculate_crc(address, size, &crc_value);
-;;;842                if (dl_result != UDS_DL_OK)
-;;;843                {
-;;;844                    UDS_E("CRC calculation failed: %d", dl_result);
-;;;845                    *result = 0;
-;;;846                }
-;;;847                else
-;;;848                {
-;;;849                    *result = crc_value;
-;;;850                }
-;;;851                break;
-;;;852            }
-;;;853            
-;;;854            case RID_JUMP_TO_BOOTLOADER:
-;;;855                UDS_I("Jump to bootloader requested");
-;;;856                *result = 1;
-;;;857                break;
-;;;858                
-;;;859            case RID_JUMP_TO_APPLICATION:
-;;;860                UDS_I("Jump to application requested");
-;;;861                *result = 1;
-;;;862                break;
-;;;863                
-;;;864            default:
-;;;865                UDS_W("Unknown RID: 0x%04X", rid);
-;;;866                *result = 0;
-;;;867                break;
-;;;868        }
-;;;869    }
+;;;819                
+;;;820                uint32_t address = (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3];
+;;;821                uint32_t size = (data[4] << 24) | (data[5] << 16) | (data[6] << 8) | data[7];
+;;;822                
+;;;823                UDS_I("Calculate CRC: addr=0x%08X, size=%d", address, size);
+;;;824                
+;;;825                uint32_t crc_value = 0;
+;;;826                uds_dl_result_t dl_result = dl->calculate_crc(address, size, &crc_value);
+;;;827                if (dl_result != UDS_DL_OK)
+;;;828                {
+;;;829                    UDS_E("CRC calculation failed: %d", dl_result);
+;;;830                    *result = 0;
+;;;831                }
+;;;832                else
+;;;833                {
+;;;834                    *result = crc_value;
+;;;835                }
+;;;836                break;
+;;;837            }
+;;;838            
+;;;839            case RID_JUMP_TO_BOOTLOADER:
+;;;840                UDS_I("Jump to bootloader requested");
+;;;841                *result = 1;
+;;;842                break;
+;;;843                
+;;;844            case RID_JUMP_TO_APPLICATION:
+;;;845                UDS_I("Jump to application requested");
+;;;846                *result = 1;
+;;;847                break;
+;;;848                
+;;;849            default:
+;;;850                UDS_W("Unknown RID: 0x%04X", rid);
+;;;851                *result = 0;
+;;;852                break;
+;;;853        }
+;;;854    }
 000016  e8bd8ff8          POP      {r3-r11,pc}
                   |L30.26|
 00001a  f7fffffe          BL       uds_dl_get_if
-00001e  4606              MOV      r6,r0                 ;795
-000020  f5b94f7e          CMP      r9,#0xfe00            ;797
+00001e  4606              MOV      r6,r0                 ;780
+000020  f5b94f7e          CMP      r9,#0xfe00            ;782
 000024  d033              BEQ      |L30.142|
-000026  f5b94f7f          CMP      r9,#0xff00            ;797
+000026  f5b94f7f          CMP      r9,#0xff00            ;782
 00002a  d007              BEQ      |L30.60|
-00002c  f5a9407f          SUB      r0,r9,#0xff00         ;797
-000030  3802              SUBS     r0,#2                 ;797
-000032  2800              CMP      r0,#0                 ;797
+00002c  f5a9407f          SUB      r0,r9,#0xff00         ;782
+000030  3802              SUBS     r0,#2                 ;782
+000032  2800              CMP      r0,#0                 ;782
 000034  d057              BEQ      |L30.230|
-000036  2801              CMP      r0,#1                 ;797
+000036  2801              CMP      r0,#1                 ;782
 000038  d15b              BNE      |L30.242|
 00003a  e057              B        |L30.236|
                   |L30.60|
-00003c  2f08              CMP      r7,#8                 ;801
+00003c  2f08              CMP      r7,#8                 ;786
 00003e  da02              BGE      |L30.70|
-000040  2000              MOVS     r0,#0                 ;804
-000042  6028              STR      r0,[r5,#0]            ;804
+000040  2000              MOVS     r0,#0                 ;789
+000042  6028              STR      r0,[r5,#0]            ;789
 000044  e7e7              B        |L30.22|
                   |L30.70|
-000046  7820              LDRB     r0,[r4,#0]            ;808
-000048  0600              LSLS     r0,r0,#24             ;808
-00004a  7861              LDRB     r1,[r4,#1]            ;808
-00004c  ea404001          ORR      r0,r0,r1,LSL #16      ;808
-000050  78a1              LDRB     r1,[r4,#2]            ;808
-000052  ea402001          ORR      r0,r0,r1,LSL #8       ;808
-000056  78e1              LDRB     r1,[r4,#3]            ;808
-000058  ea400a01          ORR      r10,r0,r1             ;808
-00005c  7920              LDRB     r0,[r4,#4]            ;809
-00005e  0600              LSLS     r0,r0,#24             ;809
-000060  7961              LDRB     r1,[r4,#5]            ;809
-000062  ea404001          ORR      r0,r0,r1,LSL #16      ;809
-000066  79a1              LDRB     r1,[r4,#6]            ;809
-000068  ea402001          ORR      r0,r0,r1,LSL #8       ;809
-00006c  79e1              LDRB     r1,[r4,#7]            ;809
-00006e  ea400b01          ORR      r11,r0,r1             ;809
-000072  4659              MOV      r1,r11                ;813
-000074  4650              MOV      r0,r10                ;813
-000076  6932              LDR      r2,[r6,#0x10]         ;813
-000078  4790              BLX      r2                    ;813
-00007a  4680              MOV      r8,r0                 ;813
-00007c  f1b80f00          CMP      r8,#0                 ;814
+000046  7820              LDRB     r0,[r4,#0]            ;793
+000048  0600              LSLS     r0,r0,#24             ;793
+00004a  7861              LDRB     r1,[r4,#1]            ;793
+00004c  ea404001          ORR      r0,r0,r1,LSL #16      ;793
+000050  78a1              LDRB     r1,[r4,#2]            ;793
+000052  ea402001          ORR      r0,r0,r1,LSL #8       ;793
+000056  78e1              LDRB     r1,[r4,#3]            ;793
+000058  ea400a01          ORR      r10,r0,r1             ;793
+00005c  7920              LDRB     r0,[r4,#4]            ;794
+00005e  0600              LSLS     r0,r0,#24             ;794
+000060  7961              LDRB     r1,[r4,#5]            ;794
+000062  ea404001          ORR      r0,r0,r1,LSL #16      ;794
+000066  79a1              LDRB     r1,[r4,#6]            ;794
+000068  ea402001          ORR      r0,r0,r1,LSL #8       ;794
+00006c  79e1              LDRB     r1,[r4,#7]            ;794
+00006e  ea400b01          ORR      r11,r0,r1             ;794
+000072  4659              MOV      r1,r11                ;798
+000074  4650              MOV      r0,r10                ;798
+000076  6932              LDR      r2,[r6,#0x10]         ;798
+000078  4790              BLX      r2                    ;798
+00007a  4680              MOV      r8,r0                 ;798
+00007c  f1b80f00          CMP      r8,#0                 ;799
 000080  d002              BEQ      |L30.136|
-000082  2000              MOVS     r0,#0                 ;817
-000084  6028              STR      r0,[r5,#0]            ;817
+000082  2000              MOVS     r0,#0                 ;802
+000084  6028              STR      r0,[r5,#0]            ;802
 000086  e001              B        |L30.140|
                   |L30.136|
-000088  2001              MOVS     r0,#1                 ;821
-00008a  6028              STR      r0,[r5,#0]            ;821
+000088  2001              MOVS     r0,#1                 ;806
+00008a  6028              STR      r0,[r5,#0]            ;806
                   |L30.140|
 00008c  e034              B        |L30.248|
                   |L30.142|
-00008e  2f08              CMP      r7,#8                 ;828
+00008e  2f08              CMP      r7,#8                 ;813
 000090  da02              BGE      |L30.152|
-000092  2000              MOVS     r0,#0                 ;831
-000094  6028              STR      r0,[r5,#0]            ;831
+000092  2000              MOVS     r0,#0                 ;816
+000094  6028              STR      r0,[r5,#0]            ;816
 000096  e7be              B        |L30.22|
                   |L30.152|
-000098  7820              LDRB     r0,[r4,#0]            ;835
-00009a  0600              LSLS     r0,r0,#24             ;835
-00009c  7861              LDRB     r1,[r4,#1]            ;835
-00009e  ea404001          ORR      r0,r0,r1,LSL #16      ;835
-0000a2  78a1              LDRB     r1,[r4,#2]            ;835
-0000a4  ea402001          ORR      r0,r0,r1,LSL #8       ;835
-0000a8  78e1              LDRB     r1,[r4,#3]            ;835
-0000aa  ea400a01          ORR      r10,r0,r1             ;835
-0000ae  7920              LDRB     r0,[r4,#4]            ;836
-0000b0  0600              LSLS     r0,r0,#24             ;836
-0000b2  7961              LDRB     r1,[r4,#5]            ;836
-0000b4  ea404001          ORR      r0,r0,r1,LSL #16      ;836
-0000b8  79a1              LDRB     r1,[r4,#6]            ;836
-0000ba  ea402001          ORR      r0,r0,r1,LSL #8       ;836
-0000be  79e1              LDRB     r1,[r4,#7]            ;836
-0000c0  ea400b01          ORR      r11,r0,r1             ;836
-0000c4  2000              MOVS     r0,#0                 ;840
-0000c6  9000              STR      r0,[sp,#0]            ;840
-0000c8  466a              MOV      r2,sp                 ;841
-0000ca  4659              MOV      r1,r11                ;841
-0000cc  4650              MOV      r0,r10                ;841
-0000ce  6973              LDR      r3,[r6,#0x14]         ;841
-0000d0  4798              BLX      r3                    ;841
-0000d2  4680              MOV      r8,r0                 ;841
-0000d4  f1b80f00          CMP      r8,#0                 ;842
+000098  7820              LDRB     r0,[r4,#0]            ;820
+00009a  0600              LSLS     r0,r0,#24             ;820
+00009c  7861              LDRB     r1,[r4,#1]            ;820
+00009e  ea404001          ORR      r0,r0,r1,LSL #16      ;820
+0000a2  78a1              LDRB     r1,[r4,#2]            ;820
+0000a4  ea402001          ORR      r0,r0,r1,LSL #8       ;820
+0000a8  78e1              LDRB     r1,[r4,#3]            ;820
+0000aa  ea400a01          ORR      r10,r0,r1             ;820
+0000ae  7920              LDRB     r0,[r4,#4]            ;821
+0000b0  0600              LSLS     r0,r0,#24             ;821
+0000b2  7961              LDRB     r1,[r4,#5]            ;821
+0000b4  ea404001          ORR      r0,r0,r1,LSL #16      ;821
+0000b8  79a1              LDRB     r1,[r4,#6]            ;821
+0000ba  ea402001          ORR      r0,r0,r1,LSL #8       ;821
+0000be  79e1              LDRB     r1,[r4,#7]            ;821
+0000c0  ea400b01          ORR      r11,r0,r1             ;821
+0000c4  2000              MOVS     r0,#0                 ;825
+0000c6  9000              STR      r0,[sp,#0]            ;825
+0000c8  466a              MOV      r2,sp                 ;826
+0000ca  4659              MOV      r1,r11                ;826
+0000cc  4650              MOV      r0,r10                ;826
+0000ce  6973              LDR      r3,[r6,#0x14]         ;826
+0000d0  4798              BLX      r3                    ;826
+0000d2  4680              MOV      r8,r0                 ;826
+0000d4  f1b80f00          CMP      r8,#0                 ;827
 0000d8  d002              BEQ      |L30.224|
-0000da  2000              MOVS     r0,#0                 ;845
-0000dc  6028              STR      r0,[r5,#0]            ;845
+0000da  2000              MOVS     r0,#0                 ;830
+0000dc  6028              STR      r0,[r5,#0]            ;830
 0000de  e001              B        |L30.228|
                   |L30.224|
-0000e0  9800              LDR      r0,[sp,#0]            ;849
-0000e2  6028              STR      r0,[r5,#0]            ;849
+0000e0  9800              LDR      r0,[sp,#0]            ;834
+0000e2  6028              STR      r0,[r5,#0]            ;834
                   |L30.228|
 0000e4  e008              B        |L30.248|
                   |L30.230|
-0000e6  2001              MOVS     r0,#1                 ;856
-0000e8  6028              STR      r0,[r5,#0]            ;856
+0000e6  2001              MOVS     r0,#1                 ;841
+0000e8  6028              STR      r0,[r5,#0]            ;841
 0000ea  e005              B        |L30.248|
                   |L30.236|
-0000ec  2001              MOVS     r0,#1                 ;861
-0000ee  6028              STR      r0,[r5,#0]            ;861
+0000ec  2001              MOVS     r0,#1                 ;846
+0000ee  6028              STR      r0,[r5,#0]            ;846
 0000f0  e002              B        |L30.248|
                   |L30.242|
-0000f2  2000              MOVS     r0,#0                 ;866
-0000f4  6028              STR      r0,[r5,#0]            ;866
-0000f6  bf00              NOP                            ;867
+0000f2  2000              MOVS     r0,#0                 ;851
+0000f4  6028              STR      r0,[r5,#0]            ;851
+0000f6  bf00              NOP                            ;852
                   |L30.248|
-0000f8  bf00              NOP                            ;823
+0000f8  bf00              NOP                            ;808
 0000fa  bf00              NOP      
 0000fc  e78b              B        |L30.22|
-;;;870    
+;;;855    
                           ENDP
 
 
                           AREA ||i.uds_stop_routine||, CODE, READONLY, ALIGN=1
 
                   uds_stop_routine PROC
-;;;870    
-;;;871    static void uds_stop_routine(uint16_t rid)
+;;;855    
+;;;856    static void uds_stop_routine(uint16_t rid)
 000000  4770              BX       lr
-;;;872    {
-;;;873        UDS_I("Stop routine: RID=0x%04X", rid);
-;;;874        /* 当前例程不支持停止，直接返回 */
-;;;875    }
-;;;876    
+;;;857    {
+;;;858        UDS_I("Stop routine: RID=0x%04X", rid);
+;;;859        /* 当前例程不支持停止，直接返回 */
+;;;860    }
+;;;861    
                           ENDP
 
 

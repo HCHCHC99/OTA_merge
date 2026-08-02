@@ -25976,22 +25976,7 @@ static void uds_handle_routine_control(uint8_t* data, uint8_t len, uint8_t* resp
     
      
     if (((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x1A000 || ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x4C000) {
-             
-        {
-            uint8_t _pb6_i;
-            stc_gpio_init_t stcPortInit;
-            memset(&(stcPortInit), 0, sizeof(stcPortInit));
-            stcPortInit.u16PinDir = ((0x0002U));
-            LL_PERIPH_WE((1UL << 2U));
-            GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-            LL_PERIPH_WP((1UL << 2U));
-            for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-                GPIO_SetPins((0x01U), (0x0040U));
-                tickTimer_DelayMs(100);
-                GPIO_ResetPins((0x01U), (0x0040U));
-                tickTimer_DelayMs(100);
-            }
-        }
+            
         {
             stc_uds_shared_t _st;
             memset(&(_st), 0, sizeof(_st));

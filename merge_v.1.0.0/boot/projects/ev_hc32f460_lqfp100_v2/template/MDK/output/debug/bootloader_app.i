@@ -25421,8 +25421,6 @@ static void UpdateAppState(stc_app_info_t *pstcApp);
 static void HandleWatchdogReset(stc_boot_context_t *pstcCtx);
 static void SelectTargetSlot(stc_boot_context_t *pstcCtx);
 static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx);
-static en_boot_status_t GetBootStatus(stc_boot_context_t *pstcCtx);
-static void ShowBootStatus(en_boot_status_t eStatus);
 static void RunBootloaderForever(void);
 static void CheckAndClearAppState(void);
 
@@ -25789,8 +25787,6 @@ void Boot_StartupSequence(void)
 
 
 
-    ShowBootStatus(GetBootStatus(&stcCtx));
-
     if (stcCtx.eTargetSlot == ((en_slot_type_t)0x5A5A5A5Au))      Bootloader_JumpToApp(0x1A000);
     else if (stcCtx.eTargetSlot == ((en_slot_type_t)0xA5A5A5A5u)) Bootloader_JumpToApp(0x4C000);
     else {
@@ -25872,37 +25868,6 @@ static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx) {
     EFM_ProgramWord(0x7C000, val);
     EFM_REG_Lock();
     pstcCtx->u8NeedUpdateSlotFlag = 0;
-}
-
-static en_boot_status_t GetBootStatus(stc_boot_context_t *pstcCtx) {
-    uint8_t aok = (pstcCtx->stcApp1.eState == APP_STATE_AVAILABLE);
-    uint8_t bok = (pstcCtx->stcApp2.eState == APP_STATE_AVAILABLE);
-    if (!aok && !bok) return BOOT_STATUS_BOTH_DISABLED;
-    if (!aok) return BOOT_STATUS_APP1_DISABLED;
-    if (!bok) return BOOT_STATUS_APP2_DISABLED;
-    return BOOT_STATUS_NORMAL;
-}
-
-static void ShowBootStatus(en_boot_status_t eStatus) {
-    stc_gpio_init_t stcPortInit;
-    memset(&(stcPortInit), 0, sizeof(stcPortInit));
-    stcPortInit.u16PinDir = ((0x0002U));
-    LL_PERIPH_WE((1UL << 2U));
-    GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-    LL_PERIPH_WP((1UL << 2U));
-    uint8_t cnt; uint32_t dly;
-
-    switch(eStatus) {
-        case BOOT_STATUS_NORMAL: cnt=2; dly=50; break;
-        case BOOT_STATUS_APP1_DISABLED: cnt=3; dly=50; break;
-        case BOOT_STATUS_APP2_DISABLED: cnt=4; dly=50; break;
-        default: cnt=5; dly=200000; break;
-    }
-
-    for (uint8_t i=0; i<cnt; i++) {
-        GPIO_TogglePins((0x01U), (0x0040U)); Bootloader_Delay(dly);
-        GPIO_TogglePins((0x01U), (0x0040U)); Bootloader_Delay(dly);
-    }
 }
 
 static void RunBootloaderForever(void) {
@@ -26022,22 +25987,7 @@ void Bootloader_UdsMain(void)
 
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "===== Bootloader UDS Main Start =====\r\n" "\033[0m" "\r\n", "MAIN");
 
-     
-    {
-        uint8_t _pb6_i;
-        stc_gpio_init_t stcPortInit;
-        memset(&(stcPortInit), 0, sizeof(stcPortInit));
-        stcPortInit.u16PinDir = ((0x0002U));
-        LL_PERIPH_WE((1UL << 2U));
-        GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-        LL_PERIPH_WP((1UL << 2U));
-        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-            GPIO_SetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(200);
-            GPIO_ResetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(200);
-        }
-    }
+    
 
      
     {
@@ -26137,23 +26087,7 @@ void App_CheckPendingUdsAck(void)
         CanIf_Send(&stcMsg);
     }
 
-     
-    {
-        uint8_t _pb6_i;
-        stc_gpio_init_t stcPortInit;
-        memset(&(stcPortInit), 0, sizeof(stcPortInit));
-        stcPortInit.u16PinDir = ((0x0002U));
-        LL_PERIPH_WE((1UL << 2U));
-        GPIO_Init((0x01U), (0x0040U), &stcPortInit);
-        for (_pb6_i = 0; _pb6_i < 3; _pb6_i++) {
-            GPIO_SetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(300);
-            GPIO_ResetPins((0x01U), (0x0040U));
-            tickTimer_DelayMs(300);
-        }
-        GPIO_SetPins((0x01U), (0x0040U));
-        LL_PERIPH_WP((1UL << 2U));
-    }
+    
 
      
     UdsShared_Clear();
