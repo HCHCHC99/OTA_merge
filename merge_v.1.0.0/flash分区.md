@@ -13,16 +13,17 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
 ```
 扇区    地址        归属                     FlashAdvanced视角      实际写入方式
 ────     ────        ────                     ────────────────      ──────────
- 0-7    0x00000     Bootloader (256KB)        保护区 (0-12)         直接操作 EFM
+ 0-5    0x00000     Bootloader (48KB 预留)     保护区 (0-12)         直接操作 EFM (镜像 46.55KB)
+ 6-7    0x0C000     预留 (16KB)               保护区 (0-12)         无
  8      0x10000     UDS Shared State          保护区 (0-12)         Bootloader_App.c 直接写
  9      0x12000     FlashAdvanced 管理记录     保护区 (0-12)         FlashAdvanced 自己维护
 10      0x14000     预留                       保护区 (0-12)         无
 11      0x16000     APP1 WDT State            保护区 (0-12)         Bootloader_App.c 直接写
 12      0x18000     APP2 WDT State            保护区 (0-12)         Bootloader_App.c 直接写
 ────     ────        ────                     ────────────────      ──────────
-13-37   0x1A000     APP1 固件 (196KB)         有效用户区 (13-61)    烧录 / 直接运行
-38-43   0x4C000     APP2 OTA 固件 (48KB)      有效用户区 (13-61)    FlashDownload (经 FlashAdvanced)
-44-55   0x58000     空闲 (96KB)               有效用户区 (13-61)    无
+13-22   0x1A000     APP1 固件 (80KB)          有效用户区 (13-61)    烧录 / 直接运行-37   0x2E000     空闲 (120KB)              有效用户区 (13-61)    无
+38-47   0x4C000     APP2 OTA 固件 (80KB)      有效用户区 (13-61)    FlashDownload (经 FlashAdvanced)
+48-55   0x60000     空闲 (64KB)               有效用户区 (13-61)    无
 56-61   0x70000     param_manager (48KB)      有效用户区 (13-61)    param_manager (绕过 FlashAdvanced)
 ────     ────        ────                     ────────────────      ──────────
 62      0x7C000     APP_RUN_SLOT              灰色地带 (非有效非保护) Bootloader_App.c 直接写
@@ -46,30 +47,17 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
 
 ---
 
-## Flash 分区详图
+## Flash 分区详图（2026-08-02 更新：APP1/APP2 80KB）
 
 ```
 0x00000000 +===========================================================+
-           |                    BOOTLOADER (128KB)                      |
+           |                    BOOTLOADER (48KB 预留, sectors 0-5)      |
            |  Boot_StartupSequence, WDT fallback, slot selection,       |
            |  UDS OTA programming mode (Bootloader_UdsMain)             |
            |  Source: boot/projects/.../Bootloader_App/                 |
-0x00020000 +-----------------------------------------------------------+
-           |                    BOOTLOADER (reserved, 128KB)             |
-0x00040000 +-----------------------------------------------------------+
-           |                    UNUSED / RESERVED (64KB)                 |
-0x00050000 +-----------------------------------------------------------+
-           |                    UNUSED / RESERVED (64KB)                 |
-0x00070000 +-----------------------------------------------------------+
-           |                    UNUSED / RESERVED (64KB)                 |
-0x00090000 +-----------------------------------------------------------+
-           |                    UNUSED / RESERVED (64KB)                 |
-0x000B0000 +-----------------------------------------------------------+
-           |                    UNUSED / RESERVED (64KB)                 |
-0x000D0000 +-----------------------------------------------------------+
-           |                    UNUSED / RESERVED (64KB)                 |
-0x000F0000 +-----------------------------------------------------------+
-           |                    UNUSED / RESERVED (64KB)                 |
+           |  实测镜像 46.55KB（链接区 0x0-0x13FFF）                     |
+0x0000C000 +-----------------------------------------------------------+
+           |                    UNUSED (16KB, sectors 6-7)              |
 0x00010000 +-- UDS Shared State (8KB, sector 8) -----------------------+
            |  stc_uds_shared_t (56 bytes): magic, phase, target_slot,   |
            |  fw_size, fw_crc, result, pending_sid                      |
@@ -88,18 +76,20 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
 0x00018000 +-- APP2 State Sector (8KB, sector 12) ---------------------+
            |  Same structure as APP1 state sector                       |
 0x0001A000 +===========================================================+
-           |                    APP1 FIRMWARE (196KB, sectors 13-37)    |
+           |                    APP1 FIRMWARE (80KB, sectors 13-22)      |
            |  Slot A: motor control application                         |
            |  VTOR = 0x0001A000 (APP1_START_ADDR)                       |
-           |  LED debug: PB7 toggle 5 times                             |
-0x0004B000 +-----------------------------------------------------------+
-           |                    UNUSED (4KB)                             |
+0x0002E000 +-----------------------------------------------------------+
+           |                    UNUSED (120KB, sectors 23-37)            |
 0x0004C000 +===========================================================+
-           |                    APP2 FIRMWARE (196KB, sectors 38-61)    |
+           |                    APP2 FIRMWARE (80KB, sectors 38-47)      |
            |  Slot B: backup / OTA target                               |
            |  VTOR = 0x0004C000 (APP2_START_ADDR)                       |
-           |  OTA actual usage: 48KB (sectors 38-43 only)               |
-           |  LED debug: PB7 toggle 2 times                             |
+0x00060000 +-----------------------------------------------------------+
+           |                    UNUSED (64KB, sectors 48-55)             |
+0x00070000 +===========================================================+
+           |                    param_manager (48KB, sectors 56-61)      |
+           |  磨损均衡参数存储（绕过 FlashAdvanced）                     |
 0x0007C000 +-- APP_RUN_SLOT Sector (8KB, sector 62) -------------------+
            |  Offset 0x000: SLOT_A_MAGIC(0x5A5A5A5A) or                 |
            |                SLOT_B_MAGIC(0xA5A5A5A5)                    |
@@ -109,7 +99,6 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
            |                    PROTECTED (8KB, sector 63, 不可操作)     |
 0x00080000 +===========================================================+
 ```
-
 ---
 
 ## 关键宏定义 (`Bootloader_App.h`)
@@ -140,7 +129,7 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
 |------------|------|------|------|--------|------|
 | `stc_uds_shared_t` | 8 | `0x10000` | 56B | Bootloader_App.c | OTA 共享状态：magic, phase, target_slot, fw_size, fw_crc, result, pending_sid |
 | `APP_RUN_SLOT` magic | 62 | `0x7C000` | 4B | Bootloader_App.c | `0x5A5A5A5A`→启 APP1, `0xA5A5A5A5A`→启 APP2 |
-| APP2 固件 | 38-43 | `0x4C000` | 48KB | FlashDownload | OTA 下载目标 (`UDS_TARGET_FLASH_ADDR`) |
+| APP2 固件 | 38-47 | `0x4C000` | 80KB | FlashDownload | OTA 下载目标 (`UDS_TARGET_FLASH_ADDR`) |
 | FlashAdvanced 管理记录 | 9 | `0x12000` | ~540B | FlashAdvanced | 每扇区擦除计数、寿命统计 |
 
 ### UDS Shared State 结构 (`stc_uds_shared_t`) 详细字段
@@ -159,7 +148,7 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
 
 ```
 OTA 开始
-  → 0x34 RequestDownload: FlashDownload 擦除 APP2 区域 (扇区 38-43, 48KB)
+  → 0x34 RequestDownload: FlashDownload 擦除 APP2 区域 (扇区 38-47, 80KB)
   → 0x36 TransferData:    数据缓冲到 60KB RAM, 满后 FlashAdv_BulkWriteSimple → APP2 Flash
   → 0x37 TransferExit:    最终冲刷缓冲区, CRC32 校验
   → UdsShared_SetPhase(COMPLETE): 写 UDS Shared State (扇区 8)
@@ -316,7 +305,7 @@ FlashAdv_EraseSector(handle, addr)
 | 宏 | 默认值 | 含义 |
 |----|--------|------|
 | `FW_APP_START_ADDR` | `0x0004C000` | OTA 目标 = APP2 |
-| `FW_APP_MAX_SIZE` | `0x0000C000` | 最大固件 = 48KB (6 扇区) |
+| `FW_APP_MAX_SIZE` | `0x00014000` | 最大固件 = 80KB (10 扇区) |
 | `FW_RAM_BUFFER_SIZE` | 60KB | RAM 缓冲区 |
 | `FW_FLASH_WRITE_ENABLED` | 1 | 0 = 干运行 (不真写 Flash) |
 
@@ -427,3 +416,26 @@ FlashDownload_OnTransferExit()               // 0x37: 最终冲刷 + CRC 校验
            |  Used by: TMR0_Unit2_IRQHandler (WDT feeding decision)     |
 0x1FFFAF20 +-- RAM_END_ADDR -------------------------------------------+
 ```
+
+---
+
+## 修改记录（2026-08-02）
+
+| 修改项 | 说明 |
+|--------|------|
+| APP1 / APP2 调整为 80KB | APP1: 0x1A000~0x2DFFF（扇区13-22）；APP2: 0x4C000~0x5FFFF（扇区38-47）；`FW_APP_MAX_SIZE=0x14000`、`TBOX_ADDR_END=0x08018000`、boot 的 `max_firmware_size=80KB` |
+| Bootloader 预留区 | 0~0xC000（48KB，镜像实测 46.55KB）；0xC000~0xFFFF（扇区6-7）为空闲 |
+| PB6 相位指示删除 | 四驱工程 Phase 1 闪烁及 OTA 工程 Phase 1/2/3 闪烁、`ShowBootStatus()` 全部移除 |
+| 四驱工程移植实测通过 | 复用本工程 boot，Phase 1→2→3 全链路验证通过（详见四驱 `app/can/uds/uds移植.md`） |
+
+### 四驱控制盒工程变体（D:\260706_NL）
+
+与 OTA 工程的分区差异：
+
+| 区域 | OTA 工程 | 四驱工程 |
+|------|---------|---------|
+| 参数存储 | 扇区 56-61 (0x70000)，`param_manager` | **扇区 55 (0x6E000)**，`drv_mcu_flash.c` 的 `STORAGE_SECTOR_ADDR`（APP 自有系统） |
+| Bootloader | 链接区 0x0-0x13FFF | 预留 0~0xC000（同样使用 OTA 工程的 boot 镜像） |
+| APP1/APP2 | 80KB | 80KB（一致） |
+| Flash 写入 | 下载经 FlashAdvanced | 四驱 `flash_download` 直接 EFM 写入（无 FlashAdvanced） |
+| 跳转槽 | 0x7C000 | 0x7C000（一致，勿占用） |

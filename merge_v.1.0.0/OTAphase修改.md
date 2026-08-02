@@ -147,9 +147,20 @@ boot main():                         app1 main():
 
 两者的区别仅在于 Phase 2 额外有 WDT 喂狗和 `FW_UPDATE_COMPLETE` 检测。`UdsOta_Poll()` 内部使用静态变量 `s_last_ms_tick` 管理 1ms 门控，两处调用互不干扰。
 
-## 5. 待推广
+## 5. 推广情况（app2 已完成，2026-08-02）
 
-app2 的 main.c 仍有相同的 UDS 样板代码，后续可用同样方式简化：
-- app2: 同 app1 — `App_CheckPendingUdsAck()` 替换为 `UdsOta_App_CheckPendingAck()`，`main.c` 和 `Bootloader_App.c` 同模式修改
+- **app2 已按 app1 同样方式完成 UDS 封装层对齐**（`uds_ota.h/c`、main.c 精简、Bootloader_App.c 同模式修改）；
+- 2026-08-02 起 boot/app1/app2 三个工程的分区与下载上限统一调整为 **80KB**（`FW_APP_MAX_SIZE=0x14000`、`max_firmware_size=80KB`、`TBOX_ADDR_END=0x08018000`）；
+- app2 不需要 `UdsOta_Bootloader_Enter()`（APP 不会进入 UDS 编程模式），但保留该函数也不会造成问题（不调用就不会链接）；
+- 四驱控制盒工程（D:\260706_NL）已按 app1 模式移植 OTA，并直接复用本工程的 boot，**2026-08-02 实测 Phase 1→2→3 全链路通过**（详见四驱 `app/can/uds/uds移植.md`）。
 
-app2 不需要 `UdsOta_Bootloader_Enter()`（APP 不会进入 UDS 编程模式），但保留该函数也不会造成问题（不调用就不会链接）。
+---
+
+## 6. 修改记录（2026-08-02）
+
+| 修改项 | 涉及文件 | 说明 |
+|--------|---------|------|
+| 分区统一 80KB | `Bootloader_App.c`, `flash_download.h/c` (boot/app1/app2) | `max_firmware_size` 48→80KB、`user_end_addr` +0xC000→+0x14000、`FW_APP_MAX_SIZE` 0xC000→0x14000、`TBOX_ADDR_END` 0x08010000→0x08018000 |
+| PB6 相位指示删除 | `uds_diagnostic.c`, `Bootloader_App.c` (boot/app1/app2) | Phase 1/2/3 闪烁及 `ShowBootStatus()` 全部移除（四驱工程 PB6 为电机引脚，闪烁会导致过流故障） |
+| app1 31 ACK 发送方式统一 | `Bootloader_App.c` (app1) | raw CAN 改回 `isotp_send_message`，与 boot 一致 |
+| 四驱工程移植实测通过 | 四驱工程 (D:\260706_NL) | 复用本工程 boot，Phase 1→2→3 全链路验证通过 |

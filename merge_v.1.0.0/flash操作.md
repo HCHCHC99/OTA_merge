@@ -42,16 +42,17 @@
 ```
 扇区    地址        归属                    FlashAdvanced 视角   保护?
 ────    ────        ────                    ────────────────    ────
- 0-7    0x00000     Bootloader              保护区 (0-12)       ✅ 拒绝
+ 0-5    0x00000     Bootloader (48KB 预留)     保护区 (0-12)       ✅ 拒绝
+ 6-7    0x0C000     预留 (16KB)               保护区 (0-12)       ✅ 拒绝
  8      0x10000     UDS Shared State        保护区 (0-12)       ✅ 拒绝
  9      0x12000     FlashAdvanced 管理记录   保护区 (0-12)       ✅ 拒绝
 10      0x14000     预留                     保护区 (0-12)       ✅ 拒绝
 11      0x16000     APP1 WDT State          保护区 (0-12)       ✅ 拒绝
 12      0x18000     APP2 WDT State          保护区 (0-12)       ✅ 拒绝
 ────    ────        ────                    ────────────────    ────
-13-37   0x1A000     APP1 固件               有效用户区 (13-61)  ✅ 允许
-38-43   0x4C000     APP2 OTA 固件 (48KB)    有效用户区 (13-61)  ✅ 允许
-44-55   0x58000     空闲 (96KB)             有效用户区 (13-61)  ✅ 允许
+13-22   0x1A000     APP1 固件 (80KB)          有效用户区 (13-61)  ✅ 允许-37   0x2E000     空闲 (120KB)              有效用户区 (13-61)  ✅ 允许
+38-47   0x4C000     APP2 OTA 固件 (80KB)     有效用户区 (13-61)  ✅ 允许
+48-55   0x60000     空闲 (64KB)              有效用户区 (13-61)  ✅ 允许
 56-61   0x70000     param_manager (48KB)    有效用户区 (13-61)  ✅ 允许
 ────    ────        ────                    ────────────────    ────
 62      0x7C000     APP_RUN_SLOT            灰色地带            不保护也不操作
@@ -225,7 +226,7 @@
 **关键宏:**
 ```c
 #define FW_APP_START_ADDR           0x0004C000  // OTA 目标 = APP2
-#define FW_APP_MAX_SIZE             0x0000C000  // 最大 48KB (6 扇区)
+#define FW_APP_MAX_SIZE             0x00014000  // 最大 80KB (10 扇区)
 #define FW_RAM_BUFFER_SIZE          (60*1024)   // RAM 对齐工作缓冲区
 #define FW_FLASH_WRITE_ENABLED      1           // 0=干运行, 1=真实写入
 #define TBOX_ADDR_START             0x08004000  // TBOX 发送的逻辑地址
@@ -342,7 +343,7 @@ FlashDownload_OnTransferData(data, len)
 | 9 | 0x12000 | flash_advanced | `FlashAdv_SaveLifetimeInfo` | ✅ (自身) |
 | 11 | 0x16000 | Bootloader_App | `SetWdtFeedControl`, `UpdateWdtResetCount`, `ClearWdtResetCount` | ❌ |
 | 12 | 0x18000 | Bootloader_App | `SetWdtFeedControl`, `UpdateWdtResetCount`, `ClearWdtResetCount` | ❌ |
-| 38-43 | 0x4C000 | flash_download | `FlashDownload_OnRequestDownload` (擦除), `FlashDownload_OnTransferData` (写入) | ✅ |
+| 38-47 | 0x4C000 | flash_download | `FlashDownload_OnRequestDownload` (擦除), `FlashDownload_OnTransferData` (写入) | ✅ |
 | 56-61 | 0x70000 | param_manager | `Param_Save`, `Param_Debug_EraseAll` | ❌ |
 | 62 | 0x7C000 | Bootloader_App | `Boot_SetRunSlotToAddr`, `Boot_SwitchAndRunOther`, `UpdateSlotFlagToFlash` | ❌ |
 
@@ -370,3 +371,25 @@ FlashDownload_OnTransferData(data, len)
 | `FLASH_DEBUG_ENABLE` | hc32f46x_flash.h | 打印每次 Flash 操作状态 |
 | `FLASH_MANAGEMENT_RECORD_ENABLE` | flash_advanced.h | 开启寿命记录持久化到扇区 9 |
 | `PARAM_DEBUG` | param_manager.h | 打印参数扫描/磨损统计 |
+
+---
+
+## 修改记录（2026-08-02）
+
+| 修改项 | 说明 |
+|--------|------|
+| APP1/APP2 分区 80KB | 速查表、汇总表同步：APP1 扇区13-22（0x1A000~0x2DFFF），APP2 扇区38-47（0x4C000~0x5FFFF）；`FW_APP_MAX_SIZE=0x14000`（80KB，10 扇区） |
+| Bootloader 预留 48KB | 扇区 0-5（0x0~0xC000），boot 镜像实测 46.55KB；扇区 6-7 预留 |
+| PB6 相位指示删除 | OTA 工程 Phase 1/2/3 闪烁与 `ShowBootStatus()` 全部移除（涉及 `uds_diagnostic.c`、`Bootloader_App.c`，不含本文件的 Flash 函数） |
+| 四驱工程移植实测通过 | 复用本工程 boot，Phase 1→2→3 全链路验证通过（详见四驱 `app/can/uds/uds移植.md`） |
+
+## 四驱控制盒工程变体（D:\260706_NL）
+
+四驱工程没有 FlashAdvanced 层，`flash_download.c` 直接使用 `hc32_ll_efm.h` 的 EFM 接口：
+
+| 项目 | OTA 工程 | 四驱工程 |
+|------|---------|---------|
+| OTA 下载写入 | `flash_download.c → FlashAdv_BulkWriteSimple → hc32f46x_flash.c` | `flash_download.c → EFM_SectorErase / EFM_ProgramWordReadBack`（直写） |
+| 参数存储 | 扇区 56-61（0x70000），`param_manager` | 扇区 55（0x6E000），`drv_mcu_flash.c`（`STORAGE_SECTOR_ADDR`） |
+| UDS 共享区 | 扇区 8（0x10000），EFM_REG_Unlock + EFM_SectorErase + EFM_ProgramWord | 扇区 8（0x10000），LL_PERIPH_WE + EFM_SectorErase + EFM_ProgramWordReadBack |
+| 防越界检查 | 仅地址窗口检查 | 额外增加 `m + size` 越界检查（防止擦到参数区/跳转槽） |
