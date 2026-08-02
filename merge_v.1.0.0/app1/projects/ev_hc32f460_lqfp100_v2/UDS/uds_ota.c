@@ -28,6 +28,9 @@ volatile uint32_t g_delayed_reset_ms = 0;
 
 /* ISOTP 重组后的 UDS 消息输出缓冲区（最大 4096 字节） */
 static uint8_t s_uds_rx_buffer[4100];
+/* 阶段2/3: 强制OTA指令值（0xFF/0x01/0x02），由 0x18FF5858 过滤器回调置位 */
+static volatile uint8_t s_force_cmd = 0;
+
 
 /***************************** 内部函数 ***********************************/
 
@@ -62,7 +65,7 @@ static void ISOTP_RegisterRxFilters(void)
     CanIf_RxFilterEntry_t stcEntry;
     stcEntry.u32CanId   = 0UL;
     stcEntry.u32CanMask = 0UL;  /* 精确匹配 */
-    stcEntry.u8Format   = CAN_ID_EXT;
+    stcEntry.u8Format   = (uint8_t)CAN_ID_EXT;
     stcEntry.pfnCallback = &ISOTP_RxCallback;
 
     for (uint8_t i = 0U; i < 4U; i++) {
@@ -74,6 +77,30 @@ static void ISOTP_RegisterRxFilters(void)
     }
     MAIN_D("ISOTP: 4 CAN ID RX filters registered\r\n");
 }
+/* ===== 阶段2/3: 强制OTA指令检测 (CAN ID 0x18FF5858) ===== */
+
+/* 强制指令 RX 回调：仅记录 data[0]，由 UdsOta_Poll 消费 */
+static void ForceCmd_RxCallback(const CanMsg_t *pMsg)
+{
+    if ((pMsg != NULL) && (pMsg->u8DLC >= 1U)) {
+        s_force_cmd = pMsg->au8Data[0];
+    }
+}
+
+/* 注册 0x18FF5858 过滤器（裸指令帧，不经过 ISOTP） */
+static void ForceCmd_RegisterRxFilter(void)
+{
+    CanIf_RxFilterEntry_t stcEntry;
+    stcEntry.u32CanId    = BOOT_FORCE_CMD_CAN_ID;
+    stcEntry.u32CanMask  = 0UL;  /* 精确匹配 */
+    stcEntry.u8Format    = (uint8_t)CAN_ID_EXT;
+    stcEntry.pfnCallback = ForceCmd_RxCallback;
+    if (!CanIf_RegisterRxFilter(&stcEntry)) {
+        MAIN_D("ForceCmd: failed to register RX filter 0x%08X\r\n", (unsigned int)BOOT_FORCE_CMD_CAN_ID);
+    }
+}
+
+
 
 /***************************** 公开接口实现 *******************************/
 
@@ -84,6 +111,7 @@ void UdsOta_Init(void)
 
     isotp_init(0);
     ISOTP_RegisterRxFilters();
+    ForceCmd_RegisterRxFilter();
     FlashDownload_Init(NULL);
     uds_dl_init_fw();
     uds_init();
@@ -96,6 +124,15 @@ void UdsOta_Poll(void)
 {
     static uint64_t s_last_ms_tick = 0;
     uint64_t current_tick = tickTimer_GetCount();
+    /* 阶段2/3: 强制OTA指令 → 软件复位进入 bootloader（由 boot 50ms 窗口处理） */
+    if (s_force_cmd != 0U) {
+        uint8_t u8ForceCmd = s_force_cmd;
+        s_force_cmd = 0U;
+        MAIN_D("Force OTA cmd 0x18FF5858 = 0x%02X, resetting to bootloader...\r\n", (unsigned int)u8ForceCmd);
+        NVIC_SystemReset();
+        while (1) { }
+    }
+
 
     /* 1ms 门控 */
     if (current_tick != s_last_ms_tick) {
