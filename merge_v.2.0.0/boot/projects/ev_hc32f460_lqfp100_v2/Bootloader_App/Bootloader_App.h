@@ -38,7 +38,7 @@
  *                  OTA 完成后跳转实际烧录的槽位（烧到哪里就跳到哪里）
  */
 #ifndef BOOT_OTA_MODE_DEBUG
-#define BOOT_OTA_MODE_DEBUG                 1U
+#define BOOT_OTA_MODE_DEBUG                 0U
 #endif
 #ifndef BOOT_OTA_MODE_PLUS
 #define BOOT_OTA_MODE_PLUS                  0U

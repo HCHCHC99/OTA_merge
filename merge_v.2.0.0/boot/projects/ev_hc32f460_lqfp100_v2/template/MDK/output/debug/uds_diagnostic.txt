@@ -1229,7 +1229,7 @@
 000078  6008              STR      r0,[r1,#0]            ;759  ; g_delayed_reset_ms
 00007a  e008              B        |L13.142|
                   |L13.124|
-00007c  f44f30d0          MOV      r0,#0x1a000           ;761
+00007c  f44f2098          MOV      r0,#0x4c000           ;761
 000080  f7fffffe          BL       Boot_SetRunSlotToAddr
 000084  f8878000          STRB     r8,[r7,#0]            ;762
 000088  2001              MOVS     r0,#1                 ;763

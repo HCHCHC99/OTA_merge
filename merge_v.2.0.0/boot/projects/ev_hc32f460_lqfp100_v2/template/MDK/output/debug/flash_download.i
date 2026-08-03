@@ -21047,8 +21047,14 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
 
+
+
+
+
    
-#line 63 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+
+
  
 
 
@@ -23895,7 +23901,7 @@ static _Bool g_bin_triggered = 0;
 
 
 
-static uint8_t g_fw_ram_buffer[(60 * 1024)] __attribute__((aligned(4)));
+static uint8_t g_fw_ram_buffer[(88 * 1024)] __attribute__((aligned(4)));
 
 
 typedef struct
@@ -23972,17 +23978,10 @@ static _Bool fw_is_address_valid(uint32_t address)
      
     uint32_t mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
 
-
-
-
-
      
-    return (mapped_addr >= 0x0004C000 && mapped_addr < (0x0004C000 + 0x00014000));
-
-
-
-
-
+    return ((mapped_addr >= 0x0001A000 && mapped_addr < (0x0001A000 + 0x00014000)) ||
+            (mapped_addr >= 0x0004C000  && mapped_addr < (0x0004C000 + 0x00014000)));
+#line 121 "..\\..\\UDS\\flash_download.c"
 }
 
 static _Bool fw_is_address_protected(uint32_t address)
@@ -24212,8 +24211,8 @@ FlashDownloadResult_t FlashDownload_OnRequestDownload(uint32_t address, uint32_t
     }
     
     
-    if (size > (60 * 1024)) {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "Firmware size %d exceeds RAM buffer %d" "\033[0m" "\r\n", "FW",size, (60 * 1024));
+    if (size > (88 * 1024)) {
+        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "Firmware size %d exceeds RAM buffer %d" "\033[0m" "\r\n", "FW",size, (88 * 1024));
         return FW_RESULT_SIZE_TOO_LARGE;
     }
     
@@ -24292,8 +24291,8 @@ FlashDownloadResult_t FlashDownload_OnTransferData(uint8_t block_sequence_number
     }
     
     
-    if (g_fw_ctx.buffer_offset + len > (60 * 1024)) {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "RAM buffer overflow: offset=%d, add=%d, max=%d" "\033[0m" "\r\n", "FW",g_fw_ctx . buffer_offset, len, (60 * 1024));
+    if (g_fw_ctx.buffer_offset + len > (88 * 1024)) {
+        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "RAM buffer overflow: offset=%d, add=%d, max=%d" "\033[0m" "\r\n", "FW",g_fw_ctx . buffer_offset, len, (88 * 1024));
 
         return FW_RESULT_SIZE_TOO_LARGE;
     }

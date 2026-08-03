@@ -20838,8 +20838,14 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
 
+
+
+
+
    
-#line 63 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+
+
  
 
 
@@ -26225,7 +26231,14 @@ void Bootloader_UdsMain(void)
             s_uds_shared_written = 1;
              
             ClearAppStateBySlot(state.target_slot);
-#line 810 "..\\..\\Bootloader_App\\Bootloader_App.c"
+
+             
+            if (stcProg.target_address == 0x4C000) {
+                Boot_SetRunSlotToAddr(0x4C000);
+            } else if (stcProg.target_address == 0x1A000) {
+                Boot_SetRunSlotToAddr(0x1A000);
+            }
+
             SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)stcProg . target_address);
 
         }

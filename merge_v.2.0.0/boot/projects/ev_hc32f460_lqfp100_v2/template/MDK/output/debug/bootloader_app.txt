@@ -1457,8 +1457,8 @@
 ;;;727        uint8_t i;
 ;;;728    
 ;;;729        MAIN_D("===== Bootloader UDS Main Start =====\r\n");
-000002  a250              ADR      r2,|L13.324|
-000004  a151              ADR      r1,|L13.332|
+000002  a259              ADR      r2,|L13.360|
+000004  a15a              ADR      r1,|L13.368|
 000006  2000              MOVS     r0,#0
 000008  f7fffffe          BL       SEGGER_RTT_printf
 ;;;730    
@@ -1471,7 +1471,7 @@
 00000c  a805              ADD      r0,sp,#0x14
 00000e  f7fffffe          BL       UdsShared_Read
 ;;;737            if (_st.magic == UDS_SHARED_MAGIC && _st.pending_sid == 0x31) {
-000012  495c              LDR      r1,|L13.388|
+000012  4965              LDR      r1,|L13.424|
 000014  9805              LDR      r0,[sp,#0x14]
 000016  4288              CMP      r0,r1
 000018  d116              BNE      |L13.72|
@@ -1479,18 +1479,18 @@
 00001c  2831              CMP      r0,#0x31
 00001e  d113              BNE      |L13.72|
 ;;;738                uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
-000020  a059              ADR      r0,|L13.392|
+000020  a062              ADR      r0,|L13.428|
 000022  6800              LDR      r0,[r0,#0]
 000024  9004              STR      r0,[sp,#0x10]
 ;;;739                isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
 000026  2304              MOVS     r3,#4
 000028  aa04              ADD      r2,sp,#0x10
-00002a  4958              LDR      r1,|L13.396|
+00002a  4961              LDR      r1,|L13.432|
 00002c  2000              MOVS     r0,#0
 00002e  f7fffffe          BL       isotp_send_message
 ;;;740                MAIN_D("  Sent deferred 31 ACK (71 01 FF 00) via ISOTP\r\n");
-000032  a244              ADR      r2,|L13.324|
-000034  4956              LDR      r1,|L13.400|
+000032  a24d              ADR      r2,|L13.360|
+000034  495f              LDR      r1,|L13.436|
 000036  2000              MOVS     r0,#0
 000038  f7fffffe          BL       SEGGER_RTT_printf
 ;;;741                _st.pending_sid = 0;
@@ -1503,8 +1503,8 @@
 000046  e005              B        |L13.84|
                   |L13.72|
 ;;;744                MAIN_D("  No pending 31 ACK (pending_sid=0x%02X), skip\r\n", (unsigned int)_st.pending_sid);
-000048  a23e              ADR      r2,|L13.324|
-00004a  4952              LDR      r1,|L13.404|
+000048  a247              ADR      r2,|L13.360|
+00004a  495b              LDR      r1,|L13.440|
 00004c  2000              MOVS     r0,#0
 00004e  9b0b              LDR      r3,[sp,#0x2c]
 000050  f7fffffe          BL       SEGGER_RTT_printf
@@ -1541,8 +1541,8 @@
 ;;;757        MAIN_D("  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n",
 000086  f44f20c0          MOV      r0,#0x60000
 00008a  f44f2398          MOV      r3,#0x4c000
-00008e  a22d              ADR      r2,|L13.324|
-000090  4941              LDR      r1,|L13.408|
+00008e  a236              ADR      r2,|L13.360|
+000090  494a              LDR      r1,|L13.444|
 000092  9000              STR      r0,[sp,#0]
 000094  2000              MOVS     r0,#0
 000096  f7fffffe          BL       SEGGER_RTT_printf
@@ -1556,15 +1556,15 @@
 ;;;764        uds_init();
 00009e  f7fffffe          BL       uds_init
 ;;;765        MAIN_D("  UDS init done\r\n");
-0000a2  a228              ADR      r2,|L13.324|
-0000a4  a13d              ADR      r1,|L13.412|
+0000a2  a231              ADR      r2,|L13.360|
+0000a4  a146              ADR      r1,|L13.448|
 0000a6  2000              MOVS     r0,#0
 0000a8  f7fffffe          BL       SEGGER_RTT_printf
 ;;;766    
 ;;;767        /* ==== 5. 主循环 ==== */
 ;;;768        MAIN_D("  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n");
-0000ac  a225              ADR      r2,|L13.324|
-0000ae  4944              LDR      r1,|L13.448|
+0000ac  a22e              ADR      r2,|L13.360|
+0000ae  494d              LDR      r1,|L13.484|
 0000b0  2000              MOVS     r0,#0
 0000b2  f7fffffe          BL       SEGGER_RTT_printf
 ;;;769        last_wdt_feed = tickTimer_GetCount();
@@ -1575,7 +1575,7 @@
 ;;;771        static uint8_t s_uds_shared_written = 0;
 ;;;772    
 ;;;773        while (1) {
-0000be  e03f              B        |L13.320|
+0000be  e051              B        |L13.356|
                   |L13.192|
 ;;;774            uint64_t tick = tickTimer_GetCount();
 0000c0  f7fffffe          BL       tickTimer_GetCount
@@ -1602,132 +1602,146 @@
 0000e2  f7fffffe          BL       UdsOta_Poll
 ;;;783    
 ;;;784            if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
-0000e6  4837              LDR      r0,|L13.452|
+0000e6  4840              LDR      r0,|L13.488|
 0000e8  7800              LDRB     r0,[r0,#0]  ; s_uds_shared_written
-0000ea  bb40              CBNZ     r0,|L13.318|
-0000ec  f7fffffe          BL       FlashDownload_GetState
-0000f0  2805              CMP      r0,#5
-0000f2  d124              BNE      |L13.318|
+0000ea  2800              CMP      r0,#0
+0000ec  d139              BNE      |L13.354|
+0000ee  f7fffffe          BL       FlashDownload_GetState
+0000f2  2805              CMP      r0,#5
+0000f4  d135              BNE      |L13.354|
 ;;;785                stc_uds_shared_t state;
 ;;;786                FlashDownloadProgress_t stcProg;
 ;;;787                UdsShared_Read(&state);
-0000f4  a805              ADD      r0,sp,#0x14
-0000f6  f7fffffe          BL       UdsShared_Read
+0000f6  a805              ADD      r0,sp,#0x14
+0000f8  f7fffffe          BL       UdsShared_Read
 ;;;788                FlashDownload_GetProgress(&stcProg);
-0000fa  a801              ADD      r0,sp,#4
-0000fc  f7fffffe          BL       FlashDownload_GetProgress
+0000fc  a801              ADD      r0,sp,#4
+0000fe  f7fffffe          BL       FlashDownload_GetProgress
 ;;;789    
 ;;;790                state.phase = UDS_PHASE_PROGRAMMING_DONE;
-000100  2002              MOVS     r0,#2
-000102  9006              STR      r0,[sp,#0x18]
+000102  2002              MOVS     r0,#2
+000104  9006              STR      r0,[sp,#0x18]
 ;;;791                state.result = 1;
-000104  2001              MOVS     r0,#1
-000106  900a              STR      r0,[sp,#0x28]
+000106  2001              MOVS     r0,#1
+000108  900a              STR      r0,[sp,#0x28]
 ;;;792                /* 实际下载目标槽（由 0x34 地址映射决定: APP1/APP2） */
 ;;;793                if (stcProg.target_address == APP2_START_ADDR) {
-000108  9803              LDR      r0,[sp,#0xc]
-00010a  f5b02f98          CMP      r0,#0x4c000
-00010e  d103              BNE      |L13.280|
+00010a  9803              LDR      r0,[sp,#0xc]
+00010c  f5b02f98          CMP      r0,#0x4c000
+000110  d103              BNE      |L13.282|
 ;;;794                    state.target_slot = SLOT_APP2;
-000110  f04f30a5          MOV      r0,#0xa5a5a5a5
-000114  9007              STR      r0,[sp,#0x1c]
-000116  e002              B        |L13.286|
-                  |L13.280|
+000112  f04f30a5          MOV      r0,#0xa5a5a5a5
+000116  9007              STR      r0,[sp,#0x1c]
+000118  e002              B        |L13.288|
+                  |L13.282|
 ;;;795                } else {
 ;;;796                    state.target_slot = SLOT_APP1;
-000118  f04f305a          MOV      r0,#0x5a5a5a5a
-00011c  9007              STR      r0,[sp,#0x1c]
-                  |L13.286|
+00011a  f04f305a          MOV      r0,#0x5a5a5a5a
+00011e  9007              STR      r0,[sp,#0x1c]
+                  |L13.288|
 ;;;797                }
 ;;;798                UdsShared_Write(&state);
-00011e  a805              ADD      r0,sp,#0x14
-000120  f7fffffe          BL       UdsShared_Write
+000120  a805              ADD      r0,sp,#0x14
+000122  f7fffffe          BL       UdsShared_Write
 ;;;799                s_uds_shared_written = 1;
-000124  2001              MOVS     r0,#1
-000126  4927              LDR      r1,|L13.452|
-000128  7008              STRB     r0,[r1,#0]
+000126  2001              MOVS     r0,#1
+000128  492f              LDR      r1,|L13.488|
+00012a  7008              STRB     r0,[r1,#0]
 ;;;800                /* 清除实际下载槽的 WDT 故障计数 */
 ;;;801                ClearAppStateBySlot(state.target_slot);
-00012a  9807              LDR      r0,[sp,#0x1c]
-00012c  f7fffffe          BL       ClearAppStateBySlot
+00012c  9807              LDR      r0,[sp,#0x1c]
+00012e  f7fffffe          BL       ClearAppStateBySlot
 ;;;802    #if (BOOT_OTA_MODE_DEBUG == 0U)
 ;;;803                /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
 ;;;804                if (stcProg.target_address == APP2_START_ADDR) {
+000132  9803              LDR      r0,[sp,#0xc]
+000134  f5b02f98          CMP      r0,#0x4c000
+000138  d104              BNE      |L13.324|
 ;;;805                    Boot_SetRunSlotToAddr(APP2_START_ADDR);
+00013a  f44f2098          MOV      r0,#0x4c000
+00013e  f7fffffe          BL       Boot_SetRunSlotToAddr
+000142  e007              B        |L13.340|
+                  |L13.324|
 ;;;806                } else if (stcProg.target_address == APP1_START_ADDR) {
+000144  9803              LDR      r0,[sp,#0xc]
+000146  f5b03fd0          CMP      r0,#0x1a000
+00014a  d103              BNE      |L13.340|
 ;;;807                    Boot_SetRunSlotToAddr(APP1_START_ADDR);
+00014c  f44f30d0          MOV      r0,#0x1a000
+000150  f7fffffe          BL       Boot_SetRunSlotToAddr
+                  |L13.340|
 ;;;808                }
 ;;;809    #endif
 ;;;810                MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n",
-000130  a204              ADR      r2,|L13.324|
-000132  4925              LDR      r1,|L13.456|
-000134  2000              MOVS     r0,#0
-000136  9b03              LDR      r3,[sp,#0xc]
-000138  f7fffffe          BL       SEGGER_RTT_printf
+000154  a204              ADR      r2,|L13.360|
+000156  4925              LDR      r1,|L13.492|
+000158  2000              MOVS     r0,#0
+00015a  9b03              LDR      r3,[sp,#0xc]
+00015c  f7fffffe          BL       SEGGER_RTT_printf
 ;;;811                       (unsigned int)stcProg.target_address);
 ;;;812            }
-00013c  bf00              NOP      
-                  |L13.318|
+000160  bf00              NOP      
+                  |L13.354|
 ;;;813        }
-00013e  bf00              NOP      
-                  |L13.320|
-000140  e7be              B        |L13.192|
+000162  bf00              NOP      
+                  |L13.356|
+000164  e7ac              B        |L13.192|
 ;;;814    }
 ;;;815    
                           ENDP
 
-000142  0000              DCW      0x0000
-                  |L13.324|
-000144  4d41494e          DCB      "MAIN",0
-000148  00      
-000149  00                DCB      0
-00014a  00                DCB      0
-00014b  00                DCB      0
-                  |L13.332|
-00014c  1b5b3336          DCB      27,"[36m[%s] ===== Bootloader UDS Main Start =====\r\n",27
-000150  6d5b2573
-000154  5d203d3d
-000158  3d3d3d20
-00015c  426f6f74
-000160  6c6f6164
-000164  65722055
-000168  4453204d
-00016c  61696e20
-000170  53746172
-000174  74203d3d
-000178  3d3d3d0d
-00017c  0a1b    
-00017e  5b306d0d          DCB      "[0m\r\n",0
-000182  0a00    
-                  |L13.388|
+000166  0000              DCW      0x0000
+                  |L13.360|
+000168  4d41494e          DCB      "MAIN",0
+00016c  00      
+00016d  00                DCB      0
+00016e  00                DCB      0
+00016f  00                DCB      0
+                  |L13.368|
+000170  1b5b3336          DCB      27,"[36m[%s] ===== Bootloader UDS Main Start =====\r\n",27
+000174  6d5b2573
+000178  5d203d3d
+00017c  3d3d3d20
+000180  426f6f74
+000184  6c6f6164
+000188  65722055
+00018c  4453204d
+000190  61696e20
+000194  53746172
+000198  74203d3d
+00019c  3d3d3d0d
+0001a0  0a1b    
+0001a2  5b306d0d          DCB      "[0m\r\n",0
+0001a6  0a00    
+                  |L13.424|
                           DCD      0x55445300
-                  |L13.392|
-000188  7101ff00          DCB      "q",1,255,0
-                  |L13.396|
+                  |L13.428|
+0001ac  7101ff00          DCB      "q",1,255,0
+                  |L13.432|
                           DCD      0x18daf103
-                  |L13.400|
+                  |L13.436|
                           DCD      ||.conststring||+0xf8
-                  |L13.404|
+                  |L13.440|
                           DCD      ||.conststring||+0x13c
-                  |L13.408|
+                  |L13.444|
                           DCD      ||.conststring||+0x180
-                  |L13.412|
-00019c  1b5b3336          DCB      27,"[36m[%s]   UDS init done\r\n",27,"[0m\r\n",0
-0001a0  6d5b2573
-0001a4  5d202020
-0001a8  55445320
-0001ac  696e6974
-0001b0  20646f6e
-0001b4  650d0a1b
-0001b8  5b306d0d
-0001bc  0a00    
-0001be  00                DCB      0
-0001bf  00                DCB      0
                   |L13.448|
+0001c0  1b5b3336          DCB      27,"[36m[%s]   UDS init done\r\n",27,"[0m\r\n",0
+0001c4  6d5b2573
+0001c8  5d202020
+0001cc  55445320
+0001d0  696e6974
+0001d4  20646f6e
+0001d8  650d0a1b
+0001dc  5b306d0d
+0001e0  0a00    
+0001e2  00                DCB      0
+0001e3  00                DCB      0
+                  |L13.484|
                           DCD      ||.conststring||+0x1c4
-                  |L13.452|
+                  |L13.488|
                           DCD      s_uds_shared_written
-                  |L13.456|
+                  |L13.492|
                           DCD      ||.conststring||+0x21c
 
                           AREA ||i.CheckAndClearAppState||, CODE, READONLY, ALIGN=2
