@@ -23885,12 +23885,7 @@ extern __declspec(__nothrow) void __use_no_semihosting(void);
 
 
 
-
-
-
-
-static const uint8_t g_bin_magic[8] = {0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78};
-static _Bool g_bin_triggered = 0;
+#line 24 "..\\..\\UDS\\flash_download.c"
 
 
 
@@ -23900,8 +23895,7 @@ static _Bool g_bin_triggered = 0;
 
 
 
-
-static uint8_t g_fw_ram_buffer[(88 * 1024)] __attribute__((aligned(4)));
+static uint8_t g_fw_ram_buffer[(8 * 1024)] __attribute__((aligned(4)));
 
 
 typedef struct
@@ -24211,10 +24205,10 @@ FlashDownloadResult_t FlashDownload_OnRequestDownload(uint32_t address, uint32_t
     }
     
     
-    if (size > (88 * 1024)) {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "Firmware size %d exceeds RAM buffer %d" "\033[0m" "\r\n", "FW",size, (88 * 1024));
-        return FW_RESULT_SIZE_TOO_LARGE;
-    }
+    
+    
+    
+    
     
     
     g_fw_ctx.target_address = mapped_addr;
@@ -24291,41 +24285,19 @@ FlashDownloadResult_t FlashDownload_OnTransferData(uint8_t block_sequence_number
     }
     
     
-    if (g_fw_ctx.buffer_offset + len > (88 * 1024)) {
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "RAM buffer overflow: offset=%d, add=%d, max=%d" "\033[0m" "\r\n", "FW",g_fw_ctx . buffer_offset, len, (88 * 1024));
-
-        return FW_RESULT_SIZE_TOO_LARGE;
-    }
     
     
-    memcpy(&g_fw_ram_buffer[g_fw_ctx.buffer_offset], data, len);
-    g_fw_ctx.buffer_offset += len;
+    
+    
+    
+    
+    
+    
+    
     g_fw_ctx.received_size += len;
     
     
-
-    if (!g_bin_triggered) {
-        for (uint16_t _i = 0; _i + 8 <= len; _i++) {
-            if (memcmp(&data[_i], g_bin_magic, 8) == 0) {
-                g_bin_triggered = 1;
-                break;
-            }
-        }
-    }
-    if (g_bin_triggered) {
-        g_bin_triggered = 0;
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "=== BIN DUMP START: %d bytes ===" "\033[0m" "\r\n", "OTA",g_fw_ctx . buffer_offset);
-        for (uint32_t _off = 0; _off < g_fw_ctx.buffer_offset; _off += 16) {
-            char _ln[64];
-            int _p = 0;
-            for (uint32_t _j = 0; _j < 16 && (_off + _j) < g_fw_ctx.buffer_offset; _j++) {
-                _p += sprintf(_ln + _p, "%02X ", g_fw_ram_buffer[_off + _j]);
-            }
-            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "%s" "\033[0m" "\r\n", "OTA",_ln);
-        }
-        SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "=== BIN DUMP END ===" "\033[0m" "\r\n", "OTA");
-    }
-
+#line 465 "..\\..\\UDS\\flash_download.c"
     
     
     for (uint16_t i = 0; i < len; i++) {
