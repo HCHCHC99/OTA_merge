@@ -24362,7 +24362,11 @@ FlashDownloadResult_t FlashDownload_OnTransferData(uint8_t block_sequence_number
     }
     
     
-    g_fw_ctx.expected_sequence++;
+    if (g_fw_ctx.expected_sequence == 0xFF) {
+        g_fw_ctx.expected_sequence = 0x01;   
+    } else {
+        g_fw_ctx.expected_sequence++;
+    }
     
     return FW_RESULT_OK;
 }
@@ -24398,7 +24402,7 @@ FlashDownloadResult_t FlashDownload_OnTransferExit(void)
     g_fw_ctx.rx_crc = ~g_fw_ctx.rx_crc;
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[32m" "[%s] " "Calculated CRC: 0x%08X" "\033[0m" "\r\n", "FW",g_fw_ctx . rx_crc);
     
-#line 543 "..\\..\\UDS\\flash_download.c"
+#line 547 "..\\..\\UDS\\flash_download.c"
     
     
     fw_set_state(FW_UPDATE_COMPLETE);
