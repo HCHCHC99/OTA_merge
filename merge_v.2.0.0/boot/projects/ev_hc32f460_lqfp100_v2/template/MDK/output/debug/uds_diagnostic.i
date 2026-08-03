@@ -26027,10 +26027,16 @@ static void uds_handle_routine_control(uint8_t* data, uint8_t len, uint8_t* resp
         (void)0;
         g_delayed_reset_ms = (100U);
     } else {
-        Boot_SetRunSlotToAddr(0x4C000);
+
+
+
+
+
+         
+        (void)0;
+
         resp[0] = routine_ctrl_type;
         *resp_len = 1;
-        (void)0;
     }
 }
 
