@@ -617,15 +617,15 @@ void Bootloader_UdsMain(void)
 
     /* ==== 2. 初始化固件下载模�? ==== */
     MEM_ZERO_STRUCT(stcFwConfig);
-    stcFwConfig.max_firmware_size     = 80UL * 1024UL;
-    stcFwConfig.flash_sector_size    = 0x2000UL;
+    stcFwConfig.max_firmware_size     = FW_MAX_FIRMWARE_SIZE;
+    stcFwConfig.flash_sector_size    = FLASH_SECTOR_SIZE;
     stcFwConfig.user_start_addr      = UDS_TARGET_FLASH_ADDR;
-    stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + 0x14000UL;
+    stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE;
     stcFwConfig.verify_enabled       = 1U;
     stcFwConfig.auto_reset_on_complete = 0U;
     FlashDownload_Init(&stcFwConfig);
     MAIN_D("  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n",
-           UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + 0x14000UL);
+           UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE);
 
     /* ==== 3. 注册固件下载接口�? UDS ==== */
     uds_dl_init_fw();

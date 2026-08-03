@@ -1,5 +1,6 @@
 #ifndef __BOOTLOADER_APP_H__
 #define __BOOTLOADER_APP_H__
+#include "memory_map.h"
 
 #include "hc32_ll.h"
 #include "core_cm4.h"
@@ -17,14 +18,7 @@
 //                          ����ʽ�㡿Flash ��ַӳ��
 //
 // ###########################################################################
-// ����RAM���򣨸������ṩ�ĵ�ַ��
-#define RAM_START_ADDR      0x1FFF8000UL
-#define RAM_SIZE            0x2F000UL    // 188KB
-#define RAM_END_ADDR        (RAM_START_ADDR + RAM_SIZE)
 
-#define APP1_START_ADDR                  0x1A000
-#define APP2_START_ADDR                  0x4C000
-#define APP_RUN_SLOT_ADDR                0x7C000
 
 /* ===== OTA 模式选择 =====
  * 调试模式        (BOOT_OTA_MODE_DEBUG=1, BOOT_OTA_MODE_PLUS=0):
@@ -73,13 +67,7 @@
 #define BOOT_FORCE_RESP_BOTH_FAULTY  0x03U   /* 双 APP 均故障，进入编程模式等待刷写 */
 #define BOOT_FORCE_RESP_REJECTED     0x04U   /* 目标坏块标记>=3，拒绝强制跳转（不修改自动跳转槽） */
 
-#define APP1_STATE_SECTOR_BASE           0x16000
-#define APP2_STATE_SECTOR_BASE           0x18000
 
-#define WDT_COUNT_APP1_ADDR              (APP1_STATE_SECTOR_BASE + 0x008)
-#define WDT_FEED_CONTROL_APP1_ADDR       (APP1_STATE_SECTOR_BASE + 0x000)
-#define WDT_COUNT_APP2_ADDR              (APP2_STATE_SECTOR_BASE + 0x008)
-#define WDT_FEED_CONTROL_APP2_ADDR       (APP2_STATE_SECTOR_BASE + 0x000)
 
 #define SLOT_A_MAGIC                     0x5A5A5A5Au
 #define SLOT_B_MAGIC                     0xA5A5A5A5u
@@ -138,9 +126,6 @@ typedef struct {
 //                          ����ʽ�㡿����RAM ���ƽṹ
 //
 // ###########################################################################
-#define SHARED_RAM_BASE_ADDR             0x1FFF8000
-#define SHARED_CTRL_OFFSET               0x2F000
-#define SHARED_CTRL_ADDR                 (SHARED_RAM_BASE_ADDR + SHARED_CTRL_OFFSET - 0x100)
 
 typedef struct {
     volatile uint32_t app1_feed_ctrl;
@@ -159,7 +144,6 @@ static inline stc_shared_ctrl_t* GetSharedCtrl(void)
 //                          UDS Flash 共享状态 (Bootloader ↔ APP)
 //
 // ###########################################################################
-#define UDS_SHARED_SECTOR_BASE    0x00010000
 #define UDS_SHARED_MAGIC          0x55445300UL   // "UDS\0"
 
 typedef enum {

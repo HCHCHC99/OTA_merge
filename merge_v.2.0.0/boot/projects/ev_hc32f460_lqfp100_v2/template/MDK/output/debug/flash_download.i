@@ -1,7 +1,64 @@
 #line 1 "..\\..\\UDS\\flash_download.c"
 #line 1 "..\\..\\UDS\\flash_download.h"
+#line 1 "..\\..\\Bootloader_App\\memory_map.h"
 
 
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+ 
+#line 36 "..\\..\\Bootloader_App\\memory_map.h"
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+#line 4 "..\\..\\UDS\\flash_download.h"
 
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdint.h"
  
@@ -259,7 +316,7 @@ typedef unsigned     long long uintmax_t;
 
 
  
-#line 5 "..\\..\\UDS\\flash_download.h"
+#line 6 "..\\..\\UDS\\flash_download.h"
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\stdbool.h"
  
 
@@ -278,7 +335,7 @@ typedef unsigned     long long uintmax_t;
 
 
 
-#line 6 "..\\..\\UDS\\flash_download.h"
+#line 7 "..\\..\\UDS\\flash_download.h"
 
 
 typedef enum
@@ -330,26 +387,9 @@ typedef struct
 
 
 
-
-
-
-
-
-
  
 
-
-
-
-
  
-
-
-
-
-
-
-
 
 
  
@@ -465,8 +505,7 @@ _Bool FlashDownload_IsPending(void);
 
 #line 2 "..\\..\\UDS\\flash_download.c"
 #line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
+#line 4 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 #line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
 
@@ -20542,7 +20581,7 @@ void LL_PERIPH_WP(uint32_t u32Peripheral);
 
 
  
-#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
  
 
@@ -20580,7 +20619,7 @@ void LL_PERIPH_WP(uint32_t u32Peripheral);
 
 #line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
 
-#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
  
  
@@ -21003,14 +21042,7 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
  
 
-#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
-
-
-
-
-
+#line 8 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 
 
@@ -21037,7 +21069,7 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
  
-#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 40 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
  
 
@@ -21062,12 +21094,6 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
  
-
-
-
-
-
-
 
 
 
@@ -21134,9 +21160,6 @@ typedef struct {
 
 
 
-
-
-
 typedef struct {
     volatile uint32_t app1_feed_ctrl;
     volatile uint32_t app2_feed_ctrl;
@@ -21146,9 +21169,8 @@ typedef struct {
 
 static inline stc_shared_ctrl_t* GetSharedCtrl(void)
 {
-    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
+    return (stc_shared_ctrl_t*)(0x1FFF8000UL + 0x2F000UL - 0x100);
 }
-
 
 
 
@@ -23970,11 +23992,11 @@ static _Bool fw_is_address_valid(uint32_t address)
 {
 
      
-    uint32_t mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
+    uint32_t mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
 
      
-    return ((mapped_addr >= 0x0001A000 && mapped_addr < (0x0001A000 + 0x00014000)) ||
-            (mapped_addr >= 0x0004C000  && mapped_addr < (0x0004C000 + 0x00014000)));
+    return ((mapped_addr >= 0x0001A000UL && mapped_addr < (0x0001A000UL + 0x00014000UL)) ||
+            (mapped_addr >= 0x0004C000UL  && mapped_addr < (0x0004C000UL + 0x00014000UL)));
 #line 121 "..\\..\\UDS\\flash_download.c"
 }
 
@@ -24113,8 +24135,8 @@ void FlashDownload_Init(const FlashDownloadConfig_t* config)
     memset(&g_fw_ctx, 0, sizeof(g_fw_ctx));
     
     
-    g_fw_ctx.config.max_firmware_size = (80 * 1024);
-    g_fw_ctx.config.flash_sector_size = 0x2000;
+    g_fw_ctx.config.max_firmware_size = 0x00014000UL;
+    g_fw_ctx.config.flash_sector_size = 0x2000UL;
     g_fw_ctx.config.verify_enabled = 1;
     g_fw_ctx.config.auto_reset_on_complete = 0;
     
@@ -24177,7 +24199,7 @@ FlashDownloadResult_t FlashDownload_OnRequestDownload(uint32_t address, uint32_t
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
     
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[32m" "[%s] " ">>> OnRequestDownload: orig_addr=0x%08X, mapped_addr=0x%08X, size=%d bytes" "\033[0m" "\r\n", "FW",address, mapped_addr, size);
 
@@ -24491,7 +24513,7 @@ FlashDownloadResult_t FlashDownload_Erase(uint32_t address, uint32_t size)
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "Erase: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);
@@ -24516,7 +24538,7 @@ FlashDownloadResult_t FlashDownload_CalculateCRC(uint32_t address, uint32_t size
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < 0x0802C000UL) ? ((address) - 0x08018000UL + 0x0001A000) : (((address) >= 0x08004000UL && (address) < 0x08018000UL) ? ((address) - 0x08004000UL + 0x0004C000) : (address)));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "CRC: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);
@@ -24537,20 +24559,20 @@ FlashDownloadResult_t FlashDownload_CalculateCRC(uint32_t address, uint32_t size
 uint16_t FlashDownload_GetFirmwareVersion(void)
 {
     
-    uint32_t version_addr = 0x0004C000 + 0x10;
+    uint32_t version_addr = 0x0004C000UL + 0x10;
     return (uint16_t)FlashAdv_ReadWord(g_fw_ctx.flash_handle, version_addr);
 }
 
 uint16_t FlashDownload_GetBootloaderVersion(void)
 {
     
-    uint32_t version_addr = 0x00000000 + 0x10;
+    uint32_t version_addr = 0x00000000UL + 0x10;
     return (uint16_t)FlashAdv_ReadWord(g_fw_ctx.flash_handle, version_addr);
 }
 
 uint32_t FlashDownload_GetFirmwareCRC(void)
 {
     
-    uint32_t crc_addr = 0x0004C000 + 0x00014000 - 4;
+    uint32_t crc_addr = 0x0004C000UL + 0x00014000UL - 4;
     return FlashAdv_ReadWord(g_fw_ctx.flash_handle, crc_addr);
 }

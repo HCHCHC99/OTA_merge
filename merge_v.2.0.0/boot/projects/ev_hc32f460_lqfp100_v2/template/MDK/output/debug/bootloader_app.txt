@@ -1517,16 +1517,16 @@
 000054  2114              MOVS     r1,#0x14
 000056  a813              ADD      r0,sp,#0x4c
 000058  f7fffffe          BL       __aeabi_memclr4
-;;;750        stcFwConfig.max_firmware_size     = 80UL * 1024UL;
+;;;750        stcFwConfig.max_firmware_size     = FW_MAX_FIRMWARE_SIZE;
 00005c  f44f30a0          MOV      r0,#0x14000
 000060  9013              STR      r0,[sp,#0x4c]
-;;;751        stcFwConfig.flash_sector_size    = 0x2000UL;
+;;;751        stcFwConfig.flash_sector_size    = FLASH_SECTOR_SIZE;
 000062  f44f5000          MOV      r0,#0x2000
 000066  9014              STR      r0,[sp,#0x50]
 ;;;752        stcFwConfig.user_start_addr      = UDS_TARGET_FLASH_ADDR;
 000068  f44f2098          MOV      r0,#0x4c000
 00006c  9015              STR      r0,[sp,#0x54]
-;;;753        stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + 0x14000UL;
+;;;753        stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE;
 00006e  f44f20c0          MOV      r0,#0x60000
 000072  9016              STR      r0,[sp,#0x58]
 ;;;754        stcFwConfig.verify_enabled       = 1U;
@@ -1546,7 +1546,7 @@
 000092  9000              STR      r0,[sp,#0]
 000094  2000              MOVS     r0,#0
 000096  f7fffffe          BL       SEGGER_RTT_printf
-;;;758               UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + 0x14000UL);
+;;;758               UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE);
 ;;;759    
 ;;;760        /* ==== 3. 注册固件下载接口到 UDS ==== */
 ;;;761        uds_dl_init_fw();

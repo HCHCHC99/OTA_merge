@@ -25686,10 +25686,67 @@ void UdsOta_Bootloader_Enter(void);
 
 #line 20 "..\\source\\main.c"
 #line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 1 "..\\..\\Bootloader_App\\memory_map.h"
 
 
 
-#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+ 
+#line 36 "..\\..\\Bootloader_App\\memory_map.h"
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+#line 4 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
  
 
@@ -25727,15 +25784,8 @@ void UdsOta_Bootloader_Enter(void);
 
 #line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
 
-#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
-
-
-
-
-
+#line 8 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 
 
@@ -25762,7 +25812,7 @@ void UdsOta_Bootloader_Enter(void);
 
 
  
-#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 40 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
  
 
@@ -25787,12 +25837,6 @@ void UdsOta_Bootloader_Enter(void);
 
 
  
-
-
-
-
-
-
 
 
 
@@ -25859,9 +25903,6 @@ typedef struct {
 
 
 
-
-
-
 typedef struct {
     volatile uint32_t app1_feed_ctrl;
     volatile uint32_t app2_feed_ctrl;
@@ -25871,9 +25912,8 @@ typedef struct {
 
 static inline stc_shared_ctrl_t* GetSharedCtrl(void)
 {
-    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
+    return (stc_shared_ctrl_t*)(0x1FFF8000UL + 0x2F000UL - 0x100);
 }
-
 
 
 

@@ -20459,10 +20459,67 @@ uint64_t tickTimer_GetRawTick(void);
 
 #line 10 "..\\..\\Adp\\Timer0_Unit2.c"
 #line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 1 "..\\..\\Bootloader_App\\memory_map.h"
 
 
 
-#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+ 
+#line 36 "..\\..\\Bootloader_App\\memory_map.h"
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+#line 4 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
  
 
@@ -20500,7 +20557,7 @@ uint64_t tickTimer_GetRawTick(void);
 
 #line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
 
-#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
  
  
@@ -20923,14 +20980,7 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
  
 
-#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
-
-
-
-
-
+#line 8 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 
 
@@ -20957,7 +21007,7 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
  
-#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 40 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
  
 
@@ -20982,12 +21032,6 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
  
-
-
-
-
-
-
 
 
 
@@ -21054,9 +21098,6 @@ typedef struct {
 
 
 
-
-
-
 typedef struct {
     volatile uint32_t app1_feed_ctrl;
     volatile uint32_t app2_feed_ctrl;
@@ -21066,9 +21107,8 @@ typedef struct {
 
 static inline stc_shared_ctrl_t* GetSharedCtrl(void)
 {
-    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
+    return (stc_shared_ctrl_t*)(0x1FFF8000UL + 0x2F000UL - 0x100);
 }
-
 
 
 
@@ -21311,9 +21351,9 @@ static void TMR0_Unit2_IRQHandler(void)
                 stc_shared_ctrl_t *pCtrl = GetSharedCtrl();
                 uint32_t feed_ctrl = 0x00000000u;
                 uint32_t vtor = ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR;
-                if (vtor == 0x1A000) {
+                if (vtor == 0x0001A000UL) {
                     feed_ctrl = pCtrl->app1_feed_ctrl;
-                } else if (vtor == 0x4C000) {
+                } else if (vtor == 0x0004C000UL) {
                     feed_ctrl = pCtrl->app2_feed_ctrl;
                 }
                 if (feed_ctrl == 0x00000000u) {

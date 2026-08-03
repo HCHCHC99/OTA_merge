@@ -1,7 +1,64 @@
 #line 1 "..\\..\\Bootloader_App\\Bootloader_App.c"
 #line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 1 "..\\..\\Bootloader_App\\memory_map.h"
 
 
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+ 
+#line 36 "..\\..\\Bootloader_App\\memory_map.h"
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+#line 4 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 #line 1 "../../../../drivers/hc32_ll_driver/inc/hc32_ll.h"
 
@@ -20333,7 +20390,7 @@ void LL_PERIPH_WP(uint32_t u32Peripheral);
 
 
  
-#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
  
 
@@ -20371,7 +20428,7 @@ void LL_PERIPH_WP(uint32_t u32Peripheral);
 
 #line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
 
-#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "F:\\Keil5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
  
  
@@ -20794,14 +20851,7 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
  
 
-#line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
-
-
-
-
-
+#line 8 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 
 
@@ -20828,7 +20878,7 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
  
-#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 40 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
  
 
@@ -20853,12 +20903,6 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
 
  
-
-
-
-
-
-
 
 
 
@@ -20925,9 +20969,6 @@ typedef struct {
 
 
 
-
-
-
 typedef struct {
     volatile uint32_t app1_feed_ctrl;
     volatile uint32_t app2_feed_ctrl;
@@ -20937,9 +20978,8 @@ typedef struct {
 
 static inline stc_shared_ctrl_t* GetSharedCtrl(void)
 {
-    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
+    return (stc_shared_ctrl_t*)(0x1FFF8000UL + 0x2F000UL - 0x100);
 }
-
 
 
 
@@ -24521,11 +24561,10 @@ const char* uds_security_to_string(uds_security_state_t state);
 
 #line 5 "..\\..\\Bootloader_App\\Bootloader_App.c"
 #line 1 "..\\..\\UDS\\flash_download.h"
+#line 4 "..\\..\\UDS\\flash_download.h"
 
-
-
-#line 5 "..\\..\\UDS\\flash_download.h"
 #line 6 "..\\..\\UDS\\flash_download.h"
+#line 7 "..\\..\\UDS\\flash_download.h"
 
 
 typedef enum
@@ -24577,26 +24616,9 @@ typedef struct
 
 
 
-
-
-
-
-
-
  
 
-
-
-
-
  
-
-
-
-
-
-
-
 
 
  
@@ -25575,14 +25597,14 @@ void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount)
     uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
     uint32_t u32Count, u32Feed;
 
-    if (u32Addr == (0x16000 + 0x008)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
-    } else if (u32Addr == (0x18000 + 0x008)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
+    if (u32Addr == (0x00016000UL + 0x008)) {
+        u32SectorBase = 0x00016000UL;
+        u32CountAddr = (0x00016000UL + 0x008);
+        u32FeedAddr = (0x00016000UL + 0x000);
+    } else if (u32Addr == (0x00018000UL + 0x008)) {
+        u32SectorBase = 0x00018000UL;
+        u32CountAddr = (0x00018000UL + 0x008);
+        u32FeedAddr = (0x00018000UL + 0x000);
     } else return;
 
     u32Count = READ_FLASH_DIRECT(u32CountAddr);
@@ -25606,14 +25628,14 @@ void ClearWdtResetCount(uint32_t u32Addr)
     uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
     uint32_t u32Count, u32Feed;
 
-    if (u32Addr == (0x16000 + 0x008)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
-    } else if (u32Addr == (0x18000 + 0x008)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
+    if (u32Addr == (0x00016000UL + 0x008)) {
+        u32SectorBase = 0x00016000UL;
+        u32CountAddr = (0x00016000UL + 0x008);
+        u32FeedAddr = (0x00016000UL + 0x000);
+    } else if (u32Addr == (0x00018000UL + 0x008)) {
+        u32SectorBase = 0x00018000UL;
+        u32CountAddr = (0x00018000UL + 0x008);
+        u32FeedAddr = (0x00018000UL + 0x000);
     } else return;
 
     u32Count = READ_FLASH_DIRECT(u32CountAddr);
@@ -25637,14 +25659,14 @@ void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value)
 
     if (u32Value != 0x00000000u && u32Value != 0xDEADBEEFu) return;
 
-    if (u32Addr == (0x16000 + 0x000)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
-    } else if (u32Addr == (0x18000 + 0x000)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
+    if (u32Addr == (0x00016000UL + 0x000)) {
+        u32SectorBase = 0x00016000UL;
+        u32CountAddr = (0x00016000UL + 0x008);
+        u32FeedAddr = (0x00016000UL + 0x000);
+    } else if (u32Addr == (0x00018000UL + 0x000)) {
+        u32SectorBase = 0x00018000UL;
+        u32CountAddr = (0x00018000UL + 0x008);
+        u32FeedAddr = (0x00018000UL + 0x000);
     } else return;
 
     u32Count = READ_FLASH_DIRECT(u32CountAddr);
@@ -25672,13 +25694,13 @@ void ClearAppStateBySlot(en_slot_type_t eSlot)
     uint32_t u32SectorBase, u32CountAddr, u32FeedAddr, u32Feed;
 
     if (eSlot == ((en_slot_type_t)0x5A5A5A5Au)) {
-        u32SectorBase = 0x16000;
-        u32CountAddr = (0x16000 + 0x008);
-        u32FeedAddr = (0x16000 + 0x000);
+        u32SectorBase = 0x00016000UL;
+        u32CountAddr = (0x00016000UL + 0x008);
+        u32FeedAddr = (0x00016000UL + 0x000);
     } else if (eSlot == ((en_slot_type_t)0xA5A5A5A5u)) {
-        u32SectorBase = 0x18000;
-        u32CountAddr = (0x18000 + 0x008);
-        u32FeedAddr = (0x18000 + 0x000);
+        u32SectorBase = 0x00018000UL;
+        u32CountAddr = (0x00018000UL + 0x008);
+        u32FeedAddr = (0x00018000UL + 0x000);
     } else return;
 
     u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
@@ -25772,14 +25794,14 @@ void ClearAllRAM(void)
 
 void Boot_SwitchAndRunOther(void)
 {
-    uint32_t curr = READ_FLASH_DIRECT(0x7C000);
+    uint32_t curr = READ_FLASH_DIRECT(0x0007C000UL);
     uint32_t target = (curr == 0x5A5A5A5Au) ? 0xA5A5A5A5u : 0x5A5A5A5Au;
 
     EFM_REG_Unlock();
     EFM_FWMC_Cmd(ENABLE);
     while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(0x7C000);
-    EFM_ProgramWord(0x7C000, target);
+    EFM_SectorErase(0x0007C000UL);
+    EFM_ProgramWord(0x0007C000UL, target);
     EFM_REG_Lock();
 
     __NVIC_SystemReset();
@@ -25788,9 +25810,9 @@ void Boot_SwitchAndRunOther(void)
 void Boot_SetRunSlotToAddr(uint32_t u32Addr)
 {
     uint32_t u32Magic;
-    if (u32Addr == 0x1A000)
+    if (u32Addr == 0x0001A000UL)
         u32Magic = 0x5A5A5A5Au;
-    else if (u32Addr == 0x4C000)
+    else if (u32Addr == 0x0004C000UL)
         u32Magic = 0xA5A5A5A5u;
     else
         return;
@@ -25798,8 +25820,8 @@ void Boot_SetRunSlotToAddr(uint32_t u32Addr)
     EFM_REG_Unlock();
     EFM_FWMC_Cmd(ENABLE);
     while(SET != EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(0x7C000);
-    EFM_ProgramWord(0x7C000, u32Magic);
+    EFM_SectorErase(0x0007C000UL);
+    EFM_ProgramWord(0x0007C000UL, u32Magic);
     EFM_REG_Lock();
 }
 
@@ -25846,8 +25868,8 @@ void Boot_StartupSequence(void)
 
 
  
-                    uint32_t u32Wdt1 = READ_FLASH_DIRECT((0x16000 + 0x008));
-                    uint32_t u32Wdt2 = READ_FLASH_DIRECT((0x18000 + 0x008));
+                    uint32_t u32Wdt1 = READ_FLASH_DIRECT((0x00016000UL + 0x008));
+                    uint32_t u32Wdt2 = READ_FLASH_DIRECT((0x00018000UL + 0x008));
                     uint32_t u32T0;
                     uint8_t u8App1Ok;
                     uint8_t u8App2Ok;
@@ -25865,8 +25887,8 @@ void Boot_StartupSequence(void)
                     }
                     else if (s_force_cmd == 0x02U) {
                         if (u8App2Ok != 0U) {
-                            if (READ_FLASH_DIRECT(0x7C000) != 0xA5A5A5A5u) {
-                                Boot_SetRunSlotToAddr(0x4C000);
+                            if (READ_FLASH_DIRECT(0x0007C000UL) != 0xA5A5A5A5u) {
+                                Boot_SetRunSlotToAddr(0x0004C000UL);
                                 Boot_SendForceResp(0x02U);
                                 SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Force boot slot = APP2, resetting...\r\n" "\033[0m" "\r\n", "MAIN");
                                  
@@ -25887,8 +25909,8 @@ void Boot_StartupSequence(void)
                     }
                     else {
                         if (u8App1Ok != 0U) {
-                            if (READ_FLASH_DIRECT(0x7C000) != 0x5A5A5A5Au) {
-                                Boot_SetRunSlotToAddr(0x1A000);
+                            if (READ_FLASH_DIRECT(0x0007C000UL) != 0x5A5A5A5Au) {
+                                Boot_SetRunSlotToAddr(0x0001A000UL);
                                 Boot_SendForceResp(0x01U);
                                 SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Force boot slot = APP1, resetting...\r\n" "\033[0m" "\r\n", "MAIN");
                                  
@@ -25915,8 +25937,8 @@ void Boot_StartupSequence(void)
 
     stc_shared_ctrl_t *pSharedCtrl = GetSharedCtrl();
     if (pSharedCtrl->debug_flag == 0x5A5A5A5A) {
-        SetWdtFeedControl((0x16000 + 0x000), pSharedCtrl->app1_feed_ctrl);
-        SetWdtFeedControl((0x18000 + 0x000), pSharedCtrl->app2_feed_ctrl);
+        SetWdtFeedControl((0x00016000UL + 0x000), pSharedCtrl->app1_feed_ctrl);
+        SetWdtFeedControl((0x00018000UL + 0x000), pSharedCtrl->app2_feed_ctrl);
         pSharedCtrl->debug_flag = 0;
     }
 
@@ -25946,8 +25968,8 @@ void Boot_StartupSequence(void)
     stcCtx.eCurrentSlot = GetCurrentSlot();
     ValidateSlotFlag(&stcCtx);
 
-    InitAppInfo(&stcCtx.stcApp1, ((en_slot_type_t)0x5A5A5A5Au), 0x1A000);
-    InitAppInfo(&stcCtx.stcApp2, ((en_slot_type_t)0xA5A5A5A5u), 0x4C000);
+    InitAppInfo(&stcCtx.stcApp1, ((en_slot_type_t)0x5A5A5A5Au), 0x0001A000UL);
+    InitAppInfo(&stcCtx.stcApp2, ((en_slot_type_t)0xA5A5A5A5u), 0x0004C000UL);
     UpdateAppState(&stcCtx.stcApp1);
     UpdateAppState(&stcCtx.stcApp2);
     HandleWatchdogReset(&stcCtx);
@@ -25960,8 +25982,8 @@ void Boot_StartupSequence(void)
 
 
 
-    if (stcCtx.eTargetSlot == ((en_slot_type_t)0x5A5A5A5Au))      Bootloader_JumpToApp(0x1A000);
-    else if (stcCtx.eTargetSlot == ((en_slot_type_t)0xA5A5A5A5u)) Bootloader_JumpToApp(0x4C000);
+    if (stcCtx.eTargetSlot == ((en_slot_type_t)0x5A5A5A5Au))      Bootloader_JumpToApp(0x0001A000UL);
+    else if (stcCtx.eTargetSlot == ((en_slot_type_t)0xA5A5A5A5u)) Bootloader_JumpToApp(0x0004C000UL);
     else {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  ERROR: No valid APP slot, running forever!\r\n" "\033[0m" "\r\n", "MAIN");
         RunBootloaderForever();
@@ -25978,7 +26000,7 @@ static en_wdt_reset_type_t GetWdtResetType(void) {
 }
 
 static en_slot_type_t GetCurrentSlot(void) {
-    uint32_t s = READ_FLASH_DIRECT(0x7C000);
+    uint32_t s = READ_FLASH_DIRECT(0x0007C000UL);
     if (s == 0x5A5A5A5Au) return ((en_slot_type_t)0x5A5A5A5Au);
     if (s == 0xA5A5A5A5u) return ((en_slot_type_t)0xA5A5A5A5u);
     return ((en_slot_type_t)0);
@@ -25994,7 +26016,7 @@ static void ValidateSlotFlag(stc_boot_context_t *pstcCtx) {
 static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr) {
     pstcApp->eSlot = eSlot;
     pstcApp->u32StartAddr = u32Addr;
-    uint32_t cnt = (eSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? READ_FLASH_DIRECT((0x16000 + 0x008)) : READ_FLASH_DIRECT((0x18000 + 0x008));
+    uint32_t cnt = (eSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? READ_FLASH_DIRECT((0x00016000UL + 0x008)) : READ_FLASH_DIRECT((0x00018000UL + 0x008));
     pstcApp->u32WdtCount = (cnt == 0xFFFFFFFF) ? 0 : cnt;
     pstcApp->eState = APP_STATE_AVAILABLE;
 }
@@ -26009,14 +26031,14 @@ static void HandleWatchdogReset(stc_boot_context_t *pstcCtx) {
     uint32_t addr = 0;
 
     if (pstcCtx->eCurrentSlot == ((en_slot_type_t)0x5A5A5A5Au)) {
-        app = &pstcCtx->stcApp1; addr = (0x16000 + 0x008);
+        app = &pstcCtx->stcApp1; addr = (0x00016000UL + 0x008);
     } else if (pstcCtx->eCurrentSlot == ((en_slot_type_t)0xA5A5A5A5u)) {
-        app = &pstcCtx->stcApp2; addr = (0x18000 + 0x008);
+        app = &pstcCtx->stcApp2; addr = (0x00018000UL + 0x008);
     } else return;
 
     if (app->eState == APP_STATE_AVAILABLE) {
         UpdateWdtResetCount(addr, 0);
-        app->u32WdtCount = (app->eSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? GetWdtResetCount((0x16000 + 0x008)) : GetWdtResetCount((0x18000 + 0x008));
+        app->u32WdtCount = (app->eSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? GetWdtResetCount((0x00016000UL + 0x008)) : GetWdtResetCount((0x00018000UL + 0x008));
         if (app->u32WdtCount >= 3) app->eState = APP_STATE_DISABLED;
     }
 }
@@ -26037,8 +26059,8 @@ static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx) {
     uint32_t val = (pstcCtx->eTargetSlot == ((en_slot_type_t)0x5A5A5A5Au)) ? 0x5A5A5A5Au : 0xA5A5A5A5u;
 
     EFM_REG_Unlock(); EFM_FWMC_Cmd(ENABLE); while(!EFM_GetStatus(((0x00000100UL))));
-    EFM_SectorErase(0x7C000);
-    EFM_ProgramWord(0x7C000, val);
+    EFM_SectorErase(0x0007C000UL);
+    EFM_ProgramWord(0x0007C000UL, val);
     EFM_REG_Lock();
     pstcCtx->u8NeedUpdateSlotFlag = 0;
 }
@@ -26061,7 +26083,7 @@ static void CheckAndClearAppState(void) {
 
 void UdsShared_Read(stc_uds_shared_t *pState)
 {
-    uint32_t *pSrc = (uint32_t *)0x00010000;
+    uint32_t *pSrc = (uint32_t *)0x00010000UL;
     uint32_t *pDst = (uint32_t *)pState;
     uint32_t count = sizeof(stc_uds_shared_t) / 4;
     uint32_t i;
@@ -26072,7 +26094,7 @@ void UdsShared_Read(stc_uds_shared_t *pState)
 
 void UdsShared_Write(const stc_uds_shared_t *pState)
 {
-    uint32_t u32SectorBase = 0x00010000;
+    uint32_t u32SectorBase = 0x00010000UL;
     const uint32_t *pSrc = (const uint32_t *)pState;
     uint32_t count = sizeof(stc_uds_shared_t) / 4;
     uint32_t i;
@@ -26090,7 +26112,7 @@ void UdsShared_Write(const stc_uds_shared_t *pState)
 
 void UdsShared_Clear(void)
 {
-    Bootloader_FlashEraseSector(0x00010000);
+    Bootloader_FlashEraseSector(0x00010000UL);
 }
 
 void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot)
@@ -26179,14 +26201,14 @@ void Bootloader_UdsMain(void)
 
      
     memset(&(stcFwConfig), 0, sizeof(stcFwConfig));
-    stcFwConfig.max_firmware_size     = 80UL * 1024UL;
+    stcFwConfig.max_firmware_size     = 0x00014000UL;
     stcFwConfig.flash_sector_size    = 0x2000UL;
-    stcFwConfig.user_start_addr      = 0x4C000;
-    stcFwConfig.user_end_addr        = 0x4C000 + 0x14000UL;
+    stcFwConfig.user_start_addr      = 0x0004C000UL;
+    stcFwConfig.user_end_addr        = 0x0004C000UL + 0x00014000UL;
     stcFwConfig.verify_enabled       = 1U;
     stcFwConfig.auto_reset_on_complete = 0U;
     FlashDownload_Init(&stcFwConfig);
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n" "\033[0m" "\r\n", "MAIN",0x4C000, 0x4C000 + 0x14000UL);
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n" "\033[0m" "\r\n", "MAIN",0x0004C000UL, 0x0004C000UL + 0x00014000UL);
 
 
      
@@ -26222,7 +26244,7 @@ void Bootloader_UdsMain(void)
             state.phase = UDS_PHASE_PROGRAMMING_DONE;
             state.result = 1;
              
-            if (stcProg.target_address == 0x4C000) {
+            if (stcProg.target_address == 0x0004C000UL) {
                 state.target_slot = ((en_slot_type_t)0xA5A5A5A5u);
             } else {
                 state.target_slot = ((en_slot_type_t)0x5A5A5A5Au);
@@ -26233,10 +26255,10 @@ void Bootloader_UdsMain(void)
             ClearAppStateBySlot(state.target_slot);
 
              
-            if (stcProg.target_address == 0x4C000) {
-                Boot_SetRunSlotToAddr(0x4C000);
-            } else if (stcProg.target_address == 0x1A000) {
-                Boot_SetRunSlotToAddr(0x1A000);
+            if (stcProg.target_address == 0x0004C000UL) {
+                Boot_SetRunSlotToAddr(0x0004C000UL);
+            } else if (stcProg.target_address == 0x0001A000UL) {
+                Boot_SetRunSlotToAddr(0x0001A000UL);
             }
 
             SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)stcProg . target_address);

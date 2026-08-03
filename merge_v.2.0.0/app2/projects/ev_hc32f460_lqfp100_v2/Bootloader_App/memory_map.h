@@ -1,0 +1,70 @@
+#ifndef MEMORY_MAP_H
+#define MEMORY_MAP_H
+
+/*
+ * ============================================================
+ * 内存 / Flash 分区唯一宏定义源
+ * ------------------------------------------------------------
+ * 所有 APP1/APP2 起始地址、分区大小、TBOX 地址窗口、RAM 布局、
+ * OTA 固件大小限制都集中在本文件。
+ * 修改分区只需改本文件，并同步 app1/app2 的 Keil Target IROM1
+ * （Start/Size）链接设置。
+ * ============================================================
+ */
+
+/* ========== 芯片 / 扇区 ========== */
+#define FLASH_SECTOR_SIZE           0x2000UL        /* 8KB/扇区 */
+#define FLASH_TOTAL_SIZE            0x80000UL       /* 512KB (HC32F460xE) */
+#define RAM_START_ADDR              0x1FFF8000UL
+#define RAM_SIZE                    0x2F000UL       /* 188KB */
+#define RAM_END_ADDR                (RAM_START_ADDR + RAM_SIZE)
+
+/* ========== 系统保留区 ========== */
+#define BOOT_START_ADDR             0x00000000UL
+#define BOOT_LINK_SIZE              0x00014000UL    /* boot 链接区 80KB（镜像约 47KB） */
+#define UDS_SHARED_SECTOR_BASE      0x00010000UL    /* 扇区 8 */
+#define FLASHADV_MGMT_SECTOR_BASE   0x00012000UL    /* 扇区 9 */
+#define APP1_STATE_SECTOR_BASE      0x00016000UL    /* 扇区 11 */
+#define APP2_STATE_SECTOR_BASE      0x00018000UL    /* 扇区 12 */
+#define WDT_FEED_CONTROL_APP1_ADDR  (APP1_STATE_SECTOR_BASE + 0x000)
+#define WDT_COUNT_APP1_ADDR         (APP1_STATE_SECTOR_BASE + 0x008)
+#define WDT_FEED_CONTROL_APP2_ADDR  (APP2_STATE_SECTOR_BASE + 0x000)
+#define WDT_COUNT_APP2_ADDR         (APP2_STATE_SECTOR_BASE + 0x008)
+#define SHARED_RAM_BASE_ADDR        0x1FFF8000UL
+#define SHARED_CTRL_OFFSET          0x2F000UL
+#define SHARED_CTRL_ADDR            (SHARED_RAM_BASE_ADDR + SHARED_CTRL_OFFSET - 0x100)
+
+/* ========== APP 分区（当前 80KB / 80KB） ========== */
+#define APP1_START_ADDR             0x0001A000UL    /* 扇区 13 */
+#define APP2_START_ADDR             0x0004C000UL    /* 扇区 38 */
+#define APP_MAX_SIZE                0x00014000UL    /* 80KB */
+#define APP1_END_ADDR               (APP1_START_ADDR + APP_MAX_SIZE)  /* 0x2E000 */
+#define APP2_END_ADDR               (APP2_START_ADDR + APP_MAX_SIZE)  /* 0x60000 */
+
+/* 兼容旧名（原 flash_download.h 中的定义） */
+#define FW_APP1_START_ADDR          APP1_START_ADDR
+#define FW_APP_START_ADDR           APP2_START_ADDR
+#define FW_APP_MAX_SIZE             APP_MAX_SIZE
+#define FW_BOOTLOADER_START_ADDR    BOOT_START_ADDR
+
+/* ========== 参数区 / 跳转槽 ========== */
+#define PARAM_MANAGER_START_ADDR    0x00070000UL    /* 扇区 56 */
+#define APP_RUN_SLOT_ADDR           0x0007C000UL    /* 扇区 62 */
+
+/* ========== TBOX 地址窗口（当前 80KB） ========== */
+#define TBOX_ADDR_APP1_START        0x08018000UL
+#define TBOX_ADDR_APP1_END          (TBOX_ADDR_APP1_START + APP_MAX_SIZE)  /* 0x0802C000 */
+#define TBOX_ADDR_APP2_START        0x08004000UL
+#define TBOX_ADDR_APP2_END          (TBOX_ADDR_APP2_START + APP_MAX_SIZE)  /* 0x08018000 */
+
+#define MAP_TBOX_ADDR_TO_FLASH(addr) \
+    (((addr) >= TBOX_ADDR_APP1_START && (addr) < TBOX_ADDR_APP1_END) ? \
+     ((addr) - TBOX_ADDR_APP1_START + APP1_START_ADDR) : \
+    (((addr) >= TBOX_ADDR_APP2_START && (addr) < TBOX_ADDR_APP2_END) ? \
+     ((addr) - TBOX_ADDR_APP2_START + APP2_START_ADDR) : (addr)))
+
+/* ========== OTA 限制 ========== */
+#define FW_MAX_FIRMWARE_SIZE        APP_MAX_SIZE    /* 固件最大 = APP 分区大小 */
+#define FW_RAM_BUFFER_SIZE          (8 * 1024)      /* 0x36 块对齐暂存（仅对齐/调试用） */
+
+#endif /* MEMORY_MAP_H */

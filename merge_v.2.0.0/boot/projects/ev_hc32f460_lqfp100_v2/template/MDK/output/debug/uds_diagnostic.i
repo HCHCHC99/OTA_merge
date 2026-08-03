@@ -24957,10 +24957,67 @@ _Bool seedkey_calc_lv1_key(uint8_t *seed, uint8_t *key);
 
 #line 14 "..\\..\\UDS\\uds_diagnostic.c"
 #line 1 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 1 "..\\..\\Bootloader_App\\memory_map.h"
 
 
 
-#line 5 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+ 
+#line 36 "..\\..\\Bootloader_App\\memory_map.h"
+
+ 
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+#line 4 "..\\..\\Bootloader_App\\Bootloader_App.h"
+
+#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 1 "../../../../drivers/cmsis/Include/core_cm4.h"
  
 
@@ -24998,15 +25055,8 @@ _Bool seedkey_calc_lv1_key(uint8_t *seed, uint8_t *key);
 
 #line 2128 "../../../../drivers/cmsis/Include/core_cm4.h"
 
-#line 6 "..\\..\\Bootloader_App\\Bootloader_App.h"
 #line 7 "..\\..\\Bootloader_App\\Bootloader_App.h"
-
-
-
-
-
-
-
+#line 8 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
 
 
@@ -25033,7 +25083,7 @@ _Bool seedkey_calc_lv1_key(uint8_t *seed, uint8_t *key);
 
 
  
-#line 46 "..\\..\\Bootloader_App\\Bootloader_App.h"
+#line 40 "..\\..\\Bootloader_App\\Bootloader_App.h"
 
  
 
@@ -25058,12 +25108,6 @@ _Bool seedkey_calc_lv1_key(uint8_t *seed, uint8_t *key);
 
 
  
-
-
-
-
-
-
 
 
 
@@ -25130,9 +25174,6 @@ typedef struct {
 
 
 
-
-
-
 typedef struct {
     volatile uint32_t app1_feed_ctrl;
     volatile uint32_t app2_feed_ctrl;
@@ -25142,9 +25183,8 @@ typedef struct {
 
 static inline stc_shared_ctrl_t* GetSharedCtrl(void)
 {
-    return (stc_shared_ctrl_t*)(0x1FFF8000 + 0x2F000 - 0x100);
+    return (stc_shared_ctrl_t*)(0x1FFF8000UL + 0x2F000UL - 0x100);
 }
-
 
 
 
@@ -25668,7 +25708,7 @@ static void uds_handle_ecu_reset(uint8_t* data, uint8_t len, uint8_t* resp, uint
         if (state.magic == 0x55445300UL) {
             state.pending_sid = 0x11;
             UdsShared_Write(&state);
-            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  pending_sid=0x11 written to flash at 0x%08X\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)0x00010000);
+            SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  pending_sid=0x11 written to flash at 0x%08X\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)0x00010000UL);
 
         } else {
             SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  WARNING: magic mismatch (0x%08X), pending_sid NOT written!\r\n" "\033[0m" "\r\n", "MAIN",(unsigned int)state . magic);
@@ -26013,7 +26053,7 @@ static void uds_handle_routine_control(uint8_t* data, uint8_t len, uint8_t* resp
      
     
      
-    if (((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x1A000 || ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x4C000) {
+    if (((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x0001A000UL || ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x0004C000UL) {
             
         {
             stc_uds_shared_t _st;

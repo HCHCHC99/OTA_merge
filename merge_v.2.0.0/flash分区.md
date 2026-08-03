@@ -23,12 +23,15 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
 ────     ────        ────                     ────────────────      ──────────
 13-22   0x1A000     APP1 固件 (80KB)          有效用户区 (13-61)    烧录 / 直接运行-37   0x2E000     空闲 (120KB)              有效用户区 (13-61)    无
 38-47   0x4C000     APP2 OTA 固件 (80KB)      有效用户区 (13-61)    FlashDownload (经 FlashAdvanced)
-48-55   0x60000     空闲 (64KB)               有效用户区 (13-61)    无
+48-54   0x60000     空闲 (56KB)               有效用户区 (13-61)    无
+55      0x6E000     已被占用（四驱参数存储）    有效用户区 (13-61)    四驱 drv_mcu_flash 占用 ⚠️
 56-61   0x70000     param_manager (48KB)      有效用户区 (13-61)    param_manager (绕过 FlashAdvanced)
 ────     ────        ────                     ────────────────      ──────────
 62      0x7C000     APP_RUN_SLOT              灰色地带 (非有效非保护) Bootloader_App.c 直接写
 63      0x7E000     硬保护 (不可操作)          单独保护              无
 ```
+
+> ⚠️ **扇区 55（0x6E000）占用约束**：四驱工程（D:\260706_NL）的 `drv_mcu_flash.c` 使用 `STORAGE_SECTOR_ADDR=0x6E000` 存储参数。OTA 工程当前虽未使用该扇区，但做分区规划时必须按“不可用”处理（APP2 结束地址必须 ≤ 0x6E000，最多用到 54 号扇区）。
 
 ### FlashAdvanced 分区定义 (`flash_advanced.h`)
 
@@ -86,7 +89,8 @@ HC32F460xE: 512KB Flash (`0x00000000` – `0x0007FFFF`), 64 sectors, sector size
            |  Slot B: backup / OTA target                               |
            |  VTOR = 0x0004C000 (APP2_START_ADDR)                       |
 0x00060000 +-----------------------------------------------------------+
-           |                    UNUSED (64KB, sectors 48-55)             |
+           |                    UNUSED (56KB, sectors 48-54)            |
+           |   sector 55 (0x6E000) 已被占用（四驱参数存储）              |
 0x00070000 +===========================================================+
            |                    param_manager (48KB, sectors 56-61)      |
            |  磨损均衡参数存储（绕过 FlashAdvanced）                     |
@@ -419,6 +423,50 @@ FlashDownload_OnTransferExit()               // 0x37: 最终冲刷 + CRC 校验
 
 ---
 
+---
+
+## APP1/APP2 未来规划：128KB + 128KB（2026-08-04，未实施）
+
+> 换算：128KB = `0x20000`，96KB = `0x18000`；每扇区 8KB。完整规划另见本次会话输出 `OTA写入.md`。
+
+### 原设想（不可行）
+
+```
+APP1：0x1A000 ~ 0x3A000   (128KB，扇区 13–28)
+APP2：0x32000 ~ 0x52000   (128KB，扇区 25–40，首地址 = 0x1A000 + 96KB)
+重叠：0x32000 ~ 0x3A000   = 32KB（扇区 25–28，4 个扇区）
+```
+
+APP1 为 128KB 时，APP2 至少要从 0x3A000 开始，不能从 +96KB 开始。
+
+### 方案 A（推荐）
+
+```
+APP1：0x1A000 ~ 0x3A000   (128KB，扇区 13–28)
+APP2：0x3A000 ~ 0x5A000   (128KB，扇区 29–44)
+结束 0x5A000 < 0x6E000 ✓（不碰 55 号扇区）
+剩余空闲：0x5A000 ~ 0x6DFFF（扇区 45–54，80KB）
+```
+
+### 方案 B（若 APP2 首地址必须 = 0x32000）
+
+```
+APP1：0x1A000 ~ 0x32000   (96KB，扇区 13–24)
+APP2：0x32000 ~ 0x52000   (128KB，扇区 25–40)
+结束 0x52000 < 0x6E000 ✓
+剩余空闲：0x52000 ~ 0x6DFFF（扇区 41–54，112KB）
+```
+
+### 实施需同步修改的位置（方案 A 为例）
+
+| 位置 | 修改 |
+|---|---|
+| `flash_download.h` | `FW_APP_MAX_SIZE` `0x14000`→`0x20000`；`FW_APP_START_ADDR` `0x4C000`→`0x3A000`；TBOX 窗口扩为 128KB |
+| `Bootloader_App.h` | `APP2_START_ADDR` `0x4C000`→`0x3A000` |
+| `Bootloader_App.c` | `max_firmware_size` 80KB→128KB；`user_end_addr` `+0x14000`→`+0x20000` |
+| `flash_download.c` | `FW_DEFAULT_MAX_SIZE` 80KB→128KB |
+| app1/app2 链接脚本（Keil Target） | app1 `0x1A000`/`0x20000`；app2 `0x3A000`/`0x20000` |
+| TBOX 协议侧 | 0x34 地址窗口同步（APP1 `0x08018000~0x08038000`；APP2 `0x08038000~0x08058000`） |
 ## 修改记录（2026-08-02）
 
 | 修改项 | 说明 |
@@ -439,3 +487,14 @@ FlashDownload_OnTransferExit()               // 0x37: 最终冲刷 + CRC 校验
 | APP1/APP2 | 80KB | 80KB（一致） |
 | Flash 写入 | 下载经 FlashAdvanced | 四驱 `flash_download` 直接 EFM 写入（无 FlashAdvanced） |
 | 跳转槽 | 0x7C000 | 0x7C000（一致，勿占用） |
+---
+
+## 修改记录（2026-08-04）
+
+| 修改项 | 说明 |
+|--------|------|
+| OTA 正式模式 | `BOOT_OTA_MODE_DEBUG=0`：0x34 按实际烧录目标（APP1/APP2）写跳转槽；0x31（boot 上下文）不再抢写跳转槽 |
+| 0x36 块序号回绕 | `expected_sequence` 255→1 回绕，支持 >255 块（>63.75KB）固件 |
+| RAM 缓冲缩减 | `FW_RAM_BUFFER_SIZE` 88KB→8KB（仅作 0x36 块 4 字节对齐暂存）；0x34/0x36 的 RAM 大小检查与 BIN 累积打印已注释 |
+| 扇区 55 占用约束 | 四驱参数存储位于 0x6E000；规划时 APP2 结束地址必须 ≤ 0x6E000 |
+| 128KB 分区规划 | 见上文“APP1/APP2 未来规划”（尚未实施） |
