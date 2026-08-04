@@ -20933,7 +20933,8 @@ typedef enum {
 typedef enum {
     WDT_RESET_NONE = 0,
     WDT_RESET_SWDT = 1,
-    WDT_RESET_WDT = 2
+    WDT_RESET_WDT = 2,
+    WDT_RESET_MPU_ERR = 3
 } en_wdt_reset_type_t;
 
 typedef enum {
@@ -25989,10 +25990,22 @@ void Boot_StartupSequence(void)
 
 
 
-static en_wdt_reset_type_t GetWdtResetType(void) {
-    if ( SET == RMU_GetStatus(((0x0040U)))) return WDT_RESET_SWDT;
-    if ( SET == RMU_GetStatus(((0x0020U)))) return WDT_RESET_WDT;
-    return WDT_RESET_NONE;
+static en_wdt_reset_type_t GetWdtResetType(void)
+{
+    en_wdt_reset_type_t enType = WDT_RESET_NONE;
+    _Bool bSwdt = (SET == RMU_GetStatus(((0x0040U))));
+    _Bool bWdt  = (SET == RMU_GetStatus(((0x0020U))));
+    _Bool bMpu  = (SET == RMU_GetStatus(((0x0200U))));
+
+     
+    PWC_REG_Unlock((0xA502U));
+    RMU_ClearStatus();
+    PWC_REG_Lock((0xA502U));
+
+    if (bSwdt)      enType = WDT_RESET_SWDT;
+    else if (bWdt)  enType = WDT_RESET_WDT;
+    else if (bMpu)  enType = WDT_RESET_MPU_ERR;
+    return enType;
 }
 
 static en_slot_type_t GetCurrentSlot(void) {

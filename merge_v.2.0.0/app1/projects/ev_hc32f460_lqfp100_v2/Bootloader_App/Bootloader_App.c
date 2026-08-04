@@ -409,10 +409,22 @@ void Boot_StartupSequence(void)
 // ###########################################################################
 //                          �ڲ���̬����
 // ###########################################################################
-static en_wdt_reset_type_t GetWdtResetType(void) {
-    if ( SET == RMU_GetStatus(RMU_FLAG_SWDT)) return WDT_RESET_SWDT;
-    if ( SET == RMU_GetStatus(RMU_FLAG_WDT)) return WDT_RESET_WDT;
-    return WDT_RESET_NONE;
+static en_wdt_reset_type_t GetWdtResetType(void)
+{
+    en_wdt_reset_type_t enType = WDT_RESET_NONE;
+    bool bSwdt = (SET == RMU_GetStatus(RMU_FLAG_SWDT));
+    bool bWdt  = (SET == RMU_GetStatus(RMU_FLAG_WDT));
+    bool bMpu  = (SET == RMU_GetStatus(RMU_FLAG_MPU_ERR));
+
+    /* 读取后立即清除 RMU 粘性复位标志 (RSTF0)，防止残留导致下次误判；RSTF0 受 PWC 保护，先解锁再清 */
+    PWC_REG_Unlock(PWC_UNLOCK_CODE1);
+    RMU_ClearStatus();
+    PWC_REG_Lock(PWC_UNLOCK_CODE1);
+
+    if (bSwdt)      enType = WDT_RESET_SWDT;
+    else if (bWdt)  enType = WDT_RESET_WDT;
+    else if (bMpu)  enType = WDT_RESET_MPU_ERR;
+    return enType;
 }
 
 static en_slot_type_t GetCurrentSlot(void) {

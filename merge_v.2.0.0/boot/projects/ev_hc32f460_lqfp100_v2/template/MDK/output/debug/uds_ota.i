@@ -25359,7 +25359,8 @@ typedef enum {
 typedef enum {
     WDT_RESET_NONE = 0,
     WDT_RESET_SWDT = 1,
-    WDT_RESET_WDT = 2
+    WDT_RESET_WDT = 2,
+    WDT_RESET_MPU_ERR = 3
 } en_wdt_reset_type_t;
 
 typedef enum {
