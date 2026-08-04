@@ -50,10 +50,6 @@
 
 
 
-
-
-
-
  
 
 
@@ -23992,7 +23988,7 @@ static _Bool fw_is_address_valid(uint32_t address)
 {
 
      
-    uint32_t mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
+    uint32_t mapped_addr = (((address) == 0x08018000UL) ? 0x0001A000UL : ((address) == 0x08004000UL) ? 0x00044000UL : (address));
 
      
     return ((mapped_addr >= 0x0001A000UL && mapped_addr < (0x0001A000UL + 0x0002A000UL)) ||
@@ -24199,7 +24195,7 @@ FlashDownloadResult_t FlashDownload_OnRequestDownload(uint32_t address, uint32_t
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
+    mapped_addr = (((address) == 0x08018000UL) ? 0x0001A000UL : ((address) == 0x08004000UL) ? 0x00044000UL : (address));
     
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[32m" "[%s] " ">>> OnRequestDownload: orig_addr=0x%08X, mapped_addr=0x%08X, size=%d bytes" "\033[0m" "\r\n", "FW",address, mapped_addr, size);
 
@@ -24513,7 +24509,7 @@ FlashDownloadResult_t FlashDownload_Erase(uint32_t address, uint32_t size)
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
+    mapped_addr = (((address) == 0x08018000UL) ? 0x0001A000UL : ((address) == 0x08004000UL) ? 0x00044000UL : (address));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "Erase: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);
@@ -24538,7 +24534,7 @@ FlashDownloadResult_t FlashDownload_CalculateCRC(uint32_t address, uint32_t size
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
+    mapped_addr = (((address) == 0x08018000UL) ? 0x0001A000UL : ((address) == 0x08004000UL) ? 0x00044000UL : (address));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "CRC: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);

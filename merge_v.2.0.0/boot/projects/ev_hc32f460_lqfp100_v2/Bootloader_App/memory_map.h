@@ -5,7 +5,7 @@
  * ============================================================
  * 内存 / Flash 分区唯一宏定义源
  * ------------------------------------------------------------
- * 所有 APP1/APP2 起始地址、分区大小、TBOX 地址窗口、RAM 布局、
+ * 所有 APP1/APP2 起始地址、分区大小、TBOX 槽位标签、RAM 布局、
  * OTA 固件大小限制都集中在本文件。
  * 修改分区只需改本文件，并同步 app1/app2 的 Keil Target IROM1
  * （Start/Size）链接设置。
@@ -51,17 +51,13 @@
 #define PARAM_MANAGER_START_ADDR    0x00070000UL    /* 扇区 56 */
 #define APP_RUN_SLOT_ADDR           0x0007C000UL    /* 扇区 62 */
 
-/* ========== TBOX 地址窗口（协议固定，不可修改） ========== */
-#define TBOX_ADDR_APP1_START        0x08018000UL    /* 客户协议：烧录到 APP1 */
-#define TBOX_ADDR_APP1_END          (TBOX_ADDR_APP1_START + APP_MAX_SIZE)  /* 0x08042000 */
-#define TBOX_ADDR_APP2_START        0x08004000UL    /* 客户协议：烧录到 APP2 */
-#define TBOX_ADDR_APP2_END          (TBOX_ADDR_APP2_START + APP_MAX_SIZE)  /* 0x08018000 */
+/* ========== TBOX 槽位标签（客户协议固定，仅表示烧录到哪个槽，不校验区间） ========== */
+#define TBOX_ADDR_APP1              0x08018000UL    /* 标签：烧录到 APP1（0x1A000） */
+#define TBOX_ADDR_APP2              0x08004000UL    /* 标签：烧录到 APP2（0x44000） */
 
 #define MAP_TBOX_ADDR_TO_FLASH(addr) \
-    (((addr) >= TBOX_ADDR_APP1_START && (addr) < TBOX_ADDR_APP1_END) ? \
-     ((addr) - TBOX_ADDR_APP1_START + APP1_START_ADDR) : \
-    (((addr) >= TBOX_ADDR_APP2_START && (addr) < TBOX_ADDR_APP2_END) ? \
-     ((addr) - TBOX_ADDR_APP2_START + APP2_START_ADDR) : (addr)))
+    (((addr) == TBOX_ADDR_APP1) ? APP1_START_ADDR : \
+     ((addr) == TBOX_ADDR_APP2) ? APP2_START_ADDR : (addr))
 
 /* ========== OTA 限制 ========== */
 #define FW_MAX_FIRMWARE_SIZE        APP_MAX_SIZE    /* 固件最大 = APP 分区大小 = 168KB */
