@@ -25812,7 +25812,7 @@ void Boot_SetRunSlotToAddr(uint32_t u32Addr)
     uint32_t u32Magic;
     if (u32Addr == 0x0001A000UL)
         u32Magic = 0x5A5A5A5Au;
-    else if (u32Addr == 0x0004C000UL)
+    else if (u32Addr == 0x00044000UL)
         u32Magic = 0xA5A5A5A5u;
     else
         return;
@@ -25888,7 +25888,7 @@ void Boot_StartupSequence(void)
                     else if (s_force_cmd == 0x02U) {
                         if (u8App2Ok != 0U) {
                             if (READ_FLASH_DIRECT(0x0007C000UL) != 0xA5A5A5A5u) {
-                                Boot_SetRunSlotToAddr(0x0004C000UL);
+                                Boot_SetRunSlotToAddr(0x00044000UL);
                                 Boot_SendForceResp(0x02U);
                                 SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  -> Force boot slot = APP2, resetting...\r\n" "\033[0m" "\r\n", "MAIN");
                                  
@@ -25969,7 +25969,7 @@ void Boot_StartupSequence(void)
     ValidateSlotFlag(&stcCtx);
 
     InitAppInfo(&stcCtx.stcApp1, ((en_slot_type_t)0x5A5A5A5Au), 0x0001A000UL);
-    InitAppInfo(&stcCtx.stcApp2, ((en_slot_type_t)0xA5A5A5A5u), 0x0004C000UL);
+    InitAppInfo(&stcCtx.stcApp2, ((en_slot_type_t)0xA5A5A5A5u), 0x00044000UL);
     UpdateAppState(&stcCtx.stcApp1);
     UpdateAppState(&stcCtx.stcApp2);
     HandleWatchdogReset(&stcCtx);
@@ -25983,7 +25983,7 @@ void Boot_StartupSequence(void)
 
 
     if (stcCtx.eTargetSlot == ((en_slot_type_t)0x5A5A5A5Au))      Bootloader_JumpToApp(0x0001A000UL);
-    else if (stcCtx.eTargetSlot == ((en_slot_type_t)0xA5A5A5A5u)) Bootloader_JumpToApp(0x0004C000UL);
+    else if (stcCtx.eTargetSlot == ((en_slot_type_t)0xA5A5A5A5u)) Bootloader_JumpToApp(0x00044000UL);
     else {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  ERROR: No valid APP slot, running forever!\r\n" "\033[0m" "\r\n", "MAIN");
         RunBootloaderForever();
@@ -26201,14 +26201,14 @@ void Bootloader_UdsMain(void)
 
      
     memset(&(stcFwConfig), 0, sizeof(stcFwConfig));
-    stcFwConfig.max_firmware_size     = 0x00014000UL;
+    stcFwConfig.max_firmware_size     = 0x0002A000UL;
     stcFwConfig.flash_sector_size    = 0x2000UL;
-    stcFwConfig.user_start_addr      = 0x0004C000UL;
-    stcFwConfig.user_end_addr        = 0x0004C000UL + 0x00014000UL;
+    stcFwConfig.user_start_addr      = 0x00044000UL;
+    stcFwConfig.user_end_addr        = 0x00044000UL + 0x0002A000UL;
     stcFwConfig.verify_enabled       = 1U;
     stcFwConfig.auto_reset_on_complete = 0U;
     FlashDownload_Init(&stcFwConfig);
-    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n" "\033[0m" "\r\n", "MAIN",0x0004C000UL, 0x0004C000UL + 0x00014000UL);
+    SEGGER_RTT_printf(LOG_CH_MAIN, "\033[36m" "[%s] " "  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n" "\033[0m" "\r\n", "MAIN",0x00044000UL, 0x00044000UL + 0x0002A000UL);
 
 
      
@@ -26244,7 +26244,7 @@ void Bootloader_UdsMain(void)
             state.phase = UDS_PHASE_PROGRAMMING_DONE;
             state.result = 1;
              
-            if (stcProg.target_address == 0x0004C000UL) {
+            if (stcProg.target_address == 0x00044000UL) {
                 state.target_slot = ((en_slot_type_t)0xA5A5A5A5u);
             } else {
                 state.target_slot = ((en_slot_type_t)0x5A5A5A5Au);
@@ -26255,8 +26255,8 @@ void Bootloader_UdsMain(void)
             ClearAppStateBySlot(state.target_slot);
 
              
-            if (stcProg.target_address == 0x0004C000UL) {
-                Boot_SetRunSlotToAddr(0x0004C000UL);
+            if (stcProg.target_address == 0x00044000UL) {
+                Boot_SetRunSlotToAddr(0x00044000UL);
             } else if (stcProg.target_address == 0x0001A000UL) {
                 Boot_SetRunSlotToAddr(0x0001A000UL);
             }

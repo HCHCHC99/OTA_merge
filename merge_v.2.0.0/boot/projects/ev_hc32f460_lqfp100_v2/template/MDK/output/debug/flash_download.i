@@ -23992,11 +23992,11 @@ static _Bool fw_is_address_valid(uint32_t address)
 {
 
      
-    uint32_t mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
+    uint32_t mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
 
      
-    return ((mapped_addr >= 0x0001A000UL && mapped_addr < (0x0001A000UL + 0x00014000UL)) ||
-            (mapped_addr >= 0x0004C000UL  && mapped_addr < (0x0004C000UL + 0x00014000UL)));
+    return ((mapped_addr >= 0x0001A000UL && mapped_addr < (0x0001A000UL + 0x0002A000UL)) ||
+            (mapped_addr >= 0x00044000UL  && mapped_addr < (0x00044000UL + 0x0002A000UL)));
 #line 121 "..\\..\\UDS\\flash_download.c"
 }
 
@@ -24135,7 +24135,7 @@ void FlashDownload_Init(const FlashDownloadConfig_t* config)
     memset(&g_fw_ctx, 0, sizeof(g_fw_ctx));
     
     
-    g_fw_ctx.config.max_firmware_size = 0x00014000UL;
+    g_fw_ctx.config.max_firmware_size = 0x0002A000UL;
     g_fw_ctx.config.flash_sector_size = 0x2000UL;
     g_fw_ctx.config.verify_enabled = 1;
     g_fw_ctx.config.auto_reset_on_complete = 0;
@@ -24199,7 +24199,7 @@ FlashDownloadResult_t FlashDownload_OnRequestDownload(uint32_t address, uint32_t
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
     
     SEGGER_RTT_printf(LOG_CH_MAIN, "\033[32m" "[%s] " ">>> OnRequestDownload: orig_addr=0x%08X, mapped_addr=0x%08X, size=%d bytes" "\033[0m" "\r\n", "FW",address, mapped_addr, size);
 
@@ -24513,7 +24513,7 @@ FlashDownloadResult_t FlashDownload_Erase(uint32_t address, uint32_t size)
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "Erase: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);
@@ -24538,7 +24538,7 @@ FlashDownloadResult_t FlashDownload_CalculateCRC(uint32_t address, uint32_t size
     }
     
      
-    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x00014000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x00014000UL)) ? ((address) - 0x08004000UL + 0x0004C000UL) : (address)));
+    mapped_addr = (((address) >= 0x08018000UL && (address) < (0x08018000UL + 0x0002A000UL)) ? ((address) - 0x08018000UL + 0x0001A000UL) : (((address) >= 0x08004000UL && (address) < (0x08004000UL + 0x0002A000UL)) ? ((address) - 0x08004000UL + 0x00044000UL) : (address)));
     
     if (!fw_is_address_valid(mapped_addr)) {
         SEGGER_RTT_printf(LOG_CH_MAIN, "\033[31m" "[%s] " "CRC: invalid address: orig=0x%08X, mapped=0x%08X" "\033[0m" "\r\n", "FW",address, mapped_addr);
@@ -24559,7 +24559,7 @@ FlashDownloadResult_t FlashDownload_CalculateCRC(uint32_t address, uint32_t size
 uint16_t FlashDownload_GetFirmwareVersion(void)
 {
     
-    uint32_t version_addr = 0x0004C000UL + 0x10;
+    uint32_t version_addr = 0x00044000UL + 0x10;
     return (uint16_t)FlashAdv_ReadWord(g_fw_ctx.flash_handle, version_addr);
 }
 
@@ -24573,6 +24573,6 @@ uint16_t FlashDownload_GetBootloaderVersion(void)
 uint32_t FlashDownload_GetFirmwareCRC(void)
 {
     
-    uint32_t crc_addr = 0x0004C000UL + 0x00014000UL - 4;
+    uint32_t crc_addr = 0x00044000UL + 0x0002A000UL - 4;
     return FlashAdv_ReadWord(g_fw_ctx.flash_handle, crc_addr);
 }

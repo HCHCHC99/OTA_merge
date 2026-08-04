@@ -21353,7 +21353,7 @@ static void TMR0_Unit2_IRQHandler(void)
                 uint32_t vtor = ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR;
                 if (vtor == 0x0001A000UL) {
                     feed_ctrl = pCtrl->app1_feed_ctrl;
-                } else if (vtor == 0x0004C000UL) {
+                } else if (vtor == 0x00044000UL) {
                     feed_ctrl = pCtrl->app2_feed_ctrl;
                 }
                 if (feed_ctrl == 0x00000000u) {

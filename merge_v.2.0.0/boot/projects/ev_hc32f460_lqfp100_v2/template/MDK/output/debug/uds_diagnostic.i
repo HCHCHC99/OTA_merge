@@ -26053,7 +26053,7 @@ static void uds_handle_routine_control(uint8_t* data, uint8_t len, uint8_t* resp
      
     
      
-    if (((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x0001A000UL || ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x0004C000UL) {
+    if (((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x0001A000UL || ((SCB_Type *) ((0xE000E000UL) + 0x0D00UL) )->VTOR == 0x00044000UL) {
             
         {
             stc_uds_shared_t _st;

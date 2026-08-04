@@ -148,24 +148,7 @@
           <Name>UL2CM3(-S0 -C0 -P0 -FD1FFF8000 -FC1000 -FN2 -FF0HC32F46x -FS00 -FL0200000 -FF1HC32F46x_otp -FS13000C00 -FL13FC -FP0($$Device:HC32F460JETA$FlashARM\HC32F46x.FLM) -FP1($$Device:HC32F460JETA$FlashARM\HC32F46x_otp.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>359</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>2094</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\Bootloader_App\Bootloader_App.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\boot\../../Bootloader_App/Bootloader_App.c\359</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -1525,7 +1508,7 @@
 
   <Group>
     <GroupName>UDS</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1589,17 +1572,29 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+    <File>
+      <GroupNumber>10</GroupNumber>
+      <FileNumber>97</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\UDS\uds_ota.c</PathWithFileName>
+      <FilenameWithoutPath>uds_ota.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
   </Group>
 
   <Group>
     <GroupName>Bootloader_App</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>97</FileNumber>
+      <FileNumber>98</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>

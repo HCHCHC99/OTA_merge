@@ -34,12 +34,12 @@
 #define SHARED_CTRL_OFFSET          0x2F000UL
 #define SHARED_CTRL_ADDR            (SHARED_RAM_BASE_ADDR + SHARED_CTRL_OFFSET - 0x100)
 
-/* ========== APP 分区（当前 80KB / 80KB） ========== */
+/* ========== APP 分区（168KB / 168KB，扇区 13~54 平分） ========== */
 #define APP1_START_ADDR             0x0001A000UL    /* 扇区 13 */
-#define APP2_START_ADDR             0x0004C000UL    /* 扇区 38 */
-#define APP_MAX_SIZE                0x00014000UL    /* 80KB */
-#define APP1_END_ADDR               (APP1_START_ADDR + APP_MAX_SIZE)  /* 0x2E000 */
-#define APP2_END_ADDR               (APP2_START_ADDR + APP_MAX_SIZE)  /* 0x60000 */
+#define APP2_START_ADDR             0x00044000UL    /* 扇区 34 */
+#define APP_MAX_SIZE                0x0002A000UL    /* 168KB */
+#define APP1_END_ADDR               (APP1_START_ADDR + APP_MAX_SIZE)  /* 0x00044000 */
+#define APP2_END_ADDR               (APP2_START_ADDR + APP_MAX_SIZE)  /* 0x0006E000 */
 
 /* 兼容旧名（原 flash_download.h 中的定义） */
 #define FW_APP1_START_ADDR          APP1_START_ADDR
@@ -51,10 +51,10 @@
 #define PARAM_MANAGER_START_ADDR    0x00070000UL    /* 扇区 56 */
 #define APP_RUN_SLOT_ADDR           0x0007C000UL    /* 扇区 62 */
 
-/* ========== TBOX 地址窗口（当前 80KB） ========== */
-#define TBOX_ADDR_APP1_START        0x08018000UL
-#define TBOX_ADDR_APP1_END          (TBOX_ADDR_APP1_START + APP_MAX_SIZE)  /* 0x0802C000 */
-#define TBOX_ADDR_APP2_START        0x08004000UL
+/* ========== TBOX 地址窗口（协议固定，不可修改） ========== */
+#define TBOX_ADDR_APP1_START        0x08018000UL    /* 客户协议：烧录到 APP1 */
+#define TBOX_ADDR_APP1_END          (TBOX_ADDR_APP1_START + APP_MAX_SIZE)  /* 0x08042000 */
+#define TBOX_ADDR_APP2_START        0x08004000UL    /* 客户协议：烧录到 APP2 */
 #define TBOX_ADDR_APP2_END          (TBOX_ADDR_APP2_START + APP_MAX_SIZE)  /* 0x08018000 */
 
 #define MAP_TBOX_ADDR_TO_FLASH(addr) \
@@ -64,7 +64,7 @@
      ((addr) - TBOX_ADDR_APP2_START + APP2_START_ADDR) : (addr)))
 
 /* ========== OTA 限制 ========== */
-#define FW_MAX_FIRMWARE_SIZE        APP_MAX_SIZE    /* 固件最大 = APP 分区大小 */
+#define FW_MAX_FIRMWARE_SIZE        APP_MAX_SIZE    /* 固件最大 = APP 分区大小 = 168KB */
 #define FW_RAM_BUFFER_SIZE          (8 * 1024)      /* 0x36 块对齐暂存（仅对齐/调试用） */
 
 #endif /* MEMORY_MAP_H */
