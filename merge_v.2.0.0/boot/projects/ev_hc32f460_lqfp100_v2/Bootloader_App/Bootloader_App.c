@@ -767,6 +767,10 @@ void Bootloader_UdsMain(void)
             }
 
             if (u32SlotBit != 0U && ((s_uds_cleared_slots & u32SlotBit) == 0U)) {
+                /* 必须显式写 magic：旧记录可能是擦除态(0xFFFFFFFF)，
+                 * 若 magic 无效，复位后 APP 的 App_CheckPendingUdsAck
+                 * 会因 magic 不匹配直接返回，导致 0x51/0x71 补发失败。 */
+                state.magic = UDS_SHARED_MAGIC;
                 state.phase = UDS_PHASE_PROGRAMMING_DONE;
                 state.result = 1;
                 state.target_slot = eSlot;
