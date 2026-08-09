@@ -775,8 +775,10 @@ void Bootloader_UdsMain(void)
                 state.result = 1;
                 state.target_slot = eSlot;
                 UdsShared_Write(&state);
-                /* 每次烧录完成，只清除实际下载槽的故障计数（互不影响） */
-                ClearAppStateBySlot(eSlot);
+                /* 每次烧录完成，整槽清零实际下载槽的 RMU 记录：
+                 * 错误计数 + 原因统计全部擦除为“从未初始化”（flash 状态扇区整扇区擦除），
+                 * 其它 APP 的状态扇区不受影响 */
+                Rmu_ResetSlotRecord((eSlot == SLOT_APP1) ? RMU_SLOT_APP1 : RMU_SLOT_APP2);
 #if (BOOT_OTA_MODE_DEBUG == 0U)
                 /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
                 if (eSlot == SLOT_APP2) {

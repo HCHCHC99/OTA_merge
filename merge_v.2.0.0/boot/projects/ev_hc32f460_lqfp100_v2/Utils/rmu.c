@@ -6,9 +6,11 @@
 
 #define RMU_RECORD_WORDS   (sizeof(stc_rmu_slot_record_t) / 4UL)
 
-/* 调试用 RAM 镜像（Keil Watch 查看） */
-volatile stc_rmu_last_cause_t   g_stcRmuLastCause;
-volatile stc_rmu_reason_count_t g_stcRmuReasonCount;
+/* 调试用 RAM 镜像（Keil Watch 分别查看 APP1/APP2） */
+volatile stc_rmu_last_cause_t   g_stcRmuLastCauseApp1;
+volatile stc_rmu_reason_count_t g_stcRmuReasonCountApp1;
+volatile stc_rmu_last_cause_t   g_stcRmuLastCauseApp2;
+volatile stc_rmu_reason_count_t g_stcRmuReasonCountApp2;
 
 static uint32_t Rmu_SlotToSectorBase(en_rmu_slot_t eSlot)
 {
@@ -143,6 +145,34 @@ int32_t Rmu_ClearSlotFault(en_rmu_slot_t eSlot)
     return Rmu_SaveSlotRecord(eSlot, &stcRec);
 }
 
+/* 整槽清零：UDS 刷写该 APP 成功后调用。
+ * 整扇区擦除 -> 记录变为“从未初始化”（magic=0xFFFFFFFF，fault_count/原因统计全清），
+ * 其它 APP 的状态扇区不受影响；同时同步清零本槽 RAM 镜像。 */
+int32_t Rmu_ResetSlotRecord(en_rmu_slot_t eSlot)
+{
+    uint32_t u32Base;
+
+    if (eSlot != RMU_SLOT_APP1 && eSlot != RMU_SLOT_APP2) {
+        return -1;
+    }
+    u32Base = Rmu_SlotToSectorBase(eSlot);
+
+    EFM_REG_Unlock();
+    EFM_FWMC_Cmd(ENABLE);
+    while (SET != EFM_GetStatus(EFM_FLAG_RDY)) { }
+    EFM_SectorErase(u32Base);
+    EFM_REG_Lock();
+
+    if (eSlot == RMU_SLOT_APP1) {
+        memset(&g_stcRmuLastCauseApp1, 0, sizeof(g_stcRmuLastCauseApp1));
+        memset(&g_stcRmuReasonCountApp1, 0, sizeof(g_stcRmuReasonCountApp1));
+    } else {
+        memset(&g_stcRmuLastCauseApp2, 0, sizeof(g_stcRmuLastCauseApp2));
+        memset(&g_stcRmuReasonCountApp2, 0, sizeof(g_stcRmuReasonCountApp2));
+    }
+    return 0;
+}
+
 uint32_t Rmu_GetFaultCount(en_rmu_slot_t eSlot)
 {
     stc_rmu_slot_record_t stcRec;
@@ -220,12 +250,41 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
     /* 7. 各复位原因累计计数 +1（按主原因，故障/正常都计） */
     Rmu_CountCause(&stcRec.stcReasonCount, u32Raw);
 
-    /* 8. 更新调试用 RAM 镜像（Keil Watch 直接看这两个全局变量） */
+    /* 8. 更新调试用 RAM 镜像（Keil Watch 分别看 APP1/APP2 四个全局变量）
+     *    当前槽用本次刚处理的数据；另一槽从 flash 重新加载填充，
+     *    保证两个视图始终与各自 flash 记录一致。 */
     {
         stc_rmu_last_cause_t stcLastView;
+        stc_rmu_last_cause_t stcOtherView;
+        stc_rmu_reason_count_t stcOtherCount;
+        stc_rmu_slot_record_t stcOtherRec;
+        en_rmu_slot_t eOtherSlot = (eCurrentSlot == RMU_SLOT_APP1) ? RMU_SLOT_APP2 : RMU_SLOT_APP1;
+
         Rmu_FillLastCauseView(&stcLastView, u32Raw);
-        g_stcRmuLastCause = stcLastView;
-        g_stcRmuReasonCount = stcRec.stcReasonCount;
+
+        if ((Rmu_LoadSlotRecord(eOtherSlot, &stcOtherRec) == 0) &&
+            (stcOtherRec.u32Magic == RMU_RECORD_MAGIC)) {
+            uint32_t u32OtherRaw = (stcOtherRec.u32LastResetCause == 0xFFFFFFFFUL)
+                                   ? 0U : stcOtherRec.u32LastResetCause;
+            Rmu_FillLastCauseView(&stcOtherView, u32OtherRaw);
+            stcOtherCount = stcOtherRec.stcReasonCount;
+        } else {
+            /* 另一槽从未初始化/已整槽清零：视图全 0 */
+            memset(&stcOtherView, 0, sizeof(stcOtherView));
+            memset(&stcOtherCount, 0, sizeof(stcOtherCount));
+        }
+
+        if (eCurrentSlot == RMU_SLOT_APP1) {
+            g_stcRmuLastCauseApp1 = stcLastView;
+            g_stcRmuReasonCountApp1 = stcRec.stcReasonCount;
+            g_stcRmuLastCauseApp2 = stcOtherView;
+            g_stcRmuReasonCountApp2 = stcOtherCount;
+        } else {
+            g_stcRmuLastCauseApp2 = stcLastView;
+            g_stcRmuReasonCountApp2 = stcRec.stcReasonCount;
+            g_stcRmuLastCauseApp1 = stcOtherView;
+            g_stcRmuReasonCountApp1 = stcOtherCount;
+        }
     }
 
     /* 9. 写回 FLASH（每次上电都写；后续可优化为“仅故障/原因变化时写”） */
@@ -236,38 +295,47 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
            (unsigned int)u32Raw, Rmu_CauseName(u32Raw), (int)eCurrentSlot,
            (unsigned int)stcRec.u32FaultCount, (unsigned int)stcRec.u32NonFaultCount,
            bFault ? " (fault)" : "");
+
+    /* 打印取当前槽镜像（Watch 中请查看 g_stcRmuLastCauseApp1/2、g_stcRmuReasonCountApp1/2） */
+    {
+        stc_rmu_last_cause_t stcLastPrint =
+            (eCurrentSlot == RMU_SLOT_APP1) ? g_stcRmuLastCauseApp1 : g_stcRmuLastCauseApp2;
+        stc_rmu_reason_count_t stcCntPrint =
+            (eCurrentSlot == RMU_SLOT_APP1) ? g_stcRmuReasonCountApp1 : g_stcRmuReasonCountApp2;
+
     /* 11. 可读性视图：上次复位原因（0/1） */
     MAIN_D("[RMU] last: POR=%u PIN=%u BOR=%u PVD1=%u PVD2=%u WDT=%u SWDT=%u PWRDN=%u SW=%u MPU=%u RAMP=%u RAMECC=%u CLK=%u XTAL=%u MULTI=%u\r\n",
-           (unsigned int)g_stcRmuLastCause.bPor,
-           (unsigned int)g_stcRmuLastCause.bPin,
-           (unsigned int)g_stcRmuLastCause.bBor,
-           (unsigned int)g_stcRmuLastCause.bPvd1,
-           (unsigned int)g_stcRmuLastCause.bPvd2,
-           (unsigned int)g_stcRmuLastCause.bWdt,
-           (unsigned int)g_stcRmuLastCause.bSwdt,
-           (unsigned int)g_stcRmuLastCause.bPowerDown,
-           (unsigned int)g_stcRmuLastCause.bSw,
-           (unsigned int)g_stcRmuLastCause.bMpu,
-           (unsigned int)g_stcRmuLastCause.bRamParity,
-           (unsigned int)g_stcRmuLastCause.bRamEcc,
-           (unsigned int)g_stcRmuLastCause.bClkErr,
-           (unsigned int)g_stcRmuLastCause.bXtalErr,
-           (unsigned int)g_stcRmuLastCause.bMulti);
+           (unsigned int)stcLastPrint.bPor,
+           (unsigned int)stcLastPrint.bPin,
+           (unsigned int)stcLastPrint.bBor,
+           (unsigned int)stcLastPrint.bPvd1,
+           (unsigned int)stcLastPrint.bPvd2,
+           (unsigned int)stcLastPrint.bWdt,
+           (unsigned int)stcLastPrint.bSwdt,
+           (unsigned int)stcLastPrint.bPowerDown,
+           (unsigned int)stcLastPrint.bSw,
+           (unsigned int)stcLastPrint.bMpu,
+           (unsigned int)stcLastPrint.bRamParity,
+           (unsigned int)stcLastPrint.bRamEcc,
+           (unsigned int)stcLastPrint.bClkErr,
+           (unsigned int)stcLastPrint.bXtalErr,
+           (unsigned int)stcLastPrint.bMulti);
     /* 12. 可读性视图：各复位原因累计计数 */
     MAIN_D("[RMU] cnt : POR=%u PIN=%u BOR=%u PVD1=%u PVD2=%u WDT=%u SWDT=%u PWRDN=%u SW=%u MPU=%u RAMP=%u RAMECC=%u CLK=%u XTAL=%u MULTI=%u\r\n",
-           (unsigned int)g_stcRmuReasonCount.u32Por,
-           (unsigned int)g_stcRmuReasonCount.u32Pin,
-           (unsigned int)g_stcRmuReasonCount.u32Bor,
-           (unsigned int)g_stcRmuReasonCount.u32Pvd1,
-           (unsigned int)g_stcRmuReasonCount.u32Pvd2,
-           (unsigned int)g_stcRmuReasonCount.u32Wdt,
-           (unsigned int)g_stcRmuReasonCount.u32Swdt,
-           (unsigned int)g_stcRmuReasonCount.u32PowerDown,
-           (unsigned int)g_stcRmuReasonCount.u32Sw,
-           (unsigned int)g_stcRmuReasonCount.u32Mpu,
-           (unsigned int)g_stcRmuReasonCount.u32RamParity,
-           (unsigned int)g_stcRmuReasonCount.u32RamEcc,
-           (unsigned int)g_stcRmuReasonCount.u32ClkErr,
-           (unsigned int)g_stcRmuReasonCount.u32XtalErr,
-           (unsigned int)g_stcRmuReasonCount.u32Multi);
+           (unsigned int)stcCntPrint.u32Por,
+           (unsigned int)stcCntPrint.u32Pin,
+           (unsigned int)stcCntPrint.u32Bor,
+           (unsigned int)stcCntPrint.u32Pvd1,
+           (unsigned int)stcCntPrint.u32Pvd2,
+           (unsigned int)stcCntPrint.u32Wdt,
+           (unsigned int)stcCntPrint.u32Swdt,
+           (unsigned int)stcCntPrint.u32PowerDown,
+           (unsigned int)stcCntPrint.u32Sw,
+           (unsigned int)stcCntPrint.u32Mpu,
+           (unsigned int)stcCntPrint.u32RamParity,
+           (unsigned int)stcCntPrint.u32RamEcc,
+           (unsigned int)stcCntPrint.u32ClkErr,
+           (unsigned int)stcCntPrint.u32XtalErr,
+           (unsigned int)stcCntPrint.u32Multi);
+    }
 }

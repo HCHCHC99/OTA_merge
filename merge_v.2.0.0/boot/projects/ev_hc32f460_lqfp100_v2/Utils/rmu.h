@@ -73,9 +73,11 @@ typedef struct {
     stc_rmu_reason_count_t stcReasonCount;  /* +0x018 各复位原因累计计数 */
 } stc_rmu_slot_record_t;
 
-/* 调试用 RAM 镜像：Keil Watch 直接加这两个全局变量即可展开查看 */
-extern volatile stc_rmu_last_cause_t   g_stcRmuLastCause;    /* 上次复位原因视图（0/1） */
-extern volatile stc_rmu_reason_count_t g_stcRmuReasonCount;  /* 各原因累计计数镜像 */
+/* 调试用 RAM 镜像：Keil Watch 直接加下面四个全局变量即可分别查看 APP1/APP2 */
+extern volatile stc_rmu_last_cause_t   g_stcRmuLastCauseApp1;   /* APP1 上次复位原因视图（0/1） */
+extern volatile stc_rmu_reason_count_t g_stcRmuReasonCountApp1; /* APP1 各原因累计计数镜像 */
+extern volatile stc_rmu_last_cause_t   g_stcRmuLastCauseApp2;   /* APP2 上次复位原因视图（0/1） */
+extern volatile stc_rmu_reason_count_t g_stcRmuReasonCountApp2; /* APP2 各原因累计计数镜像 */
 
 void        Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot); /* 启动序列第一件事 */
 uint32_t    Rmu_ReadRawStatus(void);                        /* 读 RSTF0 全部状态（不清标志） */
@@ -83,7 +85,8 @@ bool        Rmu_IsFaultCause(uint32_t u32RawCause);         /* 按 RMU_FAULT_MAS
 const char *Rmu_CauseName(uint32_t u32RawCause);            /* 诊断打印用 */
 int32_t     Rmu_LoadSlotRecord(en_rmu_slot_t eSlot, stc_rmu_slot_record_t *pstcRec);
 int32_t     Rmu_SaveSlotRecord(en_rmu_slot_t eSlot, const stc_rmu_slot_record_t *pstcRec);
-int32_t     Rmu_ClearSlotFault(en_rmu_slot_t eSlot);        /* 清除故障记录（OTA 完成后/调试） */
+int32_t     Rmu_ClearSlotFault(en_rmu_slot_t eSlot);        /* 只清故障计数（调试用） */
+int32_t     Rmu_ResetSlotRecord(en_rmu_slot_t eSlot);       /* 整槽清零（UDS 刷写该 APP 后调用）：擦除状态扇区 + 清 RAM 镜像 */
 uint32_t    Rmu_GetFaultCount(en_rmu_slot_t eSlot);
 uint32_t    Rmu_GetLastResetCause(en_rmu_slot_t eSlot);
 
