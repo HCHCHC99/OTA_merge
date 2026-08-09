@@ -236,4 +236,38 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
            (unsigned int)u32Raw, Rmu_CauseName(u32Raw), (int)eCurrentSlot,
            (unsigned int)stcRec.u32FaultCount, (unsigned int)stcRec.u32NonFaultCount,
            bFault ? " (fault)" : "");
+    /* 11. 可读性视图：上次复位原因（0/1） */
+    MAIN_D("[RMU] last: POR=%u PIN=%u BOR=%u PVD1=%u PVD2=%u WDT=%u SWDT=%u PWRDN=%u SW=%u MPU=%u RAMP=%u RAMECC=%u CLK=%u XTAL=%u MULTI=%u\r\n",
+           (unsigned int)g_stcRmuLastCause.bPor,
+           (unsigned int)g_stcRmuLastCause.bPin,
+           (unsigned int)g_stcRmuLastCause.bBor,
+           (unsigned int)g_stcRmuLastCause.bPvd1,
+           (unsigned int)g_stcRmuLastCause.bPvd2,
+           (unsigned int)g_stcRmuLastCause.bWdt,
+           (unsigned int)g_stcRmuLastCause.bSwdt,
+           (unsigned int)g_stcRmuLastCause.bPowerDown,
+           (unsigned int)g_stcRmuLastCause.bSw,
+           (unsigned int)g_stcRmuLastCause.bMpu,
+           (unsigned int)g_stcRmuLastCause.bRamParity,
+           (unsigned int)g_stcRmuLastCause.bRamEcc,
+           (unsigned int)g_stcRmuLastCause.bClkErr,
+           (unsigned int)g_stcRmuLastCause.bXtalErr,
+           (unsigned int)g_stcRmuLastCause.bMulti);
+    /* 12. 可读性视图：各复位原因累计计数 */
+    MAIN_D("[RMU] cnt : POR=%u PIN=%u BOR=%u PVD1=%u PVD2=%u WDT=%u SWDT=%u PWRDN=%u SW=%u MPU=%u RAMP=%u RAMECC=%u CLK=%u XTAL=%u MULTI=%u\r\n",
+           (unsigned int)g_stcRmuReasonCount.u32Por,
+           (unsigned int)g_stcRmuReasonCount.u32Pin,
+           (unsigned int)g_stcRmuReasonCount.u32Bor,
+           (unsigned int)g_stcRmuReasonCount.u32Pvd1,
+           (unsigned int)g_stcRmuReasonCount.u32Pvd2,
+           (unsigned int)g_stcRmuReasonCount.u32Wdt,
+           (unsigned int)g_stcRmuReasonCount.u32Swdt,
+           (unsigned int)g_stcRmuReasonCount.u32PowerDown,
+           (unsigned int)g_stcRmuReasonCount.u32Sw,
+           (unsigned int)g_stcRmuReasonCount.u32Mpu,
+           (unsigned int)g_stcRmuReasonCount.u32RamParity,
+           (unsigned int)g_stcRmuReasonCount.u32RamEcc,
+           (unsigned int)g_stcRmuReasonCount.u32ClkErr,
+           (unsigned int)g_stcRmuReasonCount.u32XtalErr,
+           (unsigned int)g_stcRmuReasonCount.u32Multi);
 }
