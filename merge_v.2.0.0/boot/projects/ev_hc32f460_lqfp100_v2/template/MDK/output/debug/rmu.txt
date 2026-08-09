@@ -679,7 +679,7 @@
 ;;;208        u32FaultCount = stcRec.u32FaultCount;
 ;;;209        if (bFault) {
 ;;;210            /* ???????????<3?? +1?? DISABLED ???? */
-;;;211            if (u32FaultCount < MAX_WDT_RESET_COUNT) {
+;;;211            if (u32FaultCount < MAX_APP_FAULT_COUNT) {
 ;;;212                stcRec.u32FaultCount = u32FaultCount + 1U;
 ;;;213                stcRec.u32LastFaultCause = (u32Raw & RMU_FAULT_MASK);
 ;;;214            }
