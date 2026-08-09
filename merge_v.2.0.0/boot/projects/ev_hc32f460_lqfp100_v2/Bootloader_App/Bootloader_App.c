@@ -729,7 +729,10 @@ void Bootloader_UdsMain(void)
     MAIN_D("  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n");
     last_wdt_feed = tickTimer_GetCount();
 
-    static uint8_t s_uds_shared_written = 0;
+    /* 本次 UDS 会话中已完成处理的槽位记录（bit0=APP1, bit1=APP2）：
+     * FW_UPDATE_COMPLETE 是粘性状态，用位记录避免主循环重复擦写 flash；
+     * 每个槽只处理一次，但 APP1/APP2 相互独立：一次会话里刷两个也能分别清除对应槽。 */
+    static uint8_t s_uds_cleared_slots = 0U;
 
     while (1) {
         uint64_t tick = tickTimer_GetCount();
@@ -742,34 +745,46 @@ void Bootloader_UdsMain(void)
 
         UdsOta_Poll();
 
-        if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
+        if (FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
             stc_uds_shared_t state;
             FlashDownloadProgress_t stcProg;
+            en_slot_type_t eSlot;
+            uint32_t u32SlotBit;
+
             UdsShared_Read(&state);
             FlashDownload_GetProgress(&stcProg);
 
-            state.phase = UDS_PHASE_PROGRAMMING_DONE;
-            state.result = 1;
             /* 实际下载目标槽（由 0x34 地址映射决定: APP1/APP2） */
             if (stcProg.target_address == APP2_START_ADDR) {
-                state.target_slot = SLOT_APP2;
-            } else {
-                state.target_slot = SLOT_APP1;
-            }
-            UdsShared_Write(&state);
-            s_uds_shared_written = 1;
-            /* 清除实际下载槽的 WDT 故障计数 */
-            ClearAppStateBySlot(state.target_slot);
-#if (BOOT_OTA_MODE_DEBUG == 0U)
-            /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
-            if (stcProg.target_address == APP2_START_ADDR) {
-                Boot_SetRunSlotToAddr(APP2_START_ADDR);
+                eSlot = SLOT_APP2;
+                u32SlotBit = 2U;
             } else if (stcProg.target_address == APP1_START_ADDR) {
-                Boot_SetRunSlotToAddr(APP1_START_ADDR);
+                eSlot = SLOT_APP1;
+                u32SlotBit = 1U;
+            } else {
+                eSlot = SLOT_NONE;
+                u32SlotBit = 0U;
             }
+
+            if (u32SlotBit != 0U && ((s_uds_cleared_slots & u32SlotBit) == 0U)) {
+                state.phase = UDS_PHASE_PROGRAMMING_DONE;
+                state.result = 1;
+                state.target_slot = eSlot;
+                UdsShared_Write(&state);
+                /* 每次烧录完成，只清除实际下载槽的故障计数（互不影响） */
+                ClearAppStateBySlot(eSlot);
+#if (BOOT_OTA_MODE_DEBUG == 0U)
+                /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
+                if (eSlot == SLOT_APP2) {
+                    Boot_SetRunSlotToAddr(APP2_START_ADDR);
+                } else if (eSlot == SLOT_APP1) {
+                    Boot_SetRunSlotToAddr(APP1_START_ADDR);
+                }
 #endif
-            MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n",
-                   (unsigned int)stcProg.target_address);
+                s_uds_cleared_slots |= u32SlotBit;
+                MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n",
+                       (unsigned int)stcProg.target_address);
+            }
         }
     }
 }
