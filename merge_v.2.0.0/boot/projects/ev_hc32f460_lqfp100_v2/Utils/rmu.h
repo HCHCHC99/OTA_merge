@@ -16,7 +16,7 @@
  * 软件复位等）只记录，不计故障。
  * ========================================================================== */
 
-#define RMU_RECORD_MAGIC        0x524D5531UL   /* "RMU1" */
+#define RMU_RECORD_MAGIC        0x524D5532UL   /* "RMU2" */
 #define RMU_RECORD_VERSION      1UL
 #define RMU_FAULT_MASK          (RMU_FLAG_SWDT | RMU_FLAG_WDT | RMU_FLAG_MPU_ERR)
 
@@ -25,15 +25,57 @@ typedef enum {
     RMU_SLOT_APP2 = 1
 } en_rmu_slot_t;
 
+/* 上次复位原因（可读性视图）：每个字段 0=否，1=是（按 RSTF0 各位填充） */
 typedef struct {
-    uint32_t u32FeedCtrl;        /* +0x000 兼容原 WDT_FEED_CONTROL_APPx_ADDR */
-    uint32_t u32Magic;           /* +0x004 记录有效标志 */
-    uint32_t u32FaultCount;      /* +0x008 兼容原 WDT_COUNT_APPx_ADDR */
-    uint32_t u32LastResetCause;  /* +0x00C 最近一次上电原始 RSTF0（含正常原因） */
-    uint32_t u32LastFaultCause;  /* +0x010 最近一次故障原因，0=无 */
-    uint32_t u32NonFaultCount;   /* +0x014 普通复位/掉电累计次数 */
-    uint32_t au32Reserved[2];    /* +0x018 / +0x01C */
+    uint32_t bPor;          /* 上电复位 PORF */
+    uint32_t bPin;          /* 复位脚复位 PINRF */
+    uint32_t bBor;          /* 欠压复位 BORF */
+    uint32_t bPvd1;         /* PVD1 复位 */
+    uint32_t bPvd2;         /* PVD2 复位 */
+    uint32_t bWdt;          /* WDT 复位（故障） */
+    uint32_t bSwdt;         /* SWDT 复位（故障） */
+    uint32_t bPowerDown;    /* 掉电复位 PDRF */
+    uint32_t bSw;           /* 软件复位 SWRF */
+    uint32_t bMpu;          /* MPU 错误复位（故障） */
+    uint32_t bRamParity;    /* RAM 奇偶校验错误复位 */
+    uint32_t bRamEcc;       /* RAM ECC 错误复位 */
+    uint32_t bClkErr;       /* 时钟频率错误复位 */
+    uint32_t bXtalErr;      /* 晶振错误复位 */
+    uint32_t bMulti;        /* 多重复位原因 MULTIRF */
+} stc_rmu_last_cause_t;
+
+/* 各复位原因累计计数（持久化到 FLASH，Keil Watch 可直接展开） */
+typedef struct {
+    uint32_t u32Por;        /* 上电复位 */
+    uint32_t u32Pin;        /* 复位脚复位 */
+    uint32_t u32Bor;        /* 欠压复位 */
+    uint32_t u32Pvd1;       /* PVD1 复位 */
+    uint32_t u32Pvd2;       /* PVD2 复位 */
+    uint32_t u32Wdt;        /* WDT 复位（故障） */
+    uint32_t u32Swdt;       /* SWDT 复位（故障） */
+    uint32_t u32PowerDown;  /* 掉电复位 */
+    uint32_t u32Sw;         /* 软件复位 */
+    uint32_t u32Mpu;        /* MPU 错误复位（故障） */
+    uint32_t u32RamParity;  /* RAM 奇偶校验错误 */
+    uint32_t u32RamEcc;     /* RAM ECC 错误 */
+    uint32_t u32ClkErr;     /* 时钟频率错误 */
+    uint32_t u32XtalErr;    /* 晶振错误 */
+    uint32_t u32Multi;      /* 多重复位原因 */
+} stc_rmu_reason_count_t;
+
+typedef struct {
+    uint32_t u32FeedCtrl;         /* +0x000 兼容原 WDT_FEED_CONTROL_APPx_ADDR */
+    uint32_t u32Magic;            /* +0x004 记录有效标志 */
+    uint32_t u32FaultCount;       /* +0x008 兼容原 WDT_COUNT_APPx_ADDR */
+    uint32_t u32LastResetCause;   /* +0x00C 最近一次上电原始 RSTF0（含正常原因） */
+    uint32_t u32LastFaultCause;   /* +0x010 最近一次故障原因，0=无 */
+    uint32_t u32NonFaultCount;    /* +0x014 普通复位/掉电累计次数 */
+    stc_rmu_reason_count_t stcReasonCount;  /* +0x018 各复位原因累计计数 */
 } stc_rmu_slot_record_t;
+
+/* 调试用 RAM 镜像：Keil Watch 直接加这两个全局变量即可展开查看 */
+extern volatile stc_rmu_last_cause_t   g_stcRmuLastCause;    /* 上次复位原因视图（0/1） */
+extern volatile stc_rmu_reason_count_t g_stcRmuReasonCount;  /* 各原因累计计数镜像 */
 
 void        Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot); /* 启动序列第一件事 */
 uint32_t    Rmu_ReadRawStatus(void);                        /* 读 RSTF0 全部状态（不清标志） */

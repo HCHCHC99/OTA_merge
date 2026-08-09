@@ -2,12 +2,58 @@
 #include "memory_map.h"
 #include "Bootloader_App.h"   /* MAX_WDT_RESET_COUNT / READ_FLASH_DIRECT */
 #include "rtt_log.h"
+#include <string.h>
 
 #define RMU_RECORD_WORDS   (sizeof(stc_rmu_slot_record_t) / 4UL)
+
+/* 调试用 RAM 镜像（Keil Watch 查看） */
+volatile stc_rmu_last_cause_t   g_stcRmuLastCause;
+volatile stc_rmu_reason_count_t g_stcRmuReasonCount;
 
 static uint32_t Rmu_SlotToSectorBase(en_rmu_slot_t eSlot)
 {
     return (eSlot == RMU_SLOT_APP1) ? APP1_STATE_SECTOR_BASE : APP2_STATE_SECTOR_BASE;
+}
+
+/* 按优先级给“主原因”累计 +1（MULTIRF 不算主原因，仅作标志） */
+static void Rmu_CountCause(stc_rmu_reason_count_t *pstcCount, uint32_t u32Raw)
+{
+    if (u32Raw & RMU_FLAG_SWDT)             { pstcCount->u32Swdt++; return; }
+    if (u32Raw & RMU_FLAG_WDT)              { pstcCount->u32Wdt++; return; }
+    if (u32Raw & RMU_FLAG_MPU_ERR)          { pstcCount->u32Mpu++; return; }
+    if (u32Raw & RMU_FLAG_PWR_ON)           { pstcCount->u32Por++; return; }
+    if (u32Raw & RMU_FLAG_PIN)              { pstcCount->u32Pin++; return; }
+    if (u32Raw & RMU_FLAG_BROWN_OUT)        { pstcCount->u32Bor++; return; }
+    if (u32Raw & RMU_FLAG_PVD1)             { pstcCount->u32Pvd1++; return; }
+    if (u32Raw & RMU_FLAG_PVD2)             { pstcCount->u32Pvd2++; return; }
+    if (u32Raw & RMU_FLAG_PWR_DOWN)         { pstcCount->u32PowerDown++; return; }
+    if (u32Raw & RMU_FLAG_SW)               { pstcCount->u32Sw++; return; }
+    if (u32Raw & RMU_FLAG_RAM_PARITY_ERR)   { pstcCount->u32RamParity++; return; }
+    if (u32Raw & RMU_FLAG_RAM_ECC)          { pstcCount->u32RamEcc++; return; }
+    if (u32Raw & RMU_FLAG_CLK_ERR)          { pstcCount->u32ClkErr++; return; }
+    if (u32Raw & RMU_FLAG_XTAL_ERR)         { pstcCount->u32XtalErr++; return; }
+    if (u32Raw & RMU_FLAG_MX)               { pstcCount->u32Multi++; }
+}
+
+/* 填充“上次复位原因”可读性视图：每个字段 0/1 */
+static void Rmu_FillLastCauseView(stc_rmu_last_cause_t *pstcView, uint32_t u32Raw)
+{
+    memset(pstcView, 0, sizeof(*pstcView));
+    pstcView->bPor       = (u32Raw & RMU_FLAG_PWR_ON)       ? 1U : 0U;
+    pstcView->bPin       = (u32Raw & RMU_FLAG_PIN)          ? 1U : 0U;
+    pstcView->bBor       = (u32Raw & RMU_FLAG_BROWN_OUT)    ? 1U : 0U;
+    pstcView->bPvd1      = (u32Raw & RMU_FLAG_PVD1)         ? 1U : 0U;
+    pstcView->bPvd2      = (u32Raw & RMU_FLAG_PVD2)         ? 1U : 0U;
+    pstcView->bWdt       = (u32Raw & RMU_FLAG_WDT)          ? 1U : 0U;
+    pstcView->bSwdt      = (u32Raw & RMU_FLAG_SWDT)         ? 1U : 0U;
+    pstcView->bPowerDown = (u32Raw & RMU_FLAG_PWR_DOWN)     ? 1U : 0U;
+    pstcView->bSw        = (u32Raw & RMU_FLAG_SW)           ? 1U : 0U;
+    pstcView->bMpu       = (u32Raw & RMU_FLAG_MPU_ERR)      ? 1U : 0U;
+    pstcView->bRamParity = (u32Raw & RMU_FLAG_RAM_PARITY_ERR) ? 1U : 0U;
+    pstcView->bRamEcc    = (u32Raw & RMU_FLAG_RAM_ECC)      ? 1U : 0U;
+    pstcView->bClkErr    = (u32Raw & RMU_FLAG_CLK_ERR)      ? 1U : 0U;
+    pstcView->bXtalErr   = (u32Raw & RMU_FLAG_XTAL_ERR)     ? 1U : 0U;
+    pstcView->bMulti     = (u32Raw & RMU_FLAG_MX)           ? 1U : 0U;
 }
 
 uint32_t Rmu_ReadRawStatus(void)
@@ -90,6 +136,7 @@ int32_t Rmu_ClearSlotFault(en_rmu_slot_t eSlot)
         stcRec.u32LastFaultCause = 0U;
         if (stcRec.u32FaultCount == 0xFFFFFFFFUL)    stcRec.u32FaultCount = 0U;
         if (stcRec.u32NonFaultCount == 0xFFFFFFFFUL) stcRec.u32NonFaultCount = 0U;
+        memset(&stcRec.stcReasonCount, 0, sizeof(stcRec.stcReasonCount));
     }
     stcRec.u32FaultCount = 0U;
     stcRec.u32LastFaultCause = 0U;
@@ -147,6 +194,7 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
         stcRec.u32LastResetCause = 0U;
         stcRec.u32LastFaultCause = 0U;
         stcRec.u32NonFaultCount = 0U;
+        memset(&stcRec.stcReasonCount, 0, sizeof(stcRec.stcReasonCount));
     }
 
     /* 4. 归一化擦除态 */
@@ -169,10 +217,21 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
         stcRec.u32NonFaultCount += 1U;
     }
 
-    /* 7. 写回 FLASH（每次上电都写；后续可优化为“仅故障/原因变化时写”） */
+    /* 7. 各复位原因累计计数 +1（按主原因，故障/正常都计） */
+    Rmu_CountCause(&stcRec.stcReasonCount, u32Raw);
+
+    /* 8. 更新调试用 RAM 镜像（Keil Watch 直接看这两个全局变量） */
+    {
+        stc_rmu_last_cause_t stcLastView;
+        Rmu_FillLastCauseView(&stcLastView, u32Raw);
+        g_stcRmuLastCause = stcLastView;
+        g_stcRmuReasonCount = stcRec.stcReasonCount;
+    }
+
+    /* 9. 写回 FLASH（每次上电都写；后续可优化为“仅故障/原因变化时写”） */
     Rmu_SaveSlotRecord(eCurrentSlot, &stcRec);
 
-    /* 8. RTT 诊断 */
+    /* 10. RTT 诊断 */
     MAIN_D("[RMU] raw=0x%04X cause=%s slot=%d fault=%d normal=%d%s\r\n",
            (unsigned int)u32Raw, Rmu_CauseName(u32Raw), (int)eCurrentSlot,
            (unsigned int)stcRec.u32FaultCount, (unsigned int)stcRec.u32NonFaultCount,
