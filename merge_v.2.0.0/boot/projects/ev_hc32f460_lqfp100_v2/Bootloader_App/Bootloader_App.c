@@ -7,6 +7,7 @@
 #include "rtt_log.h"
 #include "main.h"
 #include "uds_ota.h"
+#include "rmu.h"
 /* ===== 阶段2/3: 上电强制指令检测 (CAN ID 0x18FF5858) ===== */
 static volatile uint8_t s_force_cmd = 0U;
 static volatile uint8_t s_force_window_active = 0U;
@@ -56,12 +57,11 @@ static void Boot_ForceCmdRxCallback(const CanMsg_t *pMsg)
 volatile uint32_t g_u32Debug_ClearAppState = 0;
 
 // ==================== �ڲ���̬�������� ====================
-static en_wdt_reset_type_t GetWdtResetType(void);
 static en_slot_type_t GetCurrentSlot(void);
 static void ValidateSlotFlag(stc_boot_context_t *pstcCtx);
 static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr);
 static void UpdateAppState(stc_app_info_t *pstcApp);
-static void HandleWatchdogReset(stc_boot_context_t *pstcCtx);
+static bool IsAppFirmwareValid(uint32_t u32AppAddr);
 static void SelectTargetSlot(stc_boot_context_t *pstcCtx);
 static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx);
 static void RunBootloaderForever(void);
@@ -134,131 +134,82 @@ int32_t Bootloader_FlashEraseSector(uint32_t u32Addr)
 // ###########################################################################
 uint32_t GetWdtResetCount(uint32_t u32Addr)
 {
-    uint32_t u32Count = READ_FLASH_DIRECT(u32Addr);
-    return (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
+    if (u32Addr == WDT_COUNT_APP1_ADDR) return Rmu_GetFaultCount(RMU_SLOT_APP1);
+    if (u32Addr == WDT_COUNT_APP2_ADDR) return Rmu_GetFaultCount(RMU_SLOT_APP2);
+    return 0U;
 }
 
 void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount)
 {
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-    uint32_t u32Count, u32Feed;
+    stc_rmu_slot_record_t stcRec;
+    en_rmu_slot_t eSlot;
+    uint32_t u32Count;
 
-    if (u32Addr == WDT_COUNT_APP1_ADDR) {
-        u32SectorBase = APP1_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP1_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-    } else if (u32Addr == WDT_COUNT_APP2_ADDR) {
-        u32SectorBase = APP2_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP2_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-    } else return;
+    (void)u32CurrentCount;
+    if (u32Addr == WDT_COUNT_APP1_ADDR)      eSlot = RMU_SLOT_APP1;
+    else if (u32Addr == WDT_COUNT_APP2_ADDR) eSlot = RMU_SLOT_APP2;
+    else return;
 
-    u32Count = READ_FLASH_DIRECT(u32CountAddr);
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-    u32Feed = (u32Feed == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Feed;
-
-    if (u32Count < MAX_WDT_RESET_COUNT) u32Count++;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, u32Count);
-    EFM_REG_Lock();
+    if (Rmu_LoadSlotRecord(eSlot, &stcRec) != 0) return;
+    if (stcRec.u32Magic != RMU_RECORD_MAGIC) {
+        stcRec.u32Magic = RMU_RECORD_MAGIC;
+        stcRec.u32LastResetCause = 0U;
+        stcRec.u32LastFaultCause = 0U;
+        stcRec.u32NonFaultCount = 0U;
+    }
+    u32Count = (stcRec.u32FaultCount == 0xFFFFFFFFUL) ? 0U : stcRec.u32FaultCount;
+    if (u32Count < MAX_WDT_RESET_COUNT) {
+        stcRec.u32FaultCount = u32Count + 1U;
+        Rmu_SaveSlotRecord(eSlot, &stcRec);
+    }
 }
 
 void ClearWdtResetCount(uint32_t u32Addr)
 {
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-    uint32_t u32Count, u32Feed;
-
-    if (u32Addr == WDT_COUNT_APP1_ADDR) {
-        u32SectorBase = APP1_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP1_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-    } else if (u32Addr == WDT_COUNT_APP2_ADDR) {
-        u32SectorBase = APP2_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP2_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-    } else return;
-
-    u32Count = READ_FLASH_DIRECT(u32CountAddr);
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-    u32Feed = (u32Feed == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Feed;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, 0);
-    EFM_REG_Lock();
+    if (u32Addr == WDT_COUNT_APP1_ADDR)      Rmu_ClearSlotFault(RMU_SLOT_APP1);
+    else if (u32Addr == WDT_COUNT_APP2_ADDR) Rmu_ClearSlotFault(RMU_SLOT_APP2);
 }
 
 void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value)
 {
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-    uint32_t u32Count, u32Feed;
+    stc_rmu_slot_record_t stcRec;
+    en_rmu_slot_t eSlot;
 
     if (u32Value != WDT_FEED_ENABLE && u32Value != WDT_FEED_DISABLE) return;
+    if (u32Addr == WDT_FEED_CONTROL_APP1_ADDR)      eSlot = RMU_SLOT_APP1;
+    else if (u32Addr == WDT_FEED_CONTROL_APP2_ADDR) eSlot = RMU_SLOT_APP2;
+    else return;
 
-    if (u32Addr == WDT_FEED_CONTROL_APP1_ADDR) {
-        u32SectorBase = APP1_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP1_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-    } else if (u32Addr == WDT_FEED_CONTROL_APP2_ADDR) {
-        u32SectorBase = APP2_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP2_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-    } else return;
-
-    u32Count = READ_FLASH_DIRECT(u32CountAddr);
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-    u32Feed = u32Value;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, u32Count);
-    EFM_REG_Lock();
+    if (Rmu_LoadSlotRecord(eSlot, &stcRec) != 0) return;
+    if (stcRec.u32Magic != RMU_RECORD_MAGIC) {
+        stcRec.u32Magic = RMU_RECORD_MAGIC;
+        stcRec.u32LastResetCause = 0U;
+        stcRec.u32LastFaultCause = 0U;
+        stcRec.u32NonFaultCount = 0U;
+    }
+    if (stcRec.u32FaultCount == 0xFFFFFFFFUL)    stcRec.u32FaultCount = 0U;
+    if (stcRec.u32NonFaultCount == 0xFFFFFFFFUL) stcRec.u32NonFaultCount = 0U;
+    stcRec.u32FeedCtrl = u32Value;
+    Rmu_SaveSlotRecord(eSlot, &stcRec);
 }
 
 uint32_t GetWdtFeedControl(uint32_t u32Addr)
 {
-    uint32_t u32Value = READ_FLASH_DIRECT(u32Addr);
-    return (u32Value == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Value;
+    stc_rmu_slot_record_t stcRec;
+    en_rmu_slot_t eSlot;
+
+    if (u32Addr == WDT_FEED_CONTROL_APP1_ADDR)      eSlot = RMU_SLOT_APP1;
+    else if (u32Addr == WDT_FEED_CONTROL_APP2_ADDR) eSlot = RMU_SLOT_APP2;
+    else return WDT_FEED_ENABLE;
+
+    if (Rmu_LoadSlotRecord(eSlot, &stcRec) != 0) return WDT_FEED_ENABLE;
+    return (stcRec.u32FeedCtrl == 0xFFFFFFFFUL) ? WDT_FEED_ENABLE : stcRec.u32FeedCtrl;
 }
 
 void ClearAppStateBySlot(en_slot_type_t eSlot)
 {
-    uint32_t u32SectorBase, u32CountAddr, u32FeedAddr, u32Feed;
-
-    if (eSlot == SLOT_APP1) {
-        u32SectorBase = APP1_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP1_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-    } else if (eSlot == SLOT_APP2) {
-        u32SectorBase = APP2_STATE_SECTOR_BASE;
-        u32CountAddr = WDT_COUNT_APP2_ADDR;
-        u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-    } else return;
-
-    u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-    u32Feed = (u32Feed == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Feed;
-
-    EFM_REG_Unlock();
-    EFM_FWMC_Cmd(ENABLE);
-    while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-    EFM_SectorErase(u32SectorBase);
-    EFM_ProgramWord(u32FeedAddr, u32Feed);
-    EFM_ProgramWord(u32CountAddr, 0);
-    EFM_REG_Lock();
+    if (eSlot == SLOT_APP1)      Rmu_ClearSlotFault(RMU_SLOT_APP1);
+    else if (eSlot == SLOT_APP2) Rmu_ClearSlotFault(RMU_SLOT_APP2);
 }
 
 // ###########################################################################
@@ -382,6 +333,17 @@ void Boot_StartupSequence(void)
     memset(&stcCtx, 0, sizeof(stc_boot_context_t));
 
     MAIN_D("===== Bootloader Start =====\r\n");
+    /* ==== 1. 第一件事：先读 FLASH 记录的上次运行槽，再处理 RMU ====
+     * 读取全部 RMU 复位状态（RSTF0 所有位）→ 分类（故障/正常）→ 清除标志 →
+     * 更新记录并写回 FLASH（故障进故障计数，正常原因只记录不计故障）。
+     * 必须早于 50ms 强制指令窗口和 UDS 分支，避免 RMU 标志残留导致延迟计数。 */
+    {
+        en_slot_type_t ePowerUpSlot = GetCurrentSlot();
+        if (ePowerUpSlot == SLOT_NONE) {
+            ePowerUpSlot = SLOT_APP1;   /* 第一次上电/槽未初始化：默认 APP1 */
+        }
+        Rmu_ProcessPowerUp((ePowerUpSlot == SLOT_APP1) ? RMU_SLOT_APP1 : RMU_SLOT_APP2);
+    }
     /* ==== 阶段2/3: 上电 50ms 强制指令检测窗口 ==== */
     {
         static bool s_force_filter_registered = false;
@@ -414,14 +376,12 @@ void Boot_StartupSequence(void)
                      * - 受坏块标记限制：目标>=3 拒绝，不写自动跳转槽
                      * - 设置成功后软件复位，重新进 boot 按新槽位正常启动
                      * - 幂等保护：槽位已是目标值时不重复复位（防 TBOX 持续发送导致复位循环） */
-                    uint32_t u32Wdt1 = READ_FLASH_DIRECT(WDT_COUNT_APP1_ADDR);
-                    uint32_t u32Wdt2 = READ_FLASH_DIRECT(WDT_COUNT_APP2_ADDR);
+                    uint32_t u32Wdt1 = Rmu_GetFaultCount(RMU_SLOT_APP1);
+                    uint32_t u32Wdt2 = Rmu_GetFaultCount(RMU_SLOT_APP2);
                     uint32_t u32T0;
                     uint8_t u8App1Ok;
                     uint8_t u8App2Ok;
                     /* 与 InitAppInfo 保持一致：擦除态(0xFFFFFFFF)视为 0（未初始化，不算坏块） */
-                    if (u32Wdt1 == 0xFFFFFFFFUL) { u32Wdt1 = 0U; }
-                    if (u32Wdt2 == 0xFFFFFFFFUL) { u32Wdt2 = 0U; }
                     u8App1Ok = (u32Wdt1 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
                     u8App2Ok = (u32Wdt2 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
 
@@ -510,7 +470,6 @@ void Boot_StartupSequence(void)
     }
 
     CheckAndClearAppState();
-    stcCtx.eWdtResetType = GetWdtResetType();
     stcCtx.eCurrentSlot = GetCurrentSlot();
     ValidateSlotFlag(&stcCtx);
 
@@ -518,12 +477,11 @@ void Boot_StartupSequence(void)
     InitAppInfo(&stcCtx.stcApp2, SLOT_APP2, APP2_START_ADDR);
     UpdateAppState(&stcCtx.stcApp1);
     UpdateAppState(&stcCtx.stcApp2);
-    HandleWatchdogReset(&stcCtx);
     SelectTargetSlot(&stcCtx);
     UpdateSlotFlagToFlash(&stcCtx);
 
-    MAIN_D("  WDT Reset: %d, CurSlot: %d, Target: %d\r\n",
-           (int)stcCtx.eWdtResetType, (int)stcCtx.eCurrentSlot, (int)stcCtx.eTargetSlot);
+    MAIN_D("  CurSlot: %d, Target: %d\r\n",
+           (int)stcCtx.eCurrentSlot, (int)stcCtx.eTargetSlot);
     MAIN_D("  APP1 state=%d, WDT=%d | APP2 state=%d, WDT=%d\r\n",
            (int)stcCtx.stcApp1.eState, (int)stcCtx.stcApp1.u32WdtCount,
            (int)stcCtx.stcApp2.eState, (int)stcCtx.stcApp2.u32WdtCount);
@@ -539,24 +497,6 @@ void Boot_StartupSequence(void)
 // ###########################################################################
 //                          �ڲ���̬����
 // ###########################################################################
-static en_wdt_reset_type_t GetWdtResetType(void)
-{
-    en_wdt_reset_type_t enType = WDT_RESET_NONE;
-    bool bSwdt = (SET == RMU_GetStatus(RMU_FLAG_SWDT));
-    bool bWdt  = (SET == RMU_GetStatus(RMU_FLAG_WDT));
-    bool bMpu  = (SET == RMU_GetStatus(RMU_FLAG_MPU_ERR));
-
-    /* 读取后立即清除 RMU 粘性复位标志 (RSTF0)，防止残留导致下次误判；RSTF0 受 PWC 保护，先解锁再清 */
-    PWC_REG_Unlock(PWC_UNLOCK_CODE1);
-    RMU_ClearStatus();
-    PWC_REG_Lock(PWC_UNLOCK_CODE1);
-
-    if (bSwdt)      enType = WDT_RESET_SWDT;
-    else if (bWdt)  enType = WDT_RESET_WDT;
-    else if (bMpu)  enType = WDT_RESET_MPU_ERR;
-    return enType;
-}
-
 static en_slot_type_t GetCurrentSlot(void) {
     uint32_t s = READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR);
     if (s == SLOT_A_MAGIC) return SLOT_APP1;
@@ -574,31 +514,27 @@ static void ValidateSlotFlag(stc_boot_context_t *pstcCtx) {
 static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr) {
     pstcApp->eSlot = eSlot;
     pstcApp->u32StartAddr = u32Addr;
-    uint32_t cnt = (eSlot == SLOT_APP1) ? READ_FLASH_DIRECT(WDT_COUNT_APP1_ADDR) : READ_FLASH_DIRECT(WDT_COUNT_APP2_ADDR);
-    pstcApp->u32WdtCount = (cnt == 0xFFFFFFFF) ? 0 : cnt;
+    pstcApp->u32WdtCount = Rmu_GetFaultCount((eSlot == SLOT_APP1) ? RMU_SLOT_APP1 : RMU_SLOT_APP2);
     pstcApp->eState = APP_STATE_AVAILABLE;
 }
 
 static void UpdateAppState(stc_app_info_t *pstcApp) {
-    pstcApp->eState = (pstcApp->u32WdtCount >= MAX_WDT_RESET_COUNT) ? APP_STATE_DISABLED : APP_STATE_AVAILABLE;
+    pstcApp->eState = ((pstcApp->u32WdtCount < MAX_WDT_RESET_COUNT) &&
+                       IsAppFirmwareValid(pstcApp->u32StartAddr))
+                      ? APP_STATE_AVAILABLE : APP_STATE_DISABLED;
 }
 
-static void HandleWatchdogReset(stc_boot_context_t *pstcCtx) {
-    if (pstcCtx->eWdtResetType == WDT_RESET_NONE) return;
-    stc_app_info_t *app = NULL;
-    uint32_t addr = 0;
+/* 轻量固件有效性检查：SP 在 RAM 范围、ResetVector 非擦除态且在 APP 分区内。
+ * 用于“第一次上电无 APP/空片”场景：无固件视为不可用，双槽无效时留在 bootloader。
+ * 完整校验由 OTA 下载阶段的 0x37 CRC 负责。 */
+static bool IsAppFirmwareValid(uint32_t u32AppAddr) {
+    uint32_t u32Sp = READ_FLASH_DIRECT(u32AppAddr);
+    uint32_t u32ResetVec = READ_FLASH_DIRECT(u32AppAddr + 4U);
 
-    if (pstcCtx->eCurrentSlot == SLOT_APP1) {
-        app = &pstcCtx->stcApp1; addr = WDT_COUNT_APP1_ADDR;
-    } else if (pstcCtx->eCurrentSlot == SLOT_APP2) {
-        app = &pstcCtx->stcApp2; addr = WDT_COUNT_APP2_ADDR;
-    } else return;
-
-    if (app->eState == APP_STATE_AVAILABLE) {
-        UpdateWdtResetCount(addr, 0);
-        app->u32WdtCount = (app->eSlot == SLOT_APP1) ? GetWdtResetCount(WDT_COUNT_APP1_ADDR) : GetWdtResetCount(WDT_COUNT_APP2_ADDR);
-        if (app->u32WdtCount >= MAX_WDT_RESET_COUNT) app->eState = APP_STATE_DISABLED;
-    }
+    if (u32Sp < RAM_START_ADDR || u32Sp > RAM_END_ADDR) return false;
+    if (u32ResetVec == 0xFFFFFFFFUL) return false;
+    if (u32ResetVec < APP1_START_ADDR || u32ResetVec > APP2_END_ADDR) return false;
+    return true;
 }
 
 static void SelectTargetSlot(stc_boot_context_t *pstcCtx) {
