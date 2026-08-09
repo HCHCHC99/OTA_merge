@@ -6,7 +6,7 @@
 
                   u32ICGValue
                   ||__tagsym$$used||
-                          DCD      0xffdfffbf
+                          DCD      0xffdfff0e
                           DCD      0xfffffeff
                           DCD      0xffffffff
                           DCD      0xffffffff
