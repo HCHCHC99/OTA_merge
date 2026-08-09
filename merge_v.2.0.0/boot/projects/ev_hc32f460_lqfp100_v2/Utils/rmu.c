@@ -1,6 +1,6 @@
 #include "rmu.h"
 #include "memory_map.h"
-#include "Bootloader_App.h"   /* MAX_WDT_RESET_COUNT / READ_FLASH_DIRECT */
+#include "Bootloader_App.h"   /* MAX_APP_FAULT_COUNT / READ_FLASH_DIRECT */
 #include "rtt_log.h"
 #include <string.h>
 
@@ -208,7 +208,7 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
     u32FaultCount = stcRec.u32FaultCount;
     if (bFault) {
         /* ???????????<3?? +1?? DISABLED ???? */
-        if (u32FaultCount < MAX_WDT_RESET_COUNT) {
+        if (u32FaultCount < MAX_APP_FAULT_COUNT) {
             stcRec.u32FaultCount = u32FaultCount + 1U;
             stcRec.u32LastFaultCause = (u32Raw & RMU_FAULT_MASK);
         }

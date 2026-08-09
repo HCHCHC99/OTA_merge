@@ -54,7 +54,7 @@ static void Boot_ForceCmdRxCallback(const CanMsg_t *pMsg)
 // ###########################################################################
 
 // ==================== ����ȫ�ֱ����������ã� ====================
-volatile uint32_t g_u32Debug_ClearAppState = 0;
+volatile en_dbg_clear_app_state_t g_eDebugClearAppState = DBG_CLEAR_NONE;
 
 // ==================== �ڲ���̬�������� ====================
 static en_slot_type_t GetCurrentSlot(void);
@@ -66,6 +66,19 @@ static void SelectTargetSlot(stc_boot_context_t *pstcCtx);
 static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx);
 static void RunBootloaderForever(void);
 static void CheckAndClearAppState(void);
+
+/* ===== Watch/RTT 可读性辅助：槽位 / APP 状态转字符串 ===== */
+static const char *SlotToStr(en_slot_type_t eSlot)
+{
+    if (eSlot == SLOT_APP1) return "APP1";
+    if (eSlot == SLOT_APP2) return "APP2";
+    return "NONE";
+}
+
+static const char *AppStateToStr(en_app_state_t eState)
+{
+    return (eState == APP_STATE_AVAILABLE) ? "AVAILABLE" : "DISABLED";
+}
 
 uint32_t READ_FLASH_DIRECT(uint32_t addr)
 {
@@ -105,11 +118,11 @@ void DisableAllNVICInterrupts(void)
 void InitSharedCtrl(void)
 {
     stc_shared_ctrl_t *pCtrl = GetSharedCtrl();
-    if (pCtrl->app1_feed_ctrl != WDT_FEED_ENABLE &&
-        pCtrl->app1_feed_ctrl != WDT_FEED_DISABLE)
+    if (pCtrl->eApp1FeedCtrl != WDT_FEED_ENABLE &&
+        pCtrl->eApp1FeedCtrl != WDT_FEED_DISABLE)
     {
-        pCtrl->app1_feed_ctrl = WDT_FEED_ENABLE;
-        pCtrl->app2_feed_ctrl = WDT_FEED_ENABLE;
+        pCtrl->eApp1FeedCtrl = WDT_FEED_ENABLE;
+        pCtrl->eApp2FeedCtrl = WDT_FEED_ENABLE;
         pCtrl->debug_flag = 0;
         for (int i = 0; i < 5; i++) pCtrl->reserved[i] = 0;
     }
@@ -158,7 +171,7 @@ void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount)
         stcRec.u32NonFaultCount = 0U;
     }
     u32Count = (stcRec.u32FaultCount == 0xFFFFFFFFUL) ? 0U : stcRec.u32FaultCount;
-    if (u32Count < MAX_WDT_RESET_COUNT) {
+    if (u32Count < MAX_APP_FAULT_COUNT) {
         stcRec.u32FaultCount = u32Count + 1U;
         Rmu_SaveSlotRecord(eSlot, &stcRec);
     }
@@ -376,14 +389,14 @@ void Boot_StartupSequence(void)
                      * - 受坏块标记限制：目标>=3 拒绝，不写自动跳转槽
                      * - 设置成功后软件复位，重新进 boot 按新槽位正常启动
                      * - 幂等保护：槽位已是目标值时不重复复位（防 TBOX 持续发送导致复位循环） */
-                    uint32_t u32Wdt1 = Rmu_GetFaultCount(RMU_SLOT_APP1);
-                    uint32_t u32Wdt2 = Rmu_GetFaultCount(RMU_SLOT_APP2);
+                    uint32_t u32Fault1 = Rmu_GetFaultCount(RMU_SLOT_APP1);
+                    uint32_t u32Fault2 = Rmu_GetFaultCount(RMU_SLOT_APP2);
                     uint32_t u32T0;
                     uint8_t u8App1Ok;
                     uint8_t u8App2Ok;
                     /* 与 InitAppInfo 保持一致：擦除态(0xFFFFFFFF)视为 0（未初始化，不算坏块） */
-                    u8App1Ok = (u32Wdt1 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
-                    u8App2Ok = (u32Wdt2 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
+                    u8App1Ok = (u32Fault1 < MAX_APP_FAULT_COUNT) ? 1U : 0U;
+                    u8App2Ok = (u32Fault2 < MAX_APP_FAULT_COUNT) ? 1U : 0U;
 
                     if ((u8App1Ok == 0U) && (u8App2Ok == 0U)) {
                         /* 双 APP 均故障：回帧并进入编程模式等待刷写 */
@@ -443,8 +456,8 @@ void Boot_StartupSequence(void)
 
     stc_shared_ctrl_t *pSharedCtrl = GetSharedCtrl();
     if (pSharedCtrl->debug_flag == 0x5A5A5A5A) {
-        SetWdtFeedControl(WDT_FEED_CONTROL_APP1_ADDR, pSharedCtrl->app1_feed_ctrl);
-        SetWdtFeedControl(WDT_FEED_CONTROL_APP2_ADDR, pSharedCtrl->app2_feed_ctrl);
+        SetWdtFeedControl(WDT_FEED_CONTROL_APP1_ADDR, pSharedCtrl->eApp1FeedCtrl);
+        SetWdtFeedControl(WDT_FEED_CONTROL_APP2_ADDR, pSharedCtrl->eApp2FeedCtrl);
         pSharedCtrl->debug_flag = 0;
     }
 
@@ -480,11 +493,11 @@ void Boot_StartupSequence(void)
     SelectTargetSlot(&stcCtx);
     UpdateSlotFlagToFlash(&stcCtx);
 
-    MAIN_D("  CurSlot: %d, Target: %d\r\n",
-           (int)stcCtx.eCurrentSlot, (int)stcCtx.eTargetSlot);
-    MAIN_D("  APP1 state=%d, WDT=%d | APP2 state=%d, WDT=%d\r\n",
-           (int)stcCtx.stcApp1.eState, (int)stcCtx.stcApp1.u32WdtCount,
-           (int)stcCtx.stcApp2.eState, (int)stcCtx.stcApp2.u32WdtCount);
+    MAIN_D("  CurSlot: %s, Target: %s\r\n",
+           SlotToStr(stcCtx.eCurrentSlot), SlotToStr(stcCtx.eTargetSlot));
+    MAIN_D("  APP1 state=%s, fault=%d | APP2 state=%s, fault=%d\r\n",
+           AppStateToStr(stcCtx.stcApp1.eState), (unsigned int)stcCtx.stcApp1.u32FaultCount,
+           AppStateToStr(stcCtx.stcApp2.eState), (unsigned int)stcCtx.stcApp2.u32FaultCount);
 
     if (stcCtx.eTargetSlot == SLOT_APP1)      Bootloader_JumpToApp(APP1_START_ADDR);
     else if (stcCtx.eTargetSlot == SLOT_APP2) Bootloader_JumpToApp(APP2_START_ADDR);
@@ -514,12 +527,12 @@ static void ValidateSlotFlag(stc_boot_context_t *pstcCtx) {
 static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr) {
     pstcApp->eSlot = eSlot;
     pstcApp->u32StartAddr = u32Addr;
-    pstcApp->u32WdtCount = Rmu_GetFaultCount((eSlot == SLOT_APP1) ? RMU_SLOT_APP1 : RMU_SLOT_APP2);
+    pstcApp->u32FaultCount = Rmu_GetFaultCount((eSlot == SLOT_APP1) ? RMU_SLOT_APP1 : RMU_SLOT_APP2);
     pstcApp->eState = APP_STATE_AVAILABLE;
 }
 
 static void UpdateAppState(stc_app_info_t *pstcApp) {
-    pstcApp->eState = ((pstcApp->u32WdtCount < MAX_WDT_RESET_COUNT) &&
+    pstcApp->eState = ((pstcApp->u32FaultCount < MAX_APP_FAULT_COUNT) &&
                        IsAppFirmwareValid(pstcApp->u32StartAddr))
                       ? APP_STATE_AVAILABLE : APP_STATE_DISABLED;
 }
@@ -566,9 +579,9 @@ static void RunBootloaderForever(void) {
     while(1) { __nop(); }
 }
 static void CheckAndClearAppState(void) {
-    if (g_u32Debug_ClearAppState == 1) ClearAppStateBySlot(SLOT_APP1);
-    else if (g_u32Debug_ClearAppState == 2) ClearAppStateBySlot(SLOT_APP2);
-    else if (g_u32Debug_ClearAppState == 3) { ClearAppStateBySlot(SLOT_APP1); ClearAppStateBySlot(SLOT_APP2); }
+    if (g_eDebugClearAppState == DBG_CLEAR_APP1) ClearAppStateBySlot(SLOT_APP1);
+    else if (g_eDebugClearAppState == DBG_CLEAR_APP2) ClearAppStateBySlot(SLOT_APP2);
+    else if (g_eDebugClearAppState == DBG_CLEAR_BOTH) { ClearAppStateBySlot(SLOT_APP1); ClearAppStateBySlot(SLOT_APP2); }
 }
 
 // ====================================================================

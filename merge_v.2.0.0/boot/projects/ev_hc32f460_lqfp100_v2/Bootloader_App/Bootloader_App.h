@@ -69,11 +69,20 @@
 
 
 
+/* ===== flash 槽位 magic（与旧设备数据兼容，勿改值） ===== */
 #define SLOT_A_MAGIC                     0x5A5A5A5Au
 #define SLOT_B_MAGIC                     0xA5A5A5A5u
-#define MAX_WDT_RESET_COUNT              3
-#define WDT_FEED_ENABLE                  0x00000000u
-#define WDT_FEED_DISABLE                 0xDEADBEEFu
+
+/* APP 故障阈值：故障计数 >= 此值 视为坏块 */
+#define MAX_APP_FAULT_COUNT              3
+
+/* ===== 喂狗控制值（Watch 中显示 APP_FEED_ENABLE / APP_FEED_DISABLE） ===== */
+typedef enum {
+    APP_FEED_ENABLE  = 0,
+    APP_FEED_DISABLE = (int)0xDEADBEEF
+} en_feed_ctrl_t;
+#define WDT_FEED_ENABLE                  APP_FEED_ENABLE
+#define WDT_FEED_DISABLE                 APP_FEED_DISABLE
 
 #define MEM_ZERO_STRUCT(x)               memset(&(x), 0, sizeof(x))
 
@@ -82,44 +91,37 @@
 //                          ����ʽ�㡿ö�� & �ṹ��
 //
 // ###########################################################################
-typedef uint32_t en_slot_type_t;
-#define SLOT_NONE    ((en_slot_type_t)0)
-#define SLOT_APP1    ((en_slot_type_t)SLOT_A_MAGIC)
-#define SLOT_APP2    ((en_slot_type_t)SLOT_B_MAGIC)
+/* ===== 槽位类型 =====
+ * 枚举化后 Keil Watch 中 eSlot/eCurrentSlot/eTargetSlot 直接显示
+ * SLOT_NONE / SLOT_APP1 / SLOT_APP2，而不是 0x5A5A5A5A 这类数字。
+ * 枚举值 = flash magic 值（与旧设备数据兼容）；
+ * SLOT_APP2 用 (int) 强转，避免 0xA5A5A5A5 超出 int 范围（位模式不变）。 */
+typedef enum {
+    SLOT_NONE = 0,
+    SLOT_APP1 = 0x5A5A5A5A,
+    SLOT_APP2 = (int)0xA5A5A5A5
+} en_slot_type_t;
 
 typedef enum {
     APP_STATE_AVAILABLE = 0,
     APP_STATE_DISABLED = 1
 } en_app_state_t;
 
-typedef enum {
-    WDT_RESET_NONE = 0,
-    WDT_RESET_SWDT = 1,
-    WDT_RESET_WDT = 2,
-    WDT_RESET_MPU_ERR = 3
-} en_wdt_reset_type_t;
-
-typedef enum {
-    BOOT_STATUS_NORMAL = 0,
-    BOOT_STATUS_APP1_DISABLED = 1,
-    BOOT_STATUS_APP2_DISABLED = 2,
-    BOOT_STATUS_BOTH_DISABLED = 3
-} en_boot_status_t;
-
+/* ===== APP 槽信息（Watch 中可直接看 eSlot / eState / u32FaultCount） ===== */
 typedef struct {
-    en_slot_type_t eSlot;
-    uint32_t u32WdtCount;
-    en_app_state_t eState;
-    uint32_t u32StartAddr;
+    en_slot_type_t eSlot;         /* 槽位：SLOT_APP1 / SLOT_APP2 */
+    uint32_t u32FaultCount;       /* 该槽累计故障计数（>= MAX_APP_FAULT_COUNT 视为坏块） */
+    en_app_state_t eState;        /* 可用状态：APP_STATE_AVAILABLE / APP_STATE_DISABLED */
+    uint32_t u32StartAddr;        /* APP 起始地址 */
 } stc_app_info_t;
 
+/* ===== 启动上下文（Boot_StartupSequence 局部变量，Watch 中可直接展开） ===== */
 typedef struct {
-    en_wdt_reset_type_t eWdtResetType;
-    en_slot_type_t eCurrentSlot;
-    en_slot_type_t eTargetSlot;
-    stc_app_info_t stcApp1;
-    stc_app_info_t stcApp2;
-    uint8_t u8NeedUpdateSlotFlag;
+    en_slot_type_t eCurrentSlot;      /* flash 记录的自动跳转槽（本次上电目标） */
+    en_slot_type_t eTargetSlot;       /* 最终决定跳转的槽（坏块时自动切到另一个） */
+    stc_app_info_t stcApp1;           /* APP1 状态信息 */
+    stc_app_info_t stcApp2;           /* APP2 状态信息 */
+    uint8_t u8NeedUpdateSlotFlag;     /* 1=需要把 eTargetSlot 写回 flash 自动跳转槽 */
 } stc_boot_context_t;
 
 // ###########################################################################
@@ -129,9 +131,9 @@ typedef struct {
 // ###########################################################################
 
 typedef struct {
-    volatile uint32_t app1_feed_ctrl;
-    volatile uint32_t app2_feed_ctrl;
-    volatile uint32_t debug_flag;
+    volatile en_feed_ctrl_t eApp1FeedCtrl;   /* APP1 喂狗开关：APP_FEED_ENABLE / APP_FEED_DISABLE */
+    volatile en_feed_ctrl_t eApp2FeedCtrl;   /* APP2 喂狗开关 */
+    volatile uint32_t debug_flag;            /* 调试标志（0x5A5A5A5A 时把 feed 写回 flash） */
     volatile uint32_t reserved[5];
 } stc_shared_ctrl_t;
 
@@ -139,6 +141,16 @@ static inline stc_shared_ctrl_t* GetSharedCtrl(void)
 {
     return (stc_shared_ctrl_t*)SHARED_CTRL_ADDR;
 }
+
+/* ===== 调试：上电清零 APP 故障计数（Watch 变量 g_eDebugClearAppState） ===== */
+typedef enum {
+    DBG_CLEAR_NONE = 0,
+    DBG_CLEAR_APP1 = 1,
+    DBG_CLEAR_APP2 = 2,
+    DBG_CLEAR_BOTH = 3
+} en_dbg_clear_app_state_t;
+
+extern volatile en_dbg_clear_app_state_t g_eDebugClearAppState; /* Keil Watch 可加此变量 */
 
 // ###########################################################################
 //
