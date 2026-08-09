@@ -28,7 +28,7 @@
 
 - `boot/projects/ev_hc32f460_lqfp100_v2/Utils/rmu.h`
 - `boot/projects/ev_hc32f460_lqfp100_v2/Utils/rmu.c`
-- 工程文件：`boot/projects/ev_hc32f460_lqfp100_v2/template/MDK/template - 副本.uvprojx` 增加 rmu.c 源文件条目
+- 工程文件：`boot/projects/ev_hc32f460_lqfp100_v2/template/MDK/template - 副本.uvprojx` 需要增加 rmu.c 源文件条目（**由用户自行在 Keil 中添加，本次实现不修改任何 uvprojx/uvoptx**）
 
 ## 4. rmu.h 设计
 
@@ -138,3 +138,4 @@ uint32_t    Rmu_GetLastResetCause(en_rmu_slot_t eSlot);
 - **FLASH 磨损**：方案 A 每次上电擦写一次当前槽 8KB 扇区；长期频繁上下电有磨损，后续按决策切方案 B（仅故障/原因变化时写）。
 - **正常原因只记在“当前运行槽”扇区**：跨槽分析需分别读两个扇区。
 - **boot 自身 SWDT 超时**：若 boot 初始化耗时接近 SWDT 默认超时，理论上会自我复位；当前初始化耗时远小于超时，实测确认即可。
+
