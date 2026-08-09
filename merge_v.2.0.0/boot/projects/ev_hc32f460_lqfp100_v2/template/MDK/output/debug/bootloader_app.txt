@@ -5,17 +5,17 @@
                           AREA ||i.App_CheckPendingUdsAck||, CODE, READONLY, ALIGN=2
 
                   App_CheckPendingUdsAck PROC
-;;;830    // ====================================================================
-;;;831    void App_CheckPendingUdsAck(void)
+;;;766    // ====================================================================
+;;;767    void App_CheckPendingUdsAck(void)
 000000  b510              PUSH     {r4,lr}
-;;;832    {
+;;;768    {
 000002  b096              SUB      sp,sp,#0x58
-;;;833        stc_uds_shared_t state;
-;;;834        UdsShared_Read(&state);
+;;;769        stc_uds_shared_t state;
+;;;770        UdsShared_Read(&state);
 000004  a808              ADD      r0,sp,#0x20
 000006  f7fffffe          BL       UdsShared_Read
-;;;835    
-;;;836        MAIN_D("App_CheckPendingUdsAck: magic=0x%08X, pending_sid=0x%02X\r\n",
+;;;771    
+;;;772        MAIN_D("App_CheckPendingUdsAck: magic=0x%08X, pending_sid=0x%02X\r\n",
 00000a  980e              LDR      r0,[sp,#0x38]
 00000c  9000              STR      r0,[sp,#0]
 00000e  a222              ADR      r2,|L1.152|
@@ -23,87 +23,87 @@
 000012  2000              MOVS     r0,#0
 000014  9b08              LDR      r3,[sp,#0x20]
 000016  f7fffffe          BL       SEGGER_RTT_printf
-;;;837               (unsigned int)state.magic, (unsigned int)state.pending_sid);
-;;;838    
-;;;839        if (state.magic != UDS_SHARED_MAGIC) {
+;;;773               (unsigned int)state.magic, (unsigned int)state.pending_sid);
+;;;774    
+;;;775        if (state.magic != UDS_SHARED_MAGIC) {
 00001a  4922              LDR      r1,|L1.164|
 00001c  9808              LDR      r0,[sp,#0x20]
 00001e  4288              CMP      r0,r1
 000020  d006              BEQ      |L1.48|
-;;;840            MAIN_D("  No pending UDS state, skip\r\n");
+;;;776            MAIN_D("  No pending UDS state, skip\r\n");
 000022  a21d              ADR      r2,|L1.152|
 000024  a120              ADR      r1,|L1.168|
 000026  2000              MOVS     r0,#0
 000028  f7fffffe          BL       SEGGER_RTT_printf
                   |L1.44|
-;;;841            return;
-;;;842        }
-;;;843    
-;;;844        if (state.pending_sid == 0x11) {
-;;;845            MAIN_D("  Sending pending 11 01 ACK (51 01)\r\n");
-;;;846            /* 补发 11 01 的肯定响应 (51 01)
-;;;847             * ISOTP 单帧格式: PCI=0x04 (4字节数据) + 51 01 00 00, DLC=8 */
-;;;848            CanMsg_t stcMsg;
-;;;849            uint8_t au8Data[8] = {0x04, 0x51, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
-;;;850            uint8_t i;
-;;;851            stcMsg.u32ID = 0x18DAF103UL;
-;;;852            stcMsg.u8IDE  = 1U;
-;;;853            stcMsg.u8RTR  = 0U;
-;;;854            stcMsg.u8FDF  = 0U;
-;;;855            stcMsg.u8BRS  = 0U;
-;;;856            stcMsg.u8DLC  = 8U;
-;;;857            for (i = 0; i < 8; i++) stcMsg.au8Data[i] = au8Data[i];
-;;;858            CanIf_Send(&stcMsg);
-;;;859        }
-;;;860    
-;;;861        
-;;;862    
-;;;863        /* 清除共享区 */
-;;;864        UdsShared_Clear();
-;;;865        MAIN_D("  UDS shared state cleared\r\n");
-;;;866    }
+;;;777            return;
+;;;778        }
+;;;779    
+;;;780        if (state.pending_sid == 0x11) {
+;;;781            MAIN_D("  Sending pending 11 01 ACK (51 01)\r\n");
+;;;782            /* 补发 11 01 的肯定响应 (51 01)
+;;;783             * ISOTP 单帧格式: PCI=0x04 (4字节数据) + 51 01 00 00, DLC=8 */
+;;;784            CanMsg_t stcMsg;
+;;;785            uint8_t au8Data[8] = {0x04, 0x51, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
+;;;786            uint8_t i;
+;;;787            stcMsg.u32ID = 0x18DAF103UL;
+;;;788            stcMsg.u8IDE  = 1U;
+;;;789            stcMsg.u8RTR  = 0U;
+;;;790            stcMsg.u8FDF  = 0U;
+;;;791            stcMsg.u8BRS  = 0U;
+;;;792            stcMsg.u8DLC  = 8U;
+;;;793            for (i = 0; i < 8; i++) stcMsg.au8Data[i] = au8Data[i];
+;;;794            CanIf_Send(&stcMsg);
+;;;795        }
+;;;796    
+;;;797        
+;;;798    
+;;;799        /* 清除共享区 */
+;;;800        UdsShared_Clear();
+;;;801        MAIN_D("  UDS shared state cleared\r\n");
+;;;802    }
 00002c  b016              ADD      sp,sp,#0x58
 00002e  bd10              POP      {r4,pc}
                   |L1.48|
-000030  980e              LDR      r0,[sp,#0x38]         ;844
-000032  2811              CMP      r0,#0x11              ;844
+000030  980e              LDR      r0,[sp,#0x38]         ;780
+000032  2811              CMP      r0,#0x11              ;780
 000034  d126              BNE      |L1.132|
 000036  a218              ADR      r2,|L1.152|
 000038  a127              ADR      r1,|L1.216|
-00003a  2000              MOVS     r0,#0                 ;845
+00003a  2000              MOVS     r0,#0                 ;781
 00003c  f7fffffe          BL       SEGGER_RTT_printf
 000040  a133              ADR      r1,|L1.272|
-000042  c903              LDM      r1,{r0,r1}            ;849
-000044  e9cd0100          STRD     r0,r1,[sp,#0]         ;849
+000042  c903              LDM      r1,{r0,r1}            ;785
+000044  e9cd0100          STRD     r0,r1,[sp,#0]         ;785
 000048  4833              LDR      r0,|L1.280|
-00004a  9002              STR      r0,[sp,#8]            ;851
-00004c  2001              MOVS     r0,#1                 ;852
-00004e  f88d000c          STRB     r0,[sp,#0xc]          ;852
-000052  2000              MOVS     r0,#0                 ;853
-000054  f88d000d          STRB     r0,[sp,#0xd]          ;853
-000058  f88d000e          STRB     r0,[sp,#0xe]          ;854
-00005c  f88d000f          STRB     r0,[sp,#0xf]          ;855
-000060  2008              MOVS     r0,#8                 ;856
-000062  f88d0010          STRB     r0,[sp,#0x10]         ;856
-000066  2400              MOVS     r4,#0                 ;857
+00004a  9002              STR      r0,[sp,#8]            ;787
+00004c  2001              MOVS     r0,#1                 ;788
+00004e  f88d000c          STRB     r0,[sp,#0xc]          ;788
+000052  2000              MOVS     r0,#0                 ;789
+000054  f88d000d          STRB     r0,[sp,#0xd]          ;789
+000058  f88d000e          STRB     r0,[sp,#0xe]          ;790
+00005c  f88d000f          STRB     r0,[sp,#0xf]          ;791
+000060  2008              MOVS     r0,#8                 ;792
+000062  f88d0010          STRB     r0,[sp,#0x10]         ;792
+000066  2400              MOVS     r4,#0                 ;793
 000068  e006              B        |L1.120|
                   |L1.106|
-00006a  f81d1004          LDRB     r1,[sp,r4]            ;857
-00006e  f10d0011          ADD      r0,sp,#0x11           ;857
-000072  5501              STRB     r1,[r0,r4]            ;857
-000074  1c60              ADDS     r0,r4,#1              ;857
-000076  b2c4              UXTB     r4,r0                 ;857
+00006a  f81d1004          LDRB     r1,[sp,r4]            ;793
+00006e  f10d0011          ADD      r0,sp,#0x11           ;793
+000072  5501              STRB     r1,[r0,r4]            ;793
+000074  1c60              ADDS     r0,r4,#1              ;793
+000076  b2c4              UXTB     r4,r0                 ;793
                   |L1.120|
-000078  2c08              CMP      r4,#8                 ;857
+000078  2c08              CMP      r4,#8                 ;793
 00007a  dbf6              BLT      |L1.106|
-00007c  a802              ADD      r0,sp,#8              ;858
+00007c  a802              ADD      r0,sp,#8              ;794
 00007e  f7fffffe          BL       CanIf_Send
-000082  bf00              NOP                            ;859
+000082  bf00              NOP                            ;795
                   |L1.132|
 000084  f7fffffe          BL       UdsShared_Clear
 000088  a203              ADR      r2,|L1.152|
 00008a  a124              ADR      r1,|L1.284|
-00008c  2000              MOVS     r0,#0                 ;865
+00008c  2000              MOVS     r0,#0                 ;801
 00008e  f7fffffe          BL       SEGGER_RTT_printf
 000092  bf00              NOP      
 000094  e7ca              B        |L1.44|
@@ -180,49 +180,49 @@
                           AREA ||i.BL_ISOTP_RegisterRxFilters||, CODE, READONLY, ALIGN=2
 
                   BL_ISOTP_RegisterRxFilters PROC
-;;;709    
-;;;710    static void BL_ISOTP_RegisterRxFilters(void)
+;;;645    
+;;;646    static void BL_ISOTP_RegisterRxFilters(void)
 000000  b51f              PUSH     {r0-r4,lr}
-;;;711    {
-;;;712        static const uint32_t s_isotp_can_ids[4] = {
-;;;713            0x18DA03F1UL,  /* 物理寻址请求 ID (TBOX → 控制器) */
-;;;714            0x18DAF103UL,  /* 物理寻址响应 ID (控制器 → TBOX) */
-;;;715            0x18FF8118UL,  /* OTA 专用 ID */
-;;;716            0x18DBFFF0UL   /* 功能寻址请求 ID (广播) */
-;;;717        };
-;;;718    
-;;;719        CanIf_RxFilterEntry_t stcEntry;
-;;;720        stcEntry.u32CanId   = 0UL;
+;;;647    {
+;;;648        static const uint32_t s_isotp_can_ids[4] = {
+;;;649            0x18DA03F1UL,  /* 物理寻址请求 ID (TBOX → 控制器) */
+;;;650            0x18DAF103UL,  /* 物理寻址响应 ID (控制器 → TBOX) */
+;;;651            0x18FF8118UL,  /* OTA 专用 ID */
+;;;652            0x18DBFFF0UL   /* 功能寻址请求 ID (广播) */
+;;;653        };
+;;;654    
+;;;655        CanIf_RxFilterEntry_t stcEntry;
+;;;656        stcEntry.u32CanId   = 0UL;
 000002  2000              MOVS     r0,#0
 000004  9000              STR      r0,[sp,#0]
-;;;721        stcEntry.u32CanMask = 0UL;  /* 精确匹配 */
+;;;657        stcEntry.u32CanMask = 0UL;  /* 精确匹配 */
 000006  9001              STR      r0,[sp,#4]
-;;;722        stcEntry.u8Format   = CAN_ID_EXT;
+;;;658        stcEntry.u8Format   = CAN_ID_EXT;
 000008  f88d0008          STRB     r0,[sp,#8]
-;;;723        stcEntry.pfnCallback = &BL_ISOTP_RxCallback;
+;;;659        stcEntry.pfnCallback = &BL_ISOTP_RxCallback;
 00000c  4807              LDR      r0,|L2.44|
 00000e  9003              STR      r0,[sp,#0xc]
-;;;724    
-;;;725        for (uint8_t i = 0U; i < 4U; i++) {
+;;;660    
+;;;661        for (uint8_t i = 0U; i < 4U; i++) {
 000010  2400              MOVS     r4,#0
 000012  e008              B        |L2.38|
                   |L2.20|
-;;;726            stcEntry.u32CanId = s_isotp_can_ids[i];
+;;;662            stcEntry.u32CanId = s_isotp_can_ids[i];
 000014  4806              LDR      r0,|L2.48|
 000016  f8500024          LDR      r0,[r0,r4,LSL #2]
 00001a  9000              STR      r0,[sp,#0]
-;;;727            CanIf_RegisterRxFilter(&stcEntry);
+;;;663            CanIf_RegisterRxFilter(&stcEntry);
 00001c  4668              MOV      r0,sp
 00001e  f7fffffe          BL       CanIf_RegisterRxFilter
-000022  1c60              ADDS     r0,r4,#1              ;725
-000024  b2c4              UXTB     r4,r0                 ;725
+000022  1c60              ADDS     r0,r4,#1              ;661
+000024  b2c4              UXTB     r4,r0                 ;661
                   |L2.38|
-000026  2c04              CMP      r4,#4                 ;725
+000026  2c04              CMP      r4,#4                 ;661
 000028  d3f4              BCC      |L2.20|
-;;;728        }
-;;;729    }
+;;;664        }
+;;;665    }
 00002a  bd1f              POP      {r0-r4,pc}
-;;;730    
+;;;666    
                           ENDP
 
                   |L2.44|
@@ -233,15 +233,15 @@
                           AREA ||i.BL_ISOTP_RxCallback||, CODE, READONLY, ALIGN=2
 
                   BL_ISOTP_RxCallback PROC
-;;;698    
-;;;699    static void BL_ISOTP_RxCallback(const CanMsg_t *pMsg)
+;;;634    
+;;;635    static void BL_ISOTP_RxCallback(const CanMsg_t *pMsg)
 000000  b53e              PUSH     {r1-r5,lr}
-;;;700    {
+;;;636    {
 000002  4604              MOV      r4,r0
-;;;701        uint16_t out_len = 0;
+;;;637        uint16_t out_len = 0;
 000004  2000              MOVS     r0,#0
 000006  9002              STR      r0,[sp,#8]
-;;;702        int8_t result = isotp_receive_frame(0, pMsg->u32ID,
+;;;638        int8_t result = isotp_receive_frame(0, pMsg->u32ID,
 000008  a802              ADD      r0,sp,#8
 00000a  490a              LDR      r1,|L3.52|
 00000c  e9cd1000          STRD     r1,r0,[sp,#0]
@@ -251,21 +251,21 @@
 000018  6821              LDR      r1,[r4,#0]
 00001a  f7fffffe          BL       isotp_receive_frame
 00001e  4605              MOV      r5,r0
-;;;703                                            (uint8_t*)pMsg->au8Data, pMsg->u8DLC,
-;;;704                                            s_bl_uds_rx_buffer, &out_len);
-;;;705        if (result == ISOTP_OK) {
+;;;639                                            (uint8_t*)pMsg->au8Data, pMsg->u8DLC,
+;;;640                                            s_bl_uds_rx_buffer, &out_len);
+;;;641        if (result == ISOTP_OK) {
 000020  b935              CBNZ     r5,|L3.48|
-;;;706            uds_receive_handler(0, pMsg->u32ID, s_bl_uds_rx_buffer, out_len);
+;;;642            uds_receive_handler(0, pMsg->u32ID, s_bl_uds_rx_buffer, out_len);
 000022  f8bd3008          LDRH     r3,[sp,#8]
 000026  4a03              LDR      r2,|L3.52|
 000028  2000              MOVS     r0,#0
 00002a  6821              LDR      r1,[r4,#0]
 00002c  f7fffffe          BL       uds_receive_handler
                   |L3.48|
-;;;707        }
-;;;708    }
+;;;643        }
+;;;644    }
 000030  bd3e              POP      {r1-r5,pc}
-;;;709    
+;;;645    
                           ENDP
 
 000032  0000              DCW      0x0000
@@ -275,25 +275,25 @@
                           AREA ||i.Boot_ForceCmdRxCallback||, CODE, READONLY, ALIGN=2
 
                   Boot_ForceCmdRxCallback PROC
-;;;27     
-;;;28     static void Boot_ForceCmdRxCallback(const CanMsg_t *pMsg)
+;;;28     
+;;;29     static void Boot_ForceCmdRxCallback(const CanMsg_t *pMsg)
 000000  b510              PUSH     {r4,lr}
-;;;29     {
+;;;30     {
 000002  b088              SUB      sp,sp,#0x20
 000004  4604              MOV      r4,r0
-;;;30         if ((pMsg != NULL) && (pMsg->u8DLC >= 1U)) {
+;;;31         if ((pMsg != NULL) && (pMsg->u8DLC >= 1U)) {
 000006  b1ec              CBZ      r4,|L4.68|
 000008  7a20              LDRB     r0,[r4,#8]
 00000a  b1d8              CBZ      r0,|L4.68|
-;;;31             s_force_cmd = pMsg->au8Data[0];
+;;;32             s_force_cmd = pMsg->au8Data[0];
 00000c  7a60              LDRB     r0,[r4,#9]
 00000e  490e              LDR      r1,|L4.72|
 000010  7008              STRB     r0,[r1,#0]
-;;;32             if (s_force_window_active) {
+;;;33             if (s_force_window_active) {
 000012  480e              LDR      r0,|L4.76|
 000014  7800              LDRB     r0,[r0,#0]  ; s_force_window_active
 000016  b1a8              CBZ      r0,|L4.68|
-;;;33                 MAIN_D("  [FRC] RX 0x18FF5858 DLC=%d: %02X %02X %02X %02X %02X %02X %02X %02X\r\n",
+;;;34                 MAIN_D("  [FRC] RX 0x18FF5858 DLC=%d: %02X %02X %02X %02X %02X %02X %02X %02X\r\n",
 000018  7c20              LDRB     r0,[r4,#0x10]
 00001a  7be1              LDRB     r1,[r4,#0xf]
 00001c  7ba2              LDRB     r2,[r4,#0xe]
@@ -312,17 +312,17 @@
 00003e  2000              MOVS     r0,#0
 000040  f7fffffe          BL       SEGGER_RTT_printf
                   |L4.68|
-;;;34                        (int)pMsg->u8DLC,
-;;;35                        (unsigned int)pMsg->au8Data[0], (unsigned int)pMsg->au8Data[1],
-;;;36                        (unsigned int)pMsg->au8Data[2], (unsigned int)pMsg->au8Data[3],
-;;;37                        (unsigned int)pMsg->au8Data[4], (unsigned int)pMsg->au8Data[5],
-;;;38                        (unsigned int)pMsg->au8Data[6], (unsigned int)pMsg->au8Data[7]);
-;;;39             }
-;;;40         }
-;;;41     }
+;;;35                        (int)pMsg->u8DLC,
+;;;36                        (unsigned int)pMsg->au8Data[0], (unsigned int)pMsg->au8Data[1],
+;;;37                        (unsigned int)pMsg->au8Data[2], (unsigned int)pMsg->au8Data[3],
+;;;38                        (unsigned int)pMsg->au8Data[4], (unsigned int)pMsg->au8Data[5],
+;;;39                        (unsigned int)pMsg->au8Data[6], (unsigned int)pMsg->au8Data[7]);
+;;;40             }
+;;;41         }
+;;;42     }
 000044  b008              ADD      sp,sp,#0x20
 000046  bd10              POP      {r4,pc}
-;;;42     
+;;;43     
                           ENDP
 
                   |L4.72|
@@ -341,41 +341,41 @@
                           AREA ||i.Boot_SendForceResp||, CODE, READONLY, ALIGN=2
 
                   Boot_SendForceResp PROC
-;;;15     /* 阶段3: 强制指令结果回帧（CAN ID 0x18EF5858，data[0]=状态） */
-;;;16     static void Boot_SendForceResp(uint8_t u8Status)
+;;;16     /* 阶段3: 强制指令结果回帧（CAN ID 0x18EF5858，data[0]=状态） */
+;;;17     static void Boot_SendForceResp(uint8_t u8Status)
 000000  b510              PUSH     {r4,lr}
-;;;17     {
+;;;18     {
 000002  b086              SUB      sp,sp,#0x18
 000004  4604              MOV      r4,r0
-;;;18         CanMsg_t stcMsg;
-;;;19         MEM_ZERO_STRUCT(stcMsg);
+;;;19         CanMsg_t stcMsg;
+;;;20         MEM_ZERO_STRUCT(stcMsg);
 000006  2118              MOVS     r1,#0x18
 000008  4668              MOV      r0,sp
 00000a  f7fffffe          BL       __aeabi_memclr4
-;;;20         stcMsg.u32ID = BOOT_FORCE_RESP_CAN_ID;
+;;;21         stcMsg.u32ID = BOOT_FORCE_RESP_CAN_ID;
 00000e  480a              LDR      r0,|L5.56|
 000010  9000              STR      r0,[sp,#0]
-;;;21         stcMsg.u8IDE = 1U;
+;;;22         stcMsg.u8IDE = 1U;
 000012  2001              MOVS     r0,#1
 000014  f88d0004          STRB     r0,[sp,#4]
-;;;22         stcMsg.u8DLC = 8U;
+;;;23         stcMsg.u8DLC = 8U;
 000018  2008              MOVS     r0,#8
 00001a  f88d0008          STRB     r0,[sp,#8]
-;;;23         stcMsg.au8Data[0] = u8Status;
+;;;24         stcMsg.au8Data[0] = u8Status;
 00001e  f88d4009          STRB     r4,[sp,#9]
-;;;24         CanIf_Send(&stcMsg);
+;;;25         CanIf_Send(&stcMsg);
 000022  4668              MOV      r0,sp
 000024  f7fffffe          BL       CanIf_Send
-;;;25         MAIN_D("  Force resp 0x18EF5858: status=0x%02X\r\n", (unsigned int)u8Status);
+;;;26         MAIN_D("  Force resp 0x18EF5858: status=0x%02X\r\n", (unsigned int)u8Status);
 000028  4623              MOV      r3,r4
 00002a  a204              ADR      r2,|L5.60|
 00002c  a105              ADR      r1,|L5.68|
 00002e  2000              MOVS     r0,#0
 000030  f7fffffe          BL       SEGGER_RTT_printf
-;;;26     }
+;;;27     }
 000034  b006              ADD      sp,sp,#0x18
 000036  bd10              POP      {r4,pc}
-;;;27     
+;;;28     
                           ENDP
 
                   |L5.56|
@@ -409,750 +409,751 @@
                           AREA ||i.Boot_SetRunSlotToAddr||, CODE, READONLY, ALIGN=1
 
                   Boot_SetRunSlotToAddr PROC
-;;;355    
-;;;356    void Boot_SetRunSlotToAddr(uint32_t u32Addr)
+;;;306    
+;;;307    void Boot_SetRunSlotToAddr(uint32_t u32Addr)
 000000  b570              PUSH     {r4-r6,lr}
-;;;357    {
+;;;308    {
 000002  4604              MOV      r4,r0
-;;;358        uint32_t u32Magic;
-;;;359        if (u32Addr == APP1_START_ADDR)
+;;;309        uint32_t u32Magic;
+;;;310        if (u32Addr == APP1_START_ADDR)
 000004  f5b43fd0          CMP      r4,#0x1a000
 000008  d102              BNE      |L6.16|
-;;;360            u32Magic = SLOT_A_MAGIC;
+;;;311            u32Magic = SLOT_A_MAGIC;
 00000a  f04f355a          MOV      r5,#0x5a5a5a5a
 00000e  e006              B        |L6.30|
                   |L6.16|
-;;;361        else if (u32Addr == APP2_START_ADDR)
+;;;312        else if (u32Addr == APP2_START_ADDR)
 000010  f5b42f88          CMP      r4,#0x44000
 000014  d102              BNE      |L6.28|
-;;;362            u32Magic = SLOT_B_MAGIC;
+;;;313            u32Magic = SLOT_B_MAGIC;
 000016  f04f35a5          MOV      r5,#0xa5a5a5a5
 00001a  e000              B        |L6.30|
                   |L6.28|
-;;;363        else
-;;;364            return;
-;;;365    
-;;;366        EFM_REG_Unlock();
-;;;367        EFM_FWMC_Cmd(ENABLE);
-;;;368        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-;;;369        EFM_SectorErase(APP_RUN_SLOT_ADDR);
-;;;370        EFM_ProgramWord(APP_RUN_SLOT_ADDR, u32Magic);
-;;;371        EFM_REG_Lock();
-;;;372    }
+;;;314        else
+;;;315            return;
+;;;316    
+;;;317        EFM_REG_Unlock();
+;;;318        EFM_FWMC_Cmd(ENABLE);
+;;;319        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
+;;;320        EFM_SectorErase(APP_RUN_SLOT_ADDR);
+;;;321        EFM_ProgramWord(APP_RUN_SLOT_ADDR, u32Magic);
+;;;322        EFM_REG_Lock();
+;;;323    }
 00001c  bd70              POP      {r4-r6,pc}
                   |L6.30|
 00001e  f7fffffe          BL       EFM_REG_Unlock
-000022  2001              MOVS     r0,#1                 ;367
+000022  2001              MOVS     r0,#1                 ;318
 000024  f7fffffe          BL       EFM_FWMC_Cmd
-000028  bf00              NOP                            ;368
+000028  bf00              NOP                            ;319
                   |L6.42|
-00002a  f44f7080          MOV      r0,#0x100             ;368
+00002a  f44f7080          MOV      r0,#0x100             ;319
 00002e  f7fffffe          BL       EFM_GetStatus
-000032  2801              CMP      r0,#1                 ;368
+000032  2801              CMP      r0,#1                 ;319
 000034  d1f9              BNE      |L6.42|
-000036  f44f20f8          MOV      r0,#0x7c000           ;369
+000036  f44f20f8          MOV      r0,#0x7c000           ;320
 00003a  f7fffffe          BL       EFM_SectorErase
-00003e  4629              MOV      r1,r5                 ;370
-000040  f44f20f8          MOV      r0,#0x7c000           ;370
+00003e  4629              MOV      r1,r5                 ;321
+000040  f44f20f8          MOV      r0,#0x7c000           ;321
 000044  f7fffffe          BL       EFM_ProgramWord
 000048  f7fffffe          BL       EFM_REG_Lock
 00004c  bf00              NOP      
 00004e  e7e5              B        |L6.28|
-;;;373    
+;;;324    
                           ENDP
 
 
                           AREA ||i.Boot_StartupSequence||, CODE, READONLY, ALIGN=2
 
                   Boot_StartupSequence PROC
-;;;378    
-;;;379    void Boot_StartupSequence(void)
+;;;329    
+;;;330    void Boot_StartupSequence(void)
 000000  e92d4ff0          PUSH     {r4-r11,lr}
-;;;380    {
+;;;331    {
 000004  b09d              SUB      sp,sp,#0x74
-;;;381        stc_boot_context_t stcCtx;
-;;;382        memset(&stcCtx, 0, sizeof(stc_boot_context_t));
+;;;332        stc_boot_context_t stcCtx;
+;;;333        memset(&stcCtx, 0, sizeof(stc_boot_context_t));
 000006  2130              MOVS     r1,#0x30
 000008  a811              ADD      r0,sp,#0x44
 00000a  f7fffffe          BL       __aeabi_memclr4
-;;;383    
-;;;384        MAIN_D("===== Bootloader Start =====\r\n");
-00000e  a2c5              ADR      r2,|L7.804|
-000010  a1c6              ADR      r1,|L7.812|
+;;;334    
+;;;335        MAIN_D("===== Bootloader Start =====\r\n");
+00000e  a2c3              ADR      r2,|L7.796|
+000010  a1c4              ADR      r1,|L7.804|
 000012  2000              MOVS     r0,#0
 000014  f7fffffe          BL       SEGGER_RTT_printf
-;;;385        /* ==== 阶段2/3: 上电 50ms 强制指令检测窗口 ==== */
-;;;386        {
-;;;387            static bool s_force_filter_registered = false;
-;;;388            uint64_t u64WinStart;
-;;;389    
-;;;390            if (!s_force_filter_registered) {
-000018  48d0              LDR      r0,|L7.860|
-00001a  7800              LDRB     r0,[r0,#0]  ; s_force_filter_registered
-00001c  b990              CBNZ     r0,|L7.68|
-;;;391                CanIf_RxFilterEntry_t stcForceEntry;
-;;;392                MEM_ZERO_STRUCT(stcForceEntry);
-00001e  2000              MOVS     r0,#0
-000020  900d              STR      r0,[sp,#0x34]
-000022  900e              STR      r0,[sp,#0x38]
-000024  900f              STR      r0,[sp,#0x3c]
-000026  9010              STR      r0,[sp,#0x40]
-;;;393                stcForceEntry.u32CanId    = BOOT_FORCE_CMD_CAN_ID;
-000028  48cd              LDR      r0,|L7.864|
-00002a  900d              STR      r0,[sp,#0x34]
-;;;394                stcForceEntry.u32CanMask  = 0UL;
-00002c  2000              MOVS     r0,#0
-00002e  900e              STR      r0,[sp,#0x38]
-;;;395                stcForceEntry.u8Format    = CAN_ID_EXT;
-000030  f88d003c          STRB     r0,[sp,#0x3c]
-;;;396                stcForceEntry.pfnCallback = Boot_ForceCmdRxCallback;
-000034  48cb              LDR      r0,|L7.868|
-000036  9010              STR      r0,[sp,#0x40]
-;;;397                s_force_filter_registered = CanIf_RegisterRxFilter(&stcForceEntry);
-000038  a80d              ADD      r0,sp,#0x34
-00003a  f7fffffe          BL       CanIf_RegisterRxFilter
-00003e  49c7              LDR      r1,|L7.860|
-000040  7008              STRB     r0,[r1,#0]
-;;;398            }
-000042  bf00              NOP      
-                  |L7.68|
-;;;399    
-;;;400            s_force_cmd = 0U;
-000044  2000              MOVS     r0,#0
-000046  49c8              LDR      r1,|L7.872|
-000048  7008              STRB     r0,[r1,#0]
-;;;401            s_force_window_active = 1U;
-00004a  2001              MOVS     r0,#1
-00004c  49c7              LDR      r1,|L7.876|
-00004e  7008              STRB     r0,[r1,#0]
-;;;402            u64WinStart = tickTimer_GetCount();
-000050  f7fffffe          BL       tickTimer_GetCount
-000054  4606              MOV      r6,r0
-000056  460f              MOV      r7,r1
-                  |L7.88|
-;;;403            while ((tickTimer_GetCount() - u64WinStart) < BOOT_FORCE_CMD_WINDOW_MS) {
-000058  e0ca              B        |L7.496|
-                  |L7.90|
-;;;404                UdsOta_Poll();
-00005a  f7fffffe          BL       UdsOta_Poll
-;;;405                if (s_force_cmd != 0U) {
-00005e  48c2              LDR      r0,|L7.872|
-000060  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
-000062  2800              CMP      r0,#0
-000064  d0f8              BEQ      |L7.88|
-;;;406                    MAIN_D("  Force cmd on 0x18FF5858 = 0x%02X\r\n", (unsigned int)s_force_cmd);
-000066  48c0              LDR      r0,|L7.872|
-000068  7803              LDRB     r3,[r0,#0]  ; s_force_cmd
-00006a  a2ae              ADR      r2,|L7.804|
-00006c  a1c0              ADR      r1,|L7.880|
-00006e  2000              MOVS     r0,#0
-000070  f7fffffe          BL       SEGGER_RTT_printf
-;;;407                    if (s_force_cmd == BOOT_FORCE_CMD_ENTER_BL) {
-000074  48bc              LDR      r0,|L7.872|
-000076  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
-000078  28ff              CMP      r0,#0xff
-00007a  d107              BNE      |L7.140|
-;;;408                        MAIN_D("  -> Force enter UDS programming mode (stage2, no APP)\r\n");
-00007c  a2a9              ADR      r2,|L7.804|
-00007e  49ca              LDR      r1,|L7.936|
-000080  2000              MOVS     r0,#0
-000082  f7fffffe          BL       SEGGER_RTT_printf
-;;;409                        UdsOta_Bootloader_Enter();   /* 不返回 */
-000086  f7fffffe          BL       UdsOta_Bootloader_Enter
-00008a  e0b1              B        |L7.496|
-                  |L7.140|
-;;;410                    }
-;;;411                    else if ((s_force_cmd == BOOT_FORCE_CMD_BOOT_APP2) ||
-00008c  48b6              LDR      r0,|L7.872|
-00008e  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
-000090  2802              CMP      r0,#2
-000092  d003              BEQ      |L7.156|
-;;;412                             (s_force_cmd == BOOT_FORCE_CMD_BOOT_APP1)) {
-000094  48b4              LDR      r0,|L7.872|
-000096  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
-000098  2801              CMP      r0,#1
-00009a  d1dd              BNE      |L7.88|
-                  |L7.156|
-;;;413                        /* 阶段3: 强制下次启动槽位
-;;;414                         * - 受坏块标记限制：目标>=3 拒绝，不写自动跳转槽
-;;;415                         * - 设置成功后软件复位，重新进 boot 按新槽位正常启动
-;;;416                         * - 幂等保护：槽位已是目标值时不重复复位（防 TBOX 持续发送导致复位循环） */
-;;;417                        uint32_t u32Wdt1 = READ_FLASH_DIRECT(WDT_COUNT_APP1_ADDR);
-00009c  48c3              LDR      r0,|L7.940|
-00009e  f7fffffe          BL       READ_FLASH_DIRECT
-0000a2  4680              MOV      r8,r0
-;;;418                        uint32_t u32Wdt2 = READ_FLASH_DIRECT(WDT_COUNT_APP2_ADDR);
-0000a4  48c2              LDR      r0,|L7.944|
-0000a6  f7fffffe          BL       READ_FLASH_DIRECT
-0000aa  4681              MOV      r9,r0
-;;;419                        uint32_t u32T0;
-;;;420                        uint8_t u8App1Ok;
-;;;421                        uint8_t u8App2Ok;
-;;;422                        /* 与 InitAppInfo 保持一致：擦除态(0xFFFFFFFF)视为 0（未初始化，不算坏块） */
-;;;423                        if (u32Wdt1 == 0xFFFFFFFFUL) { u32Wdt1 = 0U; }
-0000ac  f1080001          ADD      r0,r8,#1
-0000b0  b908              CBNZ     r0,|L7.182|
-0000b2  f04f0800          MOV      r8,#0
-                  |L7.182|
-;;;424                        if (u32Wdt2 == 0xFFFFFFFFUL) { u32Wdt2 = 0U; }
-0000b6  f1090001          ADD      r0,r9,#1
-0000ba  b908              CBNZ     r0,|L7.192|
-0000bc  f04f0900          MOV      r9,#0
-                  |L7.192|
-;;;425                        u8App1Ok = (u32Wdt1 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
-0000c0  f1b80f03          CMP      r8,#3
-0000c4  d201              BCS      |L7.202|
-0000c6  2001              MOVS     r0,#1
-0000c8  e000              B        |L7.204|
-                  |L7.202|
-0000ca  2000              MOVS     r0,#0
-                  |L7.204|
-0000cc  4682              MOV      r10,r0
-;;;426                        u8App2Ok = (u32Wdt2 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
-0000ce  f1b90f03          CMP      r9,#3
-0000d2  d201              BCS      |L7.216|
-0000d4  2001              MOVS     r0,#1
-0000d6  e000              B        |L7.218|
-                  |L7.216|
-0000d8  2000              MOVS     r0,#0
-                  |L7.218|
-0000da  4683              MOV      r11,r0
-;;;427    
-;;;428                        if ((u8App1Ok == 0U) && (u8App2Ok == 0U)) {
-0000dc  f1ba0f00          CMP      r10,#0
-0000e0  d10d              BNE      |L7.254|
-0000e2  f1bb0f00          CMP      r11,#0
-0000e6  d10a              BNE      |L7.254|
-;;;429                            /* 双 APP 均故障：回帧并进入编程模式等待刷写 */
-;;;430                            Boot_SendForceResp(BOOT_FORCE_RESP_BOTH_FAULTY);
-0000e8  2003              MOVS     r0,#3
-0000ea  f7fffffe          BL       Boot_SendForceResp
-;;;431                            MAIN_D("  -> Both APPs faulty, entering UDS programming mode\r\n");
-0000ee  a28d              ADR      r2,|L7.804|
-0000f0  49b0              LDR      r1,|L7.948|
-0000f2  2000              MOVS     r0,#0
-0000f4  f7fffffe          BL       SEGGER_RTT_printf
-;;;432                            UdsOta_Bootloader_Enter();   /* 不返回 */
-0000f8  f7fffffe          BL       UdsOta_Bootloader_Enter
-0000fc  e077              B        |L7.494|
-                  |L7.254|
-;;;433                        }
-;;;434                        else if (s_force_cmd == BOOT_FORCE_CMD_BOOT_APP2) {
-0000fe  489a              LDR      r0,|L7.872|
-000100  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
-000102  2802              CMP      r0,#2
-000104  d139              BNE      |L7.378|
-;;;435                            if (u8App2Ok != 0U) {
-000106  f1bb0f00          CMP      r11,#0
-00010a  d02d              BEQ      |L7.360|
-;;;436                                if (READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR) != SLOT_B_MAGIC) {
-00010c  f44f20f8          MOV      r0,#0x7c000
-000110  f7fffffe          BL       READ_FLASH_DIRECT
-000114  f1b03fa5          CMP      r0,#0xa5a5a5a5
-000118  d01d              BEQ      |L7.342|
-;;;437                                    Boot_SetRunSlotToAddr(APP2_START_ADDR);
-00011a  f44f2088          MOV      r0,#0x44000
-00011e  f7fffffe          BL       Boot_SetRunSlotToAddr
-;;;438                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP2_OK);
-000122  2002              MOVS     r0,#2
-000124  f7fffffe          BL       Boot_SendForceResp
-;;;439                                    MAIN_D("  -> Force boot slot = APP2, resetting...\r\n");
-000128  a27e              ADR      r2,|L7.804|
-00012a  a1a3              ADR      r1,|L7.952|
-00012c  2000              MOVS     r0,#0
-00012e  f7fffffe          BL       SEGGER_RTT_printf
-;;;440                                    /* 确保回帧已发出后再复位 */
-;;;441                                    u32T0 = tickTimer_GetCount();
-000132  f7fffffe          BL       tickTimer_GetCount
-000136  4604              MOV      r4,r0
-;;;442                                    while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
-000138  bf00              NOP      
-                  |L7.314|
-00013a  f7fffffe          BL       can_is_tx_busy
-00013e  b140              CBZ      r0,|L7.338|
-000140  f7fffffe          BL       tickTimer_GetCount
-000144  1b02              SUBS     r2,r0,r4
-000146  f1610100          SBC      r1,r1,#0
-00014a  3a14              SUBS     r2,r2,#0x14
-00014c  f1710100          SBCS     r1,r1,#0
-000150  d3f3              BCC      |L7.314|
-                  |L7.338|
-;;;443                                    NVIC_SystemReset();
-000152  f7fffffe          BL       __NVIC_SystemReset
-                  |L7.342|
-;;;444                                    while (1) { }
-;;;445                                } else {
-;;;446                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP2_OK);
-000156  2002              MOVS     r0,#2
-000158  f7fffffe          BL       Boot_SendForceResp
-;;;447                                    MAIN_D("  -> Slot already APP2, no reset\r\n");
-00015c  a271              ADR      r2,|L7.804|
-00015e  a1a5              ADR      r1,|L7.1012|
-000160  2000              MOVS     r0,#0
-000162  f7fffffe          BL       SEGGER_RTT_printf
-000166  e007              B        |L7.376|
-                  |L7.360|
-;;;448                                }
-;;;449                            } else {
-;;;450                                /* APP2 坏块标记>=3：拒绝，不写自动跳转槽 */
-;;;451                                Boot_SendForceResp(BOOT_FORCE_RESP_REJECTED);
-000168  2004              MOVS     r0,#4
-00016a  f7fffffe          BL       Boot_SendForceResp
-;;;452                                MAIN_D("  -> APP2 bad-blocked (>=3), rejected, slot unchanged\r\n");
-00016e  a26d              ADR      r2,|L7.804|
-000170  49ad              LDR      r1,|L7.1064|
-000172  2000              MOVS     r0,#0
-000174  f7fffffe          BL       SEGGER_RTT_printf
-                  |L7.376|
-;;;453                            }
-;;;454                            break;
-000178  e044              B        |L7.516|
-                  |L7.378|
-;;;455                        }
-;;;456                        else {
-;;;457                            if (u8App1Ok != 0U) {
-00017a  f1ba0f00          CMP      r10,#0
-00017e  d02d              BEQ      |L7.476|
-;;;458                                if (READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR) != SLOT_A_MAGIC) {
-000180  f44f20f8          MOV      r0,#0x7c000
-000184  f7fffffe          BL       READ_FLASH_DIRECT
-000188  f1b03f5a          CMP      r0,#0x5a5a5a5a
-00018c  d01d              BEQ      |L7.458|
-;;;459                                    Boot_SetRunSlotToAddr(APP1_START_ADDR);
-00018e  f44f30d0          MOV      r0,#0x1a000
-000192  f7fffffe          BL       Boot_SetRunSlotToAddr
-;;;460                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP1_OK);
-000196  2001              MOVS     r0,#1
-000198  f7fffffe          BL       Boot_SendForceResp
-;;;461                                    MAIN_D("  -> Force boot slot = APP1, resetting...\r\n");
-00019c  a261              ADR      r2,|L7.804|
-00019e  a1a3              ADR      r1,|L7.1068|
-0001a0  2000              MOVS     r0,#0
-0001a2  f7fffffe          BL       SEGGER_RTT_printf
-;;;462                                    /* 确保回帧已发出后再复位 */
-;;;463                                    u32T0 = tickTimer_GetCount();
-0001a6  f7fffffe          BL       tickTimer_GetCount
-0001aa  4604              MOV      r4,r0
-;;;464                                    while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
-0001ac  bf00              NOP      
-                  |L7.430|
-0001ae  f7fffffe          BL       can_is_tx_busy
-0001b2  b140              CBZ      r0,|L7.454|
-0001b4  f7fffffe          BL       tickTimer_GetCount
-0001b8  1b00              SUBS     r0,r0,r4
-0001ba  f1610100          SBC      r1,r1,#0
-0001be  3814              SUBS     r0,r0,#0x14
-0001c0  f1710100          SBCS     r1,r1,#0
-0001c4  d3f3              BCC      |L7.430|
-                  |L7.454|
-;;;465                                    NVIC_SystemReset();
-0001c6  f7fffffe          BL       __NVIC_SystemReset
-                  |L7.458|
-;;;466                                    while (1) { }
-;;;467                                } else {
-;;;468                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP1_OK);
-0001ca  2001              MOVS     r0,#1
-0001cc  f7fffffe          BL       Boot_SendForceResp
-;;;469                                    MAIN_D("  -> Slot already APP1, no reset\r\n");
-0001d0  a254              ADR      r2,|L7.804|
-0001d2  a1a5              ADR      r1,|L7.1128|
-0001d4  2000              MOVS     r0,#0
-0001d6  f7fffffe          BL       SEGGER_RTT_printf
-0001da  e007              B        |L7.492|
-                  |L7.476|
-;;;470                                }
-;;;471                            } else {
-;;;472                                /* APP1 坏块标记>=3：拒绝，不写自动跳转槽 */
-;;;473                                Boot_SendForceResp(BOOT_FORCE_RESP_REJECTED);
-0001dc  2004              MOVS     r0,#4
-0001de  f7fffffe          BL       Boot_SendForceResp
-;;;474                                MAIN_D("  -> APP1 bad-blocked (>=3), rejected, slot unchanged\r\n");
-0001e2  a250              ADR      r2,|L7.804|
-0001e4  49ad              LDR      r1,|L7.1180|
-0001e6  2000              MOVS     r0,#0
-0001e8  f7fffffe          BL       SEGGER_RTT_printf
-                  |L7.492|
-;;;475                            }
-;;;476                            break;
-0001ec  e00a              B        |L7.516|
-                  |L7.494|
-;;;477                        }
-;;;478                    }
-0001ee  bf00              NOP      
-                  |L7.496|
-0001f0  f7fffffe          BL       tickTimer_GetCount
-0001f4  1b82              SUBS     r2,r0,r6              ;403
-0001f6  eb610107          SBC      r1,r1,r7              ;403
-0001fa  3a32              SUBS     r2,r2,#0x32           ;403
-0001fc  f1710100          SBCS     r1,r1,#0              ;403
-000200  f4ffaf2b          BCC      |L7.90|
-                  |L7.516|
-000204  bf00              NOP                            ;454
-;;;479                }
-;;;480            }
-;;;481        }
-;;;482        s_force_window_active = 0U;
-000206  2000              MOVS     r0,#0
-000208  4958              LDR      r1,|L7.876|
-00020a  7008              STRB     r0,[r1,#0]
-;;;483    
-;;;484        stc_shared_ctrl_t *pSharedCtrl = GetSharedCtrl();
-00020c  bf00              NOP      
-00020e  4da4              LDR      r5,|L7.1184|
-000210  bf00              NOP      
-;;;485        if (pSharedCtrl->debug_flag == 0x5A5A5A5A) {
-000212  68a8              LDR      r0,[r5,#8]
-000214  f1b03f5a          CMP      r0,#0x5a5a5a5a
-000218  d10b              BNE      |L7.562|
-;;;486            SetWdtFeedControl(WDT_FEED_CONTROL_APP1_ADDR, pSharedCtrl->app1_feed_ctrl);
-00021a  6829              LDR      r1,[r5,#0]
-00021c  f44f30b0          MOV      r0,#0x16000
-000220  f7fffffe          BL       SetWdtFeedControl
-;;;487            SetWdtFeedControl(WDT_FEED_CONTROL_APP2_ADDR, pSharedCtrl->app2_feed_ctrl);
-000224  6869              LDR      r1,[r5,#4]
-000226  f44f30c0          MOV      r0,#0x18000
-00022a  f7fffffe          BL       SetWdtFeedControl
-;;;488            pSharedCtrl->debug_flag = 0;
-00022e  2000              MOVS     r0,#0
-000230  60a8              STR      r0,[r5,#8]
-                  |L7.562|
-;;;489        }
-;;;490    
-;;;491        /* ==== UDS 共享状态检查 ==== */
-;;;492        {
-;;;493            stc_uds_shared_t stcUdsState;
-;;;494            UdsShared_Read(&stcUdsState);
-000232  a803              ADD      r0,sp,#0xc
-000234  f7fffffe          BL       UdsShared_Read
-;;;495    
-;;;496            MAIN_D("  UDS Shared: magic=0x%08X, phase=%d, pending_sid=0x%02X\r\n",
-000238  9909              LDR      r1,[sp,#0x24]
-00023a  9804              LDR      r0,[sp,#0x10]
-00023c  e9cd0100          STRD     r0,r1,[sp,#0]
-000240  a238              ADR      r2,|L7.804|
-000242  4998              LDR      r1,|L7.1188|
-000244  2000              MOVS     r0,#0
-000246  9b03              LDR      r3,[sp,#0xc]
-000248  f7fffffe          BL       SEGGER_RTT_printf
-;;;497                   (unsigned int)stcUdsState.magic, (int)stcUdsState.phase, (unsigned int)stcUdsState.pending_sid);
-;;;498    
-;;;499            if (stcUdsState.magic == UDS_SHARED_MAGIC) {
-00024c  4996              LDR      r1,|L7.1192|
-00024e  9803              LDR      r0,[sp,#0xc]
-000250  4288              CMP      r0,r1
-000252  d109              BNE      |L7.616|
-;;;500                if (stcUdsState.phase == UDS_PHASE_ENTER_BOOTLOADER) {
-000254  9804              LDR      r0,[sp,#0x10]
-000256  2801              CMP      r0,#1
-000258  d106              BNE      |L7.616|
-;;;501                    MAIN_D("  -> Enter UDS Programming Mode\r\n");
-00025a  a232              ADR      r2,|L7.804|
-00025c  a193              ADR      r1,|L7.1196|
-00025e  2000              MOVS     r0,#0
-000260  f7fffffe          BL       SEGGER_RTT_printf
-;;;502                    /* APP 请求进入编程模式 → 进入 Bootloader UDS 模式 */
-;;;503                    Bootloader_UdsMain();
-000264  f7fffffe          BL       Bootloader_UdsMain
-                  |L7.616|
-;;;504                    /* Bootloader_UdsMain 不返回，内部处理所有 UDS 通信 */
-;;;505                    while(1) { __nop(); }
-;;;506                }
-;;;507                /* 其他 phase (IDLE/PROGRAMMING_DONE): 正常启动 APP，
-;;;508                 * APP 启动后会通过 App_CheckPendingUdsAck() 检查 pending_sid */
-;;;509            }
-;;;510        }
-;;;511    
-;;;512        CheckAndClearAppState();
-000268  f7fffffe          BL       CheckAndClearAppState
-;;;513        stcCtx.eWdtResetType = GetWdtResetType();
-00026c  f7fffffe          BL       GetWdtResetType
-000270  f88d0044          STRB     r0,[sp,#0x44]
-;;;514        stcCtx.eCurrentSlot = GetCurrentSlot();
-000274  f7fffffe          BL       GetCurrentSlot
-000278  9012              STR      r0,[sp,#0x48]
-;;;515        ValidateSlotFlag(&stcCtx);
-00027a  a811              ADD      r0,sp,#0x44
-00027c  f7fffffe          BL       ValidateSlotFlag
-;;;516    
-;;;517        InitAppInfo(&stcCtx.stcApp1, SLOT_APP1, APP1_START_ADDR);
-000280  f44f32d0          MOV      r2,#0x1a000
-000284  f04f315a          MOV      r1,#0x5a5a5a5a
-000288  a814              ADD      r0,sp,#0x50
-00028a  f7fffffe          BL       InitAppInfo
-;;;518        InitAppInfo(&stcCtx.stcApp2, SLOT_APP2, APP2_START_ADDR);
-00028e  f44f2288          MOV      r2,#0x44000
-000292  f04f31a5          MOV      r1,#0xa5a5a5a5
-000296  a818              ADD      r0,sp,#0x60
-000298  f7fffffe          BL       InitAppInfo
-;;;519        UpdateAppState(&stcCtx.stcApp1);
-00029c  a814              ADD      r0,sp,#0x50
-00029e  f7fffffe          BL       UpdateAppState
-;;;520        UpdateAppState(&stcCtx.stcApp2);
-0002a2  a818              ADD      r0,sp,#0x60
-0002a4  f7fffffe          BL       UpdateAppState
-;;;521        HandleWatchdogReset(&stcCtx);
-0002a8  a811              ADD      r0,sp,#0x44
-0002aa  f7fffffe          BL       HandleWatchdogReset
-;;;522        SelectTargetSlot(&stcCtx);
-0002ae  a811              ADD      r0,sp,#0x44
-0002b0  f7fffffe          BL       SelectTargetSlot
-;;;523        UpdateSlotFlagToFlash(&stcCtx);
-0002b4  a811              ADD      r0,sp,#0x44
-0002b6  f7fffffe          BL       UpdateSlotFlagToFlash
-;;;524    
-;;;525        MAIN_D("  WDT Reset: %d, CurSlot: %d, Target: %d\r\n",
-0002ba  e9dd0112          LDRD     r0,r1,[sp,#0x48]
-0002be  e9cd0100          STRD     r0,r1,[sp,#0]
-0002c2  f89d3044          LDRB     r3,[sp,#0x44]
-0002c6  a217              ADR      r2,|L7.804|
-0002c8  a185              ADR      r1,|L7.1248|
-0002ca  2000              MOVS     r0,#0
-0002cc  f7fffffe          BL       SEGGER_RTT_printf
-;;;526               (int)stcCtx.eWdtResetType, (int)stcCtx.eCurrentSlot, (int)stcCtx.eTargetSlot);
-;;;527        MAIN_D("  APP1 state=%d, WDT=%d | APP2 state=%d, WDT=%d\r\n",
-0002d0  f89d1068          LDRB     r1,[sp,#0x68]
-0002d4  9a15              LDR      r2,[sp,#0x54]
-0002d6  9819              LDR      r0,[sp,#0x64]
-0002d8  e9cd2100          STRD     r2,r1,[sp,#0]
-0002dc  9002              STR      r0,[sp,#8]
-0002de  a811              ADD      r0,sp,#0x44
-0002e0  7d03              LDRB     r3,[r0,#0x14]
-0002e2  a210              ADR      r2,|L7.804|
-0002e4  498d              LDR      r1,|L7.1308|
-0002e6  2000              MOVS     r0,#0
-0002e8  f7fffffe          BL       SEGGER_RTT_printf
-;;;528               (int)stcCtx.stcApp1.eState, (int)stcCtx.stcApp1.u32WdtCount,
-;;;529               (int)stcCtx.stcApp2.eState, (int)stcCtx.stcApp2.u32WdtCount);
-;;;530    
-;;;531        if (stcCtx.eTargetSlot == SLOT_APP1)      Bootloader_JumpToApp(APP1_START_ADDR);
-0002ec  9813              LDR      r0,[sp,#0x4c]
-0002ee  f1b03f5a          CMP      r0,#0x5a5a5a5a
-0002f2  d104              BNE      |L7.766|
-0002f4  f44f30d0          MOV      r0,#0x1a000
-0002f8  f7fffffe          BL       Bootloader_JumpToApp
-0002fc  e00f              B        |L7.798|
-                  |L7.766|
-;;;532        else if (stcCtx.eTargetSlot == SLOT_APP2) Bootloader_JumpToApp(APP2_START_ADDR);
-0002fe  9813              LDR      r0,[sp,#0x4c]
-000300  f1b03fa5          CMP      r0,#0xa5a5a5a5
-000304  d104              BNE      |L7.784|
-000306  f44f2088          MOV      r0,#0x44000
-00030a  f7fffffe          BL       Bootloader_JumpToApp
-00030e  e006              B        |L7.798|
-                  |L7.784|
-;;;533        else {
-;;;534            MAIN_D("  ERROR: No valid APP slot, running forever!\r\n");
-000310  a204              ADR      r2,|L7.804|
-000312  a183              ADR      r1,|L7.1312|
-000314  2000              MOVS     r0,#0
-000316  f7fffffe          BL       SEGGER_RTT_printf
-;;;535            RunBootloaderForever();
-00031a  f7fffffe          BL       RunBootloaderForever
-                  |L7.798|
-;;;536        }
-;;;537    }
-00031e  b01d              ADD      sp,sp,#0x74
-000320  e8bd8ff0          POP      {r4-r11,pc}
-;;;538    
+;;;336        /* ==== 1. 第一件事：先读 FLASH 记录的上次运行槽，再处理 RMU ====
+;;;337         * 读取全部 RMU 复位状态（RSTF0 所有位）→ 分类（故障/正常）→ 清除标志 →
+;;;338         * 更新记录并写回 FLASH（故障进故障计数，正常原因只记录不计故障）。
+;;;339         * 必须早于 50ms 强制指令窗口和 UDS 分支，避免 RMU 标志残留导致延迟计数。 */
+;;;340        {
+;;;341            en_slot_type_t ePowerUpSlot = GetCurrentSlot();
+000018  f7fffffe          BL       GetCurrentSlot
+00001c  4604              MOV      r4,r0
+;;;342            if (ePowerUpSlot == SLOT_NONE) {
+00001e  b90c              CBNZ     r4,|L7.36|
+;;;343                ePowerUpSlot = SLOT_APP1;   /* 第一次上电/槽未初始化：默认 APP1 */
+000020  f04f345a          MOV      r4,#0x5a5a5a5a
+                  |L7.36|
+;;;344            }
+;;;345            Rmu_ProcessPowerUp((ePowerUpSlot == SLOT_APP1) ? RMU_SLOT_APP1 : RMU_SLOT_APP2);
+000024  f1b43f5a          CMP      r4,#0x5a5a5a5a
+000028  d001              BEQ      |L7.46|
+00002a  2101              MOVS     r1,#1
+00002c  e000              B        |L7.48|
+                  |L7.46|
+00002e  2100              MOVS     r1,#0
+                  |L7.48|
+000030  4608              MOV      r0,r1
+000032  f7fffffe          BL       Rmu_ProcessPowerUp
+;;;346        }
+;;;347        /* ==== 阶段2/3: 上电 50ms 强制指令检测窗口 ==== */
+;;;348        {
+;;;349            static bool s_force_filter_registered = false;
+;;;350            uint64_t u64WinStart;
+;;;351    
+;;;352            if (!s_force_filter_registered) {
+000036  48c7              LDR      r0,|L7.852|
+000038  7800              LDRB     r0,[r0,#0]  ; s_force_filter_registered
+00003a  b990              CBNZ     r0,|L7.98|
+;;;353                CanIf_RxFilterEntry_t stcForceEntry;
+;;;354                MEM_ZERO_STRUCT(stcForceEntry);
+00003c  2000              MOVS     r0,#0
+00003e  900d              STR      r0,[sp,#0x34]
+000040  900e              STR      r0,[sp,#0x38]
+000042  900f              STR      r0,[sp,#0x3c]
+000044  9010              STR      r0,[sp,#0x40]
+;;;355                stcForceEntry.u32CanId    = BOOT_FORCE_CMD_CAN_ID;
+000046  48c4              LDR      r0,|L7.856|
+000048  900d              STR      r0,[sp,#0x34]
+;;;356                stcForceEntry.u32CanMask  = 0UL;
+00004a  2000              MOVS     r0,#0
+00004c  900e              STR      r0,[sp,#0x38]
+;;;357                stcForceEntry.u8Format    = CAN_ID_EXT;
+00004e  f88d003c          STRB     r0,[sp,#0x3c]
+;;;358                stcForceEntry.pfnCallback = Boot_ForceCmdRxCallback;
+000052  48c2              LDR      r0,|L7.860|
+000054  9010              STR      r0,[sp,#0x40]
+;;;359                s_force_filter_registered = CanIf_RegisterRxFilter(&stcForceEntry);
+000056  a80d              ADD      r0,sp,#0x34
+000058  f7fffffe          BL       CanIf_RegisterRxFilter
+00005c  49bd              LDR      r1,|L7.852|
+00005e  7008              STRB     r0,[r1,#0]
+;;;360            }
+000060  bf00              NOP      
+                  |L7.98|
+;;;361    
+;;;362            s_force_cmd = 0U;
+000062  2000              MOVS     r0,#0
+000064  49be              LDR      r1,|L7.864|
+000066  7008              STRB     r0,[r1,#0]
+;;;363            s_force_window_active = 1U;
+000068  2001              MOVS     r0,#1
+00006a  49be              LDR      r1,|L7.868|
+00006c  7008              STRB     r0,[r1,#0]
+;;;364            u64WinStart = tickTimer_GetCount();
+00006e  f7fffffe          BL       tickTimer_GetCount
+000072  4606              MOV      r6,r0
+000074  460f              MOV      r7,r1
+                  |L7.118|
+;;;365            while ((tickTimer_GetCount() - u64WinStart) < BOOT_FORCE_CMD_WINDOW_MS) {
+000076  e0c1              B        |L7.508|
+                  |L7.120|
+;;;366                UdsOta_Poll();
+000078  f7fffffe          BL       UdsOta_Poll
+;;;367                if (s_force_cmd != 0U) {
+00007c  48b8              LDR      r0,|L7.864|
+00007e  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
+000080  2800              CMP      r0,#0
+000082  d0f8              BEQ      |L7.118|
+;;;368                    MAIN_D("  Force cmd on 0x18FF5858 = 0x%02X\r\n", (unsigned int)s_force_cmd);
+000084  48b6              LDR      r0,|L7.864|
+000086  7803              LDRB     r3,[r0,#0]  ; s_force_cmd
+000088  a2a4              ADR      r2,|L7.796|
+00008a  a1b7              ADR      r1,|L7.872|
+00008c  2000              MOVS     r0,#0
+00008e  f7fffffe          BL       SEGGER_RTT_printf
+;;;369                    if (s_force_cmd == BOOT_FORCE_CMD_ENTER_BL) {
+000092  48b3              LDR      r0,|L7.864|
+000094  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
+000096  28ff              CMP      r0,#0xff
+000098  d107              BNE      |L7.170|
+;;;370                        MAIN_D("  -> Force enter UDS programming mode (stage2, no APP)\r\n");
+00009a  a2a0              ADR      r2,|L7.796|
+00009c  49c0              LDR      r1,|L7.928|
+00009e  2000              MOVS     r0,#0
+0000a0  f7fffffe          BL       SEGGER_RTT_printf
+;;;371                        UdsOta_Bootloader_Enter();   /* 不返回 */
+0000a4  f7fffffe          BL       UdsOta_Bootloader_Enter
+0000a8  e0a8              B        |L7.508|
+                  |L7.170|
+;;;372                    }
+;;;373                    else if ((s_force_cmd == BOOT_FORCE_CMD_BOOT_APP2) ||
+0000aa  48ad              LDR      r0,|L7.864|
+0000ac  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
+0000ae  2802              CMP      r0,#2
+0000b0  d003              BEQ      |L7.186|
+;;;374                             (s_force_cmd == BOOT_FORCE_CMD_BOOT_APP1)) {
+0000b2  48ab              LDR      r0,|L7.864|
+0000b4  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
+0000b6  2801              CMP      r0,#1
+0000b8  d1dd              BNE      |L7.118|
+                  |L7.186|
+;;;375                        /* 阶段3: 强制下次启动槽位
+;;;376                         * - 受坏块标记限制：目标>=3 拒绝，不写自动跳转槽
+;;;377                         * - 设置成功后软件复位，重新进 boot 按新槽位正常启动
+;;;378                         * - 幂等保护：槽位已是目标值时不重复复位（防 TBOX 持续发送导致复位循环） */
+;;;379                        uint32_t u32Wdt1 = Rmu_GetFaultCount(RMU_SLOT_APP1);
+0000ba  2000              MOVS     r0,#0
+0000bc  f7fffffe          BL       Rmu_GetFaultCount
+0000c0  4682              MOV      r10,r0
+;;;380                        uint32_t u32Wdt2 = Rmu_GetFaultCount(RMU_SLOT_APP2);
+0000c2  2001              MOVS     r0,#1
+0000c4  f7fffffe          BL       Rmu_GetFaultCount
+0000c8  4683              MOV      r11,r0
+;;;381                        uint32_t u32T0;
+;;;382                        uint8_t u8App1Ok;
+;;;383                        uint8_t u8App2Ok;
+;;;384                        /* 与 InitAppInfo 保持一致：擦除态(0xFFFFFFFF)视为 0（未初始化，不算坏块） */
+;;;385                        u8App1Ok = (u32Wdt1 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
+0000ca  f1ba0f03          CMP      r10,#3
+0000ce  d201              BCS      |L7.212|
+0000d0  2001              MOVS     r0,#1
+0000d2  e000              B        |L7.214|
+                  |L7.212|
+0000d4  2000              MOVS     r0,#0
+                  |L7.214|
+0000d6  4680              MOV      r8,r0
+;;;386                        u8App2Ok = (u32Wdt2 < MAX_WDT_RESET_COUNT) ? 1U : 0U;
+0000d8  f1bb0f03          CMP      r11,#3
+0000dc  d201              BCS      |L7.226|
+0000de  2001              MOVS     r0,#1
+0000e0  e000              B        |L7.228|
+                  |L7.226|
+0000e2  2000              MOVS     r0,#0
+                  |L7.228|
+0000e4  4681              MOV      r9,r0
+;;;387    
+;;;388                        if ((u8App1Ok == 0U) && (u8App2Ok == 0U)) {
+0000e6  f1b80f00          CMP      r8,#0
+0000ea  d10d              BNE      |L7.264|
+0000ec  f1b90f00          CMP      r9,#0
+0000f0  d10a              BNE      |L7.264|
+;;;389                            /* 双 APP 均故障：回帧并进入编程模式等待刷写 */
+;;;390                            Boot_SendForceResp(BOOT_FORCE_RESP_BOTH_FAULTY);
+0000f2  2003              MOVS     r0,#3
+0000f4  f7fffffe          BL       Boot_SendForceResp
+;;;391                            MAIN_D("  -> Both APPs faulty, entering UDS programming mode\r\n");
+0000f8  a288              ADR      r2,|L7.796|
+0000fa  49aa              LDR      r1,|L7.932|
+0000fc  2000              MOVS     r0,#0
+0000fe  f7fffffe          BL       SEGGER_RTT_printf
+;;;392                            UdsOta_Bootloader_Enter();   /* 不返回 */
+000102  f7fffffe          BL       UdsOta_Bootloader_Enter
+000106  e078              B        |L7.506|
+                  |L7.264|
+;;;393                        }
+;;;394                        else if (s_force_cmd == BOOT_FORCE_CMD_BOOT_APP2) {
+000108  4895              LDR      r0,|L7.864|
+00010a  7800              LDRB     r0,[r0,#0]  ; s_force_cmd
+00010c  2802              CMP      r0,#2
+00010e  d13a              BNE      |L7.390|
+;;;395                            if (u8App2Ok != 0U) {
+000110  f1b90f00          CMP      r9,#0
+000114  d02e              BEQ      |L7.372|
+;;;396                                if (READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR) != SLOT_B_MAGIC) {
+000116  f44f20f8          MOV      r0,#0x7c000
+00011a  f7fffffe          BL       READ_FLASH_DIRECT
+00011e  f1b03fa5          CMP      r0,#0xa5a5a5a5
+000122  d01e              BEQ      |L7.354|
+;;;397                                    Boot_SetRunSlotToAddr(APP2_START_ADDR);
+000124  f44f2088          MOV      r0,#0x44000
+000128  f7fffffe          BL       Boot_SetRunSlotToAddr
+;;;398                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP2_OK);
+00012c  2002              MOVS     r0,#2
+00012e  f7fffffe          BL       Boot_SendForceResp
+;;;399                                    MAIN_D("  -> Force boot slot = APP2, resetting...\r\n");
+000132  a27a              ADR      r2,|L7.796|
+000134  a19c              ADR      r1,|L7.936|
+000136  2000              MOVS     r0,#0
+000138  f7fffffe          BL       SEGGER_RTT_printf
+;;;400                                    /* 确保回帧已发出后再复位 */
+;;;401                                    u32T0 = tickTimer_GetCount();
+00013c  f7fffffe          BL       tickTimer_GetCount
+000140  4604              MOV      r4,r0
+;;;402                                    while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
+000142  bf00              NOP      
+                  |L7.324|
+000144  f7fffffe          BL       can_is_tx_busy
+000148  b148              CBZ      r0,|L7.350|
+00014a  f7fffffe          BL       tickTimer_GetCount
+00014e  1b03              SUBS     r3,r0,r4
+000150  f1610100          SBC      r1,r1,#0
+000154  2214              MOVS     r2,#0x14
+000156  1a9a              SUBS     r2,r3,r2
+000158  f1710100          SBCS     r1,r1,#0
+00015c  d3f2              BCC      |L7.324|
+                  |L7.350|
+;;;403                                    NVIC_SystemReset();
+00015e  f7fffffe          BL       __NVIC_SystemReset
+                  |L7.354|
+;;;404                                    while (1) { }
+;;;405                                } else {
+;;;406                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP2_OK);
+000162  2002              MOVS     r0,#2
+000164  f7fffffe          BL       Boot_SendForceResp
+;;;407                                    MAIN_D("  -> Slot already APP2, no reset\r\n");
+000168  a26c              ADR      r2,|L7.796|
+00016a  a19e              ADR      r1,|L7.996|
+00016c  2000              MOVS     r0,#0
+00016e  f7fffffe          BL       SEGGER_RTT_printf
+000172  e007              B        |L7.388|
+                  |L7.372|
+;;;408                                }
+;;;409                            } else {
+;;;410                                /* APP2 坏块标记>=3：拒绝，不写自动跳转槽 */
+;;;411                                Boot_SendForceResp(BOOT_FORCE_RESP_REJECTED);
+000174  2004              MOVS     r0,#4
+000176  f7fffffe          BL       Boot_SendForceResp
+;;;412                                MAIN_D("  -> APP2 bad-blocked (>=3), rejected, slot unchanged\r\n");
+00017a  a268              ADR      r2,|L7.796|
+00017c  49a6              LDR      r1,|L7.1048|
+00017e  2000              MOVS     r0,#0
+000180  f7fffffe          BL       SEGGER_RTT_printf
+                  |L7.388|
+;;;413                            }
+;;;414                            break;
+000184  e044              B        |L7.528|
+                  |L7.390|
+;;;415                        }
+;;;416                        else {
+;;;417                            if (u8App1Ok != 0U) {
+000186  f1b80f00          CMP      r8,#0
+00018a  d02d              BEQ      |L7.488|
+;;;418                                if (READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR) != SLOT_A_MAGIC) {
+00018c  f44f20f8          MOV      r0,#0x7c000
+000190  f7fffffe          BL       READ_FLASH_DIRECT
+000194  f1b03f5a          CMP      r0,#0x5a5a5a5a
+000198  d01d              BEQ      |L7.470|
+;;;419                                    Boot_SetRunSlotToAddr(APP1_START_ADDR);
+00019a  f44f30d0          MOV      r0,#0x1a000
+00019e  f7fffffe          BL       Boot_SetRunSlotToAddr
+;;;420                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP1_OK);
+0001a2  2001              MOVS     r0,#1
+0001a4  f7fffffe          BL       Boot_SendForceResp
+;;;421                                    MAIN_D("  -> Force boot slot = APP1, resetting...\r\n");
+0001a8  a25c              ADR      r2,|L7.796|
+0001aa  a19c              ADR      r1,|L7.1052|
+0001ac  2000              MOVS     r0,#0
+0001ae  f7fffffe          BL       SEGGER_RTT_printf
+;;;422                                    /* 确保回帧已发出后再复位 */
+;;;423                                    u32T0 = tickTimer_GetCount();
+0001b2  f7fffffe          BL       tickTimer_GetCount
+0001b6  4604              MOV      r4,r0
+;;;424                                    while (can_is_tx_busy() && ((tickTimer_GetCount() - u32T0) < 20U)) { }
+0001b8  bf00              NOP      
+                  |L7.442|
+0001ba  f7fffffe          BL       can_is_tx_busy
+0001be  b140              CBZ      r0,|L7.466|
+0001c0  f7fffffe          BL       tickTimer_GetCount
+0001c4  1b00              SUBS     r0,r0,r4
+0001c6  f1610100          SBC      r1,r1,#0
+0001ca  3814              SUBS     r0,r0,#0x14
+0001cc  f1710100          SBCS     r1,r1,#0
+0001d0  d3f3              BCC      |L7.442|
+                  |L7.466|
+;;;425                                    NVIC_SystemReset();
+0001d2  f7fffffe          BL       __NVIC_SystemReset
+                  |L7.470|
+;;;426                                    while (1) { }
+;;;427                                } else {
+;;;428                                    Boot_SendForceResp(BOOT_FORCE_RESP_APP1_OK);
+0001d6  2001              MOVS     r0,#1
+0001d8  f7fffffe          BL       Boot_SendForceResp
+;;;429                                    MAIN_D("  -> Slot already APP1, no reset\r\n");
+0001dc  a24f              ADR      r2,|L7.796|
+0001de  a19e              ADR      r1,|L7.1112|
+0001e0  2000              MOVS     r0,#0
+0001e2  f7fffffe          BL       SEGGER_RTT_printf
+0001e6  e007              B        |L7.504|
+                  |L7.488|
+;;;430                                }
+;;;431                            } else {
+;;;432                                /* APP1 坏块标记>=3：拒绝，不写自动跳转槽 */
+;;;433                                Boot_SendForceResp(BOOT_FORCE_RESP_REJECTED);
+0001e8  2004              MOVS     r0,#4
+0001ea  f7fffffe          BL       Boot_SendForceResp
+;;;434                                MAIN_D("  -> APP1 bad-blocked (>=3), rejected, slot unchanged\r\n");
+0001ee  a24b              ADR      r2,|L7.796|
+0001f0  49a6              LDR      r1,|L7.1164|
+0001f2  2000              MOVS     r0,#0
+0001f4  f7fffffe          BL       SEGGER_RTT_printf
+                  |L7.504|
+;;;435                            }
+;;;436                            break;
+0001f8  e00a              B        |L7.528|
+                  |L7.506|
+;;;437                        }
+;;;438                    }
+0001fa  bf00              NOP      
+                  |L7.508|
+0001fc  f7fffffe          BL       tickTimer_GetCount
+000200  1b80              SUBS     r0,r0,r6              ;365
+000202  eb610107          SBC      r1,r1,r7              ;365
+000206  3832              SUBS     r0,r0,#0x32           ;365
+000208  f1710100          SBCS     r1,r1,#0              ;365
+00020c  f4ffaf34          BCC      |L7.120|
+                  |L7.528|
+000210  bf00              NOP                            ;414
+;;;439                }
+;;;440            }
+;;;441        }
+;;;442        s_force_window_active = 0U;
+000212  2000              MOVS     r0,#0
+000214  4953              LDR      r1,|L7.868|
+000216  7008              STRB     r0,[r1,#0]
+;;;443    
+;;;444        stc_shared_ctrl_t *pSharedCtrl = GetSharedCtrl();
+000218  bf00              NOP      
+00021a  4d9d              LDR      r5,|L7.1168|
+00021c  bf00              NOP      
+;;;445        if (pSharedCtrl->debug_flag == 0x5A5A5A5A) {
+00021e  68a8              LDR      r0,[r5,#8]
+000220  f1b03f5a          CMP      r0,#0x5a5a5a5a
+000224  d10b              BNE      |L7.574|
+;;;446            SetWdtFeedControl(WDT_FEED_CONTROL_APP1_ADDR, pSharedCtrl->app1_feed_ctrl);
+000226  6829              LDR      r1,[r5,#0]
+000228  f44f30b0          MOV      r0,#0x16000
+00022c  f7fffffe          BL       SetWdtFeedControl
+;;;447            SetWdtFeedControl(WDT_FEED_CONTROL_APP2_ADDR, pSharedCtrl->app2_feed_ctrl);
+000230  6869              LDR      r1,[r5,#4]
+000232  f44f30c0          MOV      r0,#0x18000
+000236  f7fffffe          BL       SetWdtFeedControl
+;;;448            pSharedCtrl->debug_flag = 0;
+00023a  2000              MOVS     r0,#0
+00023c  60a8              STR      r0,[r5,#8]
+                  |L7.574|
+;;;449        }
+;;;450    
+;;;451        /* ==== UDS 共享状态检查 ==== */
+;;;452        {
+;;;453            stc_uds_shared_t stcUdsState;
+;;;454            UdsShared_Read(&stcUdsState);
+00023e  a803              ADD      r0,sp,#0xc
+000240  f7fffffe          BL       UdsShared_Read
+;;;455    
+;;;456            MAIN_D("  UDS Shared: magic=0x%08X, phase=%d, pending_sid=0x%02X\r\n",
+000244  9909              LDR      r1,[sp,#0x24]
+000246  9804              LDR      r0,[sp,#0x10]
+000248  e9cd0100          STRD     r0,r1,[sp,#0]
+00024c  a233              ADR      r2,|L7.796|
+00024e  4991              LDR      r1,|L7.1172|
+000250  2000              MOVS     r0,#0
+000252  9b03              LDR      r3,[sp,#0xc]
+000254  f7fffffe          BL       SEGGER_RTT_printf
+;;;457                   (unsigned int)stcUdsState.magic, (int)stcUdsState.phase, (unsigned int)stcUdsState.pending_sid);
+;;;458    
+;;;459            if (stcUdsState.magic == UDS_SHARED_MAGIC) {
+000258  498f              LDR      r1,|L7.1176|
+00025a  9803              LDR      r0,[sp,#0xc]
+00025c  4288              CMP      r0,r1
+00025e  d109              BNE      |L7.628|
+;;;460                if (stcUdsState.phase == UDS_PHASE_ENTER_BOOTLOADER) {
+000260  9804              LDR      r0,[sp,#0x10]
+000262  2801              CMP      r0,#1
+000264  d106              BNE      |L7.628|
+;;;461                    MAIN_D("  -> Enter UDS Programming Mode\r\n");
+000266  a22d              ADR      r2,|L7.796|
+000268  a18c              ADR      r1,|L7.1180|
+00026a  2000              MOVS     r0,#0
+00026c  f7fffffe          BL       SEGGER_RTT_printf
+;;;462                    /* APP 请求进入编程模式 → 进入 Bootloader UDS 模式 */
+;;;463                    Bootloader_UdsMain();
+000270  f7fffffe          BL       Bootloader_UdsMain
+                  |L7.628|
+;;;464                    /* Bootloader_UdsMain 不返回，内部处理所有 UDS 通信 */
+;;;465                    while(1) { __nop(); }
+;;;466                }
+;;;467                /* 其他 phase (IDLE/PROGRAMMING_DONE): 正常启动 APP，
+;;;468                 * APP 启动后会通过 App_CheckPendingUdsAck() 检查 pending_sid */
+;;;469            }
+;;;470        }
+;;;471    
+;;;472        CheckAndClearAppState();
+000274  f7fffffe          BL       CheckAndClearAppState
+;;;473        stcCtx.eCurrentSlot = GetCurrentSlot();
+000278  f7fffffe          BL       GetCurrentSlot
+00027c  9012              STR      r0,[sp,#0x48]
+;;;474        ValidateSlotFlag(&stcCtx);
+00027e  a811              ADD      r0,sp,#0x44
+000280  f7fffffe          BL       ValidateSlotFlag
+;;;475    
+;;;476        InitAppInfo(&stcCtx.stcApp1, SLOT_APP1, APP1_START_ADDR);
+000284  f44f32d0          MOV      r2,#0x1a000
+000288  f04f315a          MOV      r1,#0x5a5a5a5a
+00028c  a814              ADD      r0,sp,#0x50
+00028e  f7fffffe          BL       InitAppInfo
+;;;477        InitAppInfo(&stcCtx.stcApp2, SLOT_APP2, APP2_START_ADDR);
+000292  f44f2288          MOV      r2,#0x44000
+000296  f04f31a5          MOV      r1,#0xa5a5a5a5
+00029a  a818              ADD      r0,sp,#0x60
+00029c  f7fffffe          BL       InitAppInfo
+;;;478        UpdateAppState(&stcCtx.stcApp1);
+0002a0  a814              ADD      r0,sp,#0x50
+0002a2  f7fffffe          BL       UpdateAppState
+;;;479        UpdateAppState(&stcCtx.stcApp2);
+0002a6  a818              ADD      r0,sp,#0x60
+0002a8  f7fffffe          BL       UpdateAppState
+;;;480        SelectTargetSlot(&stcCtx);
+0002ac  a811              ADD      r0,sp,#0x44
+0002ae  f7fffffe          BL       SelectTargetSlot
+;;;481        UpdateSlotFlagToFlash(&stcCtx);
+0002b2  a811              ADD      r0,sp,#0x44
+0002b4  f7fffffe          BL       UpdateSlotFlagToFlash
+;;;482    
+;;;483        MAIN_D("  CurSlot: %d, Target: %d\r\n",
+0002b8  9813              LDR      r0,[sp,#0x4c]
+0002ba  9000              STR      r0,[sp,#0]
+0002bc  a217              ADR      r2,|L7.796|
+0002be  a184              ADR      r1,|L7.1232|
+0002c0  2000              MOVS     r0,#0
+0002c2  9b12              LDR      r3,[sp,#0x48]
+0002c4  f7fffffe          BL       SEGGER_RTT_printf
+;;;484               (int)stcCtx.eCurrentSlot, (int)stcCtx.eTargetSlot);
+;;;485        MAIN_D("  APP1 state=%d, WDT=%d | APP2 state=%d, WDT=%d\r\n",
+0002c8  f89d1068          LDRB     r1,[sp,#0x68]
+0002cc  9a15              LDR      r2,[sp,#0x54]
+0002ce  9819              LDR      r0,[sp,#0x64]
+0002d0  e9cd2100          STRD     r2,r1,[sp,#0]
+0002d4  9002              STR      r0,[sp,#8]
+0002d6  a811              ADD      r0,sp,#0x44
+0002d8  7d03              LDRB     r3,[r0,#0x14]
+0002da  a210              ADR      r2,|L7.796|
+0002dc  4987              LDR      r1,|L7.1276|
+0002de  2000              MOVS     r0,#0
+0002e0  f7fffffe          BL       SEGGER_RTT_printf
+;;;486               (int)stcCtx.stcApp1.eState, (int)stcCtx.stcApp1.u32WdtCount,
+;;;487               (int)stcCtx.stcApp2.eState, (int)stcCtx.stcApp2.u32WdtCount);
+;;;488    
+;;;489        if (stcCtx.eTargetSlot == SLOT_APP1)      Bootloader_JumpToApp(APP1_START_ADDR);
+0002e4  9813              LDR      r0,[sp,#0x4c]
+0002e6  f1b03f5a          CMP      r0,#0x5a5a5a5a
+0002ea  d104              BNE      |L7.758|
+0002ec  f44f30d0          MOV      r0,#0x1a000
+0002f0  f7fffffe          BL       Bootloader_JumpToApp
+0002f4  e00f              B        |L7.790|
+                  |L7.758|
+;;;490        else if (stcCtx.eTargetSlot == SLOT_APP2) Bootloader_JumpToApp(APP2_START_ADDR);
+0002f6  9813              LDR      r0,[sp,#0x4c]
+0002f8  f1b03fa5          CMP      r0,#0xa5a5a5a5
+0002fc  d104              BNE      |L7.776|
+0002fe  f44f2088          MOV      r0,#0x44000
+000302  f7fffffe          BL       Bootloader_JumpToApp
+000306  e006              B        |L7.790|
+                  |L7.776|
+;;;491        else {
+;;;492            MAIN_D("  ERROR: No valid APP slot, running forever!\r\n");
+000308  a204              ADR      r2,|L7.796|
+00030a  a17d              ADR      r1,|L7.1280|
+00030c  2000              MOVS     r0,#0
+00030e  f7fffffe          BL       SEGGER_RTT_printf
+;;;493            RunBootloaderForever();
+000312  f7fffffe          BL       RunBootloaderForever
+                  |L7.790|
+;;;494        }
+;;;495    }
+000316  b01d              ADD      sp,sp,#0x74
+000318  e8bd8ff0          POP      {r4-r11,pc}
+;;;496    
                           ENDP
 
+                  |L7.796|
+00031c  4d41494e          DCB      "MAIN",0
+000320  00      
+000321  00                DCB      0
+000322  00                DCB      0
+000323  00                DCB      0
                   |L7.804|
-000324  4d41494e          DCB      "MAIN",0
-000328  00      
-000329  00                DCB      0
-00032a  00                DCB      0
-00032b  00                DCB      0
-                  |L7.812|
-00032c  1b5b3336          DCB      27,"[36m[%s] ===== Bootloader Start =====\r\n",27,"[0m\r"
-000330  6d5b2573
-000334  5d203d3d
-000338  3d3d3d20
-00033c  426f6f74
-000340  6c6f6164
-000344  65722053
-000348  74617274
-00034c  203d3d3d
-000350  3d3d0d0a
-000354  1b5b306d
-000358  0d      
-000359  0a00              DCB      "\n",0
-00035b  00                DCB      0
-                  |L7.860|
+000324  1b5b3336          DCB      27,"[36m[%s] ===== Bootloader Start =====\r\n",27,"[0m\r"
+000328  6d5b2573
+00032c  5d203d3d
+000330  3d3d3d20
+000334  426f6f74
+000338  6c6f6164
+00033c  65722053
+000340  74617274
+000344  203d3d3d
+000348  3d3d0d0a
+00034c  1b5b306d
+000350  0d      
+000351  0a00              DCB      "\n",0
+000353  00                DCB      0
+                  |L7.852|
                           DCD      s_force_filter_registered
-                  |L7.864|
+                  |L7.856|
                           DCD      0x18ff5858
-                  |L7.868|
+                  |L7.860|
                           DCD      Boot_ForceCmdRxCallback
-                  |L7.872|
+                  |L7.864|
                           DCD      s_force_cmd
-                  |L7.876|
+                  |L7.868|
                           DCD      s_force_window_active
-                  |L7.880|
-000370  1b5b3336          DCB      27,"[36m[%s]   Force cmd on 0x18FF5858 = 0x%02X\r\n",27,"["
-000374  6d5b2573
-000378  5d202020
-00037c  466f7263
-000380  6520636d
-000384  64206f6e
-000388  20307831
-00038c  38464635
-000390  38353820
-000394  3d203078
-000398  25303258
-00039c  0d0a1b5b
-0003a0  306d0d0a          DCB      "0m\r\n",0
-0003a4  00      
-0003a5  00                DCB      0
-0003a6  00                DCB      0
-0003a7  00                DCB      0
-                  |L7.936|
+                  |L7.872|
+000368  1b5b3336          DCB      27,"[36m[%s]   Force cmd on 0x18FF5858 = 0x%02X\r\n",27,"["
+00036c  6d5b2573
+000370  5d202020
+000374  466f7263
+000378  6520636d
+00037c  64206f6e
+000380  20307831
+000384  38464635
+000388  38353820
+00038c  3d203078
+000390  25303258
+000394  0d0a1b5b
+000398  306d0d0a          DCB      "0m\r\n",0
+00039c  00      
+00039d  00                DCB      0
+00039e  00                DCB      0
+00039f  00                DCB      0
+                  |L7.928|
                           DCD      ||.conststring||+0x278
-                  |L7.940|
-                          DCD      0x00016008
-                  |L7.944|
-                          DCD      0x00018008
-                  |L7.948|
+                  |L7.932|
                           DCD      ||.conststring||+0x2c4
-                  |L7.952|
-0003b8  1b5b3336          DCB      27,"[36m[%s]   -> Force boot slot = APP2, resetting...\r"
-0003bc  6d5b2573
-0003c0  5d202020
-0003c4  2d3e2046
-0003c8  6f726365
-0003cc  20626f6f
-0003d0  7420736c
-0003d4  6f74203d
-0003d8  20415050
-0003dc  322c2072
-0003e0  65736574
-0003e4  74696e67
-0003e8  2e2e2e0d
-0003ec  0a1b5b30          DCB      "\n",27,"[0m\r\n",0
-0003f0  6d0d0a00
-                  |L7.1012|
-0003f4  1b5b3336          DCB      27,"[36m[%s]   -> Slot already APP2, no reset\r\n",27,"["
-0003f8  6d5b2573
-0003fc  5d202020
-000400  2d3e2053
-000404  6c6f7420
-000408  616c7265
-00040c  61647920
-000410  41505032
-000414  2c206e6f
-000418  20726573
-00041c  65740d0a
-000420  1b5b    
-000422  306d0d0a          DCB      "0m\r\n",0
-000426  00      
-000427  00                DCB      0
-                  |L7.1064|
+                  |L7.936|
+0003a8  1b5b3336          DCB      27,"[36m[%s]   -> Force boot slot = APP2, resetting...\r"
+0003ac  6d5b2573
+0003b0  5d202020
+0003b4  2d3e2046
+0003b8  6f726365
+0003bc  20626f6f
+0003c0  7420736c
+0003c4  6f74203d
+0003c8  20415050
+0003cc  322c2072
+0003d0  65736574
+0003d4  74696e67
+0003d8  2e2e2e0d
+0003dc  0a1b5b30          DCB      "\n",27,"[0m\r\n",0
+0003e0  6d0d0a00
+                  |L7.996|
+0003e4  1b5b3336          DCB      27,"[36m[%s]   -> Slot already APP2, no reset\r\n",27,"["
+0003e8  6d5b2573
+0003ec  5d202020
+0003f0  2d3e2053
+0003f4  6c6f7420
+0003f8  616c7265
+0003fc  61647920
+000400  41505032
+000404  2c206e6f
+000408  20726573
+00040c  65740d0a
+000410  1b5b    
+000412  306d0d0a          DCB      "0m\r\n",0
+000416  00      
+000417  00                DCB      0
+                  |L7.1048|
                           DCD      ||.conststring||+0x30c
-                  |L7.1068|
-00042c  1b5b3336          DCB      27,"[36m[%s]   -> Force boot slot = APP1, resetting...\r"
-000430  6d5b2573
-000434  5d202020
-000438  2d3e2046
-00043c  6f726365
-000440  20626f6f
-000444  7420736c
-000448  6f74203d
-00044c  20415050
-000450  312c2072
-000454  65736574
-000458  74696e67
-00045c  2e2e2e0d
-000460  0a1b5b30          DCB      "\n",27,"[0m\r\n",0
-000464  6d0d0a00
-                  |L7.1128|
-000468  1b5b3336          DCB      27,"[36m[%s]   -> Slot already APP1, no reset\r\n",27,"["
-00046c  6d5b2573
-000470  5d202020
-000474  2d3e2053
-000478  6c6f7420
-00047c  616c7265
-000480  61647920
-000484  41505031
-000488  2c206e6f
-00048c  20726573
-000490  65740d0a
-000494  1b5b    
-000496  306d0d0a          DCB      "0m\r\n",0
-00049a  00      
-00049b  00                DCB      0
-                  |L7.1180|
+                  |L7.1052|
+00041c  1b5b3336          DCB      27,"[36m[%s]   -> Force boot slot = APP1, resetting...\r"
+000420  6d5b2573
+000424  5d202020
+000428  2d3e2046
+00042c  6f726365
+000430  20626f6f
+000434  7420736c
+000438  6f74203d
+00043c  20415050
+000440  312c2072
+000444  65736574
+000448  74696e67
+00044c  2e2e2e0d
+000450  0a1b5b30          DCB      "\n",27,"[0m\r\n",0
+000454  6d0d0a00
+                  |L7.1112|
+000458  1b5b3336          DCB      27,"[36m[%s]   -> Slot already APP1, no reset\r\n",27,"["
+00045c  6d5b2573
+000460  5d202020
+000464  2d3e2053
+000468  6c6f7420
+00046c  616c7265
+000470  61647920
+000474  41505031
+000478  2c206e6f
+00047c  20726573
+000480  65740d0a
+000484  1b5b    
+000486  306d0d0a          DCB      "0m\r\n",0
+00048a  00      
+00048b  00                DCB      0
+                  |L7.1164|
                           DCD      ||.conststring||+0x354
-                  |L7.1184|
+                  |L7.1168|
                           DCD      0x20026f00
-                  |L7.1188|
+                  |L7.1172|
                           DCD      ||.conststring||+0x39c
-                  |L7.1192|
+                  |L7.1176|
                           DCD      0x55445300
-                  |L7.1196|
-0004ac  1b5b3336          DCB      27,"[36m[%s]   -> Enter UDS Programming Mode\r\n",27,"[0"
-0004b0  6d5b2573
-0004b4  5d202020
-0004b8  2d3e2045
-0004bc  6e746572
-0004c0  20554453
-0004c4  2050726f
-0004c8  6772616d
-0004cc  6d696e67
-0004d0  204d6f64
-0004d4  650d0a1b
-0004d8  5b30    
-0004da  6d0d0a00          DCB      "m\r\n",0
-0004de  00                DCB      0
-0004df  00                DCB      0
-                  |L7.1248|
-0004e0  1b5b3336          DCB      27,"[36m[%s]   WDT Reset: %d, CurSlot: %d, Target: %d\r\n"
-0004e4  6d5b2573
-0004e8  5d202020
-0004ec  57445420
-0004f0  52657365
-0004f4  743a2025
-0004f8  642c2043
-0004fc  7572536c
-000500  6f743a20
-000504  25642c20
-000508  54617267
-00050c  65743a20
-000510  25640d0a
-000514  1b5b306d          DCB      27,"[0m\r\n",0
-000518  0d0a00  
-00051b  00                DCB      0
-                  |L7.1308|
+                  |L7.1180|
+00049c  1b5b3336          DCB      27,"[36m[%s]   -> Enter UDS Programming Mode\r\n",27,"[0"
+0004a0  6d5b2573
+0004a4  5d202020
+0004a8  2d3e2045
+0004ac  6e746572
+0004b0  20554453
+0004b4  2050726f
+0004b8  6772616d
+0004bc  6d696e67
+0004c0  204d6f64
+0004c4  650d0a1b
+0004c8  5b30    
+0004ca  6d0d0a00          DCB      "m\r\n",0
+0004ce  00                DCB      0
+0004cf  00                DCB      0
+                  |L7.1232|
+0004d0  1b5b3336          DCB      27,"[36m[%s]   CurSlot: %d, Target: %d\r\n",27,"[0m\r\n",0
+0004d4  6d5b2573
+0004d8  5d202020
+0004dc  43757253
+0004e0  6c6f743a
+0004e4  2025642c
+0004e8  20546172
+0004ec  6765743a
+0004f0  2025640d
+0004f4  0a1b5b30
+0004f8  6d0d0a00
+                  |L7.1276|
                           DCD      ||.conststring||+0x3e8
-                  |L7.1312|
-000520  1b5b3336          DCB      27,"[36m[%s]   ERROR: No valid APP slot, running forever"
-000524  6d5b2573
-000528  5d202020
-00052c  4552524f
-000530  523a204e
-000534  6f207661
-000538  6c696420
-00053c  41505020
-000540  736c6f74
-000544  2c207275
-000548  6e6e696e
-00054c  6720666f
-000550  72657665
-000554  72      
-000555  210d0a1b          DCB      "!\r\n",27,"[0m\r\n",0
-000559  5b306d0d
-00055d  0a00    
-00055f  00                DCB      0
+                  |L7.1280|
+000500  1b5b3336          DCB      27,"[36m[%s]   ERROR: No valid APP slot, running forever"
+000504  6d5b2573
+000508  5d202020
+00050c  4552524f
+000510  523a204e
+000514  6f207661
+000518  6c696420
+00051c  41505020
+000520  736c6f74
+000524  2c207275
+000528  6e6e696e
+00052c  6720666f
+000530  72657665
+000534  72      
+000535  210d0a1b          DCB      "!\r\n",27,"[0m\r\n",0
+000539  5b306d0d
+00053d  0a00    
+00053f  00                DCB      0
 
                           AREA ||i.Boot_SwitchAndRunOther||, CODE, READONLY, ALIGN=1
 
                   Boot_SwitchAndRunOther PROC
-;;;340    
-;;;341    void Boot_SwitchAndRunOther(void)
+;;;291    
+;;;292    void Boot_SwitchAndRunOther(void)
 000000  f44f20f8          MOV      r0,#0x7c000
-;;;342    {
-;;;343        uint32_t curr = READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR);
+;;;293    {
+;;;294        uint32_t curr = READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR);
 000004  f7fffffe          BL       READ_FLASH_DIRECT
 000008  4604              MOV      r4,r0
-;;;344        uint32_t target = (curr == SLOT_A_MAGIC) ? SLOT_B_MAGIC : SLOT_A_MAGIC;
+;;;295        uint32_t target = (curr == SLOT_A_MAGIC) ? SLOT_B_MAGIC : SLOT_A_MAGIC;
 00000a  f1b43f5a          CMP      r4,#0x5a5a5a5a
 00000e  d102              BNE      |L8.22|
 000010  f04f30a5          MOV      r0,#0xa5a5a5a5
@@ -1161,33 +1162,33 @@
 000016  f04f305a          MOV      r0,#0x5a5a5a5a
                   |L8.26|
 00001a  4605              MOV      r5,r0
-;;;345    
-;;;346        EFM_REG_Unlock();
+;;;296    
+;;;297        EFM_REG_Unlock();
 00001c  f7fffffe          BL       EFM_REG_Unlock
-;;;347        EFM_FWMC_Cmd(ENABLE);
+;;;298        EFM_FWMC_Cmd(ENABLE);
 000020  2001              MOVS     r0,#1
 000022  f7fffffe          BL       EFM_FWMC_Cmd
-;;;348        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
+;;;299        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
 000026  bf00              NOP      
                   |L8.40|
 000028  f44f7080          MOV      r0,#0x100
 00002c  f7fffffe          BL       EFM_GetStatus
 000030  2801              CMP      r0,#1
 000032  d1f9              BNE      |L8.40|
-;;;349        EFM_SectorErase(APP_RUN_SLOT_ADDR);
+;;;300        EFM_SectorErase(APP_RUN_SLOT_ADDR);
 000034  f44f20f8          MOV      r0,#0x7c000
 000038  f7fffffe          BL       EFM_SectorErase
-;;;350        EFM_ProgramWord(APP_RUN_SLOT_ADDR, target);
+;;;301        EFM_ProgramWord(APP_RUN_SLOT_ADDR, target);
 00003c  4629              MOV      r1,r5
 00003e  f44f20f8          MOV      r0,#0x7c000
 000042  f7fffffe          BL       EFM_ProgramWord
-;;;351        EFM_REG_Lock();
+;;;302        EFM_REG_Lock();
 000046  f7fffffe          BL       EFM_REG_Lock
-;;;352    
-;;;353        NVIC_SystemReset();
+;;;303    
+;;;304        NVIC_SystemReset();
 00004a  f7fffffe          BL       __NVIC_SystemReset
-;;;354    }
-;;;355    
+;;;305    }
+;;;306    
                           ENDP
 
 
@@ -1249,129 +1250,129 @@
                           AREA ||i.Bootloader_Init||, CODE, READONLY, ALIGN=1
 
                   Bootloader_Init PROC
-;;;376    // ###########################################################################
-;;;377    void Bootloader_Init(void) {}
+;;;327    // ###########################################################################
+;;;328    void Bootloader_Init(void) {}
 000000  4770              BX       lr
-;;;378    
+;;;329    
                           ENDP
 
 
                           AREA ||i.Bootloader_JumpToApp||, CODE, READONLY, ALIGN=2
 
                   Bootloader_JumpToApp PROC
-;;;266    // ###########################################################################
-;;;267    void Bootloader_JumpToApp(uint32_t u32AppAddr)
+;;;217    // ###########################################################################
+;;;218    void Bootloader_JumpToApp(uint32_t u32AppAddr)
 000000  b570              PUSH     {r4-r6,lr}
-;;;268    {
+;;;219    {
 000002  4604              MOV      r4,r0
-;;;269        uint32_t app_start_address;
-;;;270        uint32_t app_sp = *(uint32_t *)u32AppAddr;
+;;;220        uint32_t app_start_address;
+;;;221        uint32_t app_sp = *(uint32_t *)u32AppAddr;
 000004  6826              LDR      r6,[r4,#0]
-;;;271        app_start_address = *(uint32_t *)(u32AppAddr + 4);
+;;;222        app_start_address = *(uint32_t *)(u32AppAddr + 4);
 000006  6865              LDR      r5,[r4,#4]
-;;;272    
-;;;273        MAIN_D("=== Bootloader Jump To APP ===\r\n");
+;;;223    
+;;;224        MAIN_D("=== Bootloader Jump To APP ===\r\n");
 000008  a224              ADR      r2,|L12.156|
 00000a  a126              ADR      r1,|L12.164|
 00000c  2000              MOVS     r0,#0
 00000e  f7fffffe          BL       SEGGER_RTT_printf
-;;;274        MAIN_D("  APP Start Addr: 0x%08X\r\n", u32AppAddr);
+;;;225        MAIN_D("  APP Start Addr: 0x%08X\r\n", u32AppAddr);
 000012  4623              MOV      r3,r4
 000014  a221              ADR      r2,|L12.156|
 000016  a130              ADR      r1,|L12.216|
 000018  2000              MOVS     r0,#0
 00001a  f7fffffe          BL       SEGGER_RTT_printf
-;;;275        MAIN_D("  APP SP:         0x%08X\r\n", app_sp);
+;;;226        MAIN_D("  APP SP:         0x%08X\r\n", app_sp);
 00001e  4633              MOV      r3,r6
 000020  a21e              ADR      r2,|L12.156|
 000022  a138              ADR      r1,|L12.260|
 000024  2000              MOVS     r0,#0
 000026  f7fffffe          BL       SEGGER_RTT_printf
-;;;276        MAIN_D("  APP Reset:      0x%08X\r\n", app_start_address);
+;;;227        MAIN_D("  APP Reset:      0x%08X\r\n", app_start_address);
 00002a  462b              MOV      r3,r5
 00002c  a21b              ADR      r2,|L12.156|
 00002e  a140              ADR      r1,|L12.304|
 000030  2000              MOVS     r0,#0
 000032  f7fffffe          BL       SEGGER_RTT_printf
-;;;277    
-;;;278        if (app_start_address == 0xFFFFFFFF) {
+;;;228    
+;;;229        if (app_start_address == 0xFFFFFFFF) {
 000036  1c68              ADDS     r0,r5,#1
 000038  b928              CBNZ     r0,|L12.70|
-;;;279            MAIN_D("  ERROR: APP Reset vector is 0xFFFFFFFF, jump aborted!\r\n");
+;;;230            MAIN_D("  ERROR: APP Reset vector is 0xFFFFFFFF, jump aborted!\r\n");
 00003a  a218              ADR      r2,|L12.156|
 00003c  4947              LDR      r1,|L12.348|
 00003e  2000              MOVS     r0,#0
 000040  f7fffffe          BL       SEGGER_RTT_printf
                   |L12.68|
-;;;280            return;
-;;;281        }
-;;;282    
-;;;283        // 1. �������RAM��bootloader��APP��������
-;;;284        // ClearAllRAM(); // APP startup handles RAM init
-;;;285        
-;;;286        // 2. ֹͣSysTick
-;;;287        SysTick->CTRL = 0;
-;;;288        SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk; 
-;;;289    
-;;;290        // 3. ���������ж�
-;;;291        __disable_irq();
-;;;292        DisableAllNVICInterrupts();
-;;;293        
-;;;294        // 4. ����ж�ʹ�ܺ͹���Ĵ���
-;;;295        for (uint8_t i = 0; i < 8; i++) 
-;;;296        {
-;;;297            NVIC->ICER[i] = 0xFFFFFFFF;
-;;;298            NVIC->ICPR[i] = 0xFFFFFFFF;
-;;;299        }
-;;;300    
-;;;301        // 5. ����ջָ���������
-;;;302        __set_MSP(*(uint32_t *)u32AppAddr);
-;;;303        SCB->VTOR = ((uint32_t)u32AppAddr & SCB_VTOR_TBLOFF_Msk);
-;;;304        
-;;;305        __DSB();
-;;;306        __ISB();
-;;;307    
-;;;308        // 6. ��ת��APP
-;;;309        (*((void(*)(void))app_start_address))();
-;;;310    }
+;;;231            return;
+;;;232        }
+;;;233    
+;;;234        // 1. �������RAM��bootloader��APP��������
+;;;235        // ClearAllRAM(); // APP startup handles RAM init
+;;;236        
+;;;237        // 2. ֹͣSysTick
+;;;238        SysTick->CTRL = 0;
+;;;239        SCB->ICSR |= SCB_ICSR_PENDSTCLR_Msk; 
+;;;240    
+;;;241        // 3. ���������ж�
+;;;242        __disable_irq();
+;;;243        DisableAllNVICInterrupts();
+;;;244        
+;;;245        // 4. ����ж�ʹ�ܺ͹���Ĵ���
+;;;246        for (uint8_t i = 0; i < 8; i++) 
+;;;247        {
+;;;248            NVIC->ICER[i] = 0xFFFFFFFF;
+;;;249            NVIC->ICPR[i] = 0xFFFFFFFF;
+;;;250        }
+;;;251    
+;;;252        // 5. ����ջָ���������
+;;;253        __set_MSP(*(uint32_t *)u32AppAddr);
+;;;254        SCB->VTOR = ((uint32_t)u32AppAddr & SCB_VTOR_TBLOFF_Msk);
+;;;255        
+;;;256        __DSB();
+;;;257        __ISB();
+;;;258    
+;;;259        // 6. ��ת��APP
+;;;260        (*((void(*)(void))app_start_address))();
+;;;261    }
 000044  bd70              POP      {r4-r6,pc}
                   |L12.70|
-000046  2000              MOVS     r0,#0                 ;287
-000048  f04f21e0          MOV      r1,#0xe000e000        ;287
-00004c  6108              STR      r0,[r1,#0x10]         ;287
+000046  2000              MOVS     r0,#0                 ;238
+000048  f04f21e0          MOV      r1,#0xe000e000        ;238
+00004c  6108              STR      r0,[r1,#0x10]         ;238
 00004e  4844              LDR      r0,|L12.352|
-000050  6800              LDR      r0,[r0,#0]            ;288
-000052  f0407000          ORR      r0,r0,#0x2000000      ;288
+000050  6800              LDR      r0,[r0,#0]            ;239
+000052  f0407000          ORR      r0,r0,#0x2000000      ;239
 000056  4942              LDR      r1,|L12.352|
-000058  6008              STR      r0,[r1,#0]            ;288
-00005a  b672              CPSID    i                     ;291
+000058  6008              STR      r0,[r1,#0]            ;239
+00005a  b672              CPSID    i                     ;242
 00005c  f7fffffe          BL       DisableAllNVICInterrupts
-000060  2000              MOVS     r0,#0                 ;295
+000060  2000              MOVS     r0,#0                 ;246
 000062  e009              B        |L12.120|
                   |L12.100|
-000064  f04f32ff          MOV      r2,#0xffffffff        ;297
+000064  f04f32ff          MOV      r2,#0xffffffff        ;248
 000068  493e              LDR      r1,|L12.356|
-00006a  f8412020          STR      r2,[r1,r0,LSL #2]     ;297
+00006a  f8412020          STR      r2,[r1,r0,LSL #2]     ;248
 00006e  493e              LDR      r1,|L12.360|
-000070  f8412020          STR      r2,[r1,r0,LSL #2]     ;298
-000074  1c41              ADDS     r1,r0,#1              ;295
-000076  b2c8              UXTB     r0,r1                 ;295
+000070  f8412020          STR      r2,[r1,r0,LSL #2]     ;249
+000074  1c41              ADDS     r1,r0,#1              ;246
+000076  b2c8              UXTB     r0,r1                 ;246
                   |L12.120|
-000078  2808              CMP      r0,#8                 ;295
+000078  2808              CMP      r0,#8                 ;246
 00007a  dbf3              BLT      |L12.100|
-00007c  6820              LDR      r0,[r4,#0]            ;302
-00007e  f3808808          MSR      MSP,r0                ;302
-000082  bf00              NOP                            ;302
-000084  f024007f          BIC      r0,r4,#0x7f           ;303
+00007c  6820              LDR      r0,[r4,#0]            ;253
+00007e  f3808808          MSR      MSP,r0                ;253
+000082  bf00              NOP                            ;253
+000084  f024007f          BIC      r0,r4,#0x7f           ;254
 000088  4935              LDR      r1,|L12.352|
-00008a  1d09              ADDS     r1,r1,#4              ;303
-00008c  6008              STR      r0,[r1,#0]            ;303
-00008e  f3bf8f4f          DSB                            ;305
-000092  f3bf8f6f          ISB                            ;306
-000096  47a8              BLX      r5                    ;309
+00008a  1d09              ADDS     r1,r1,#4              ;254
+00008c  6008              STR      r0,[r1,#0]            ;254
+00008e  f3bf8f4f          DSB                            ;256
+000092  f3bf8f6f          ISB                            ;257
+000096  47a8              BLX      r5                    ;260
 000098  bf00              NOP      
 00009a  e7d3              B        |L12.68|
-;;;311    
+;;;262    
                           ENDP
 
                   |L12.156|
@@ -1448,29 +1449,29 @@
                           AREA ||i.Bootloader_UdsMain||, CODE, READONLY, ALIGN=2
 
                   Bootloader_UdsMain PROC
-;;;734    
-;;;735    void Bootloader_UdsMain(void)
+;;;670    
+;;;671    void Bootloader_UdsMain(void)
 000000  b098              SUB      sp,sp,#0x60
-;;;736    {
-;;;737        uint64_t last_wdt_feed;
-;;;738        FlashDownloadConfig_t stcFwConfig;
-;;;739        uint8_t i;
-;;;740    
-;;;741        MAIN_D("===== Bootloader UDS Main Start =====\r\n");
+;;;672    {
+;;;673        uint64_t last_wdt_feed;
+;;;674        FlashDownloadConfig_t stcFwConfig;
+;;;675        uint8_t i;
+;;;676    
+;;;677        MAIN_D("===== Bootloader UDS Main Start =====\r\n");
 000002  a259              ADR      r2,|L13.360|
 000004  a15a              ADR      r1,|L13.368|
 000006  2000              MOVS     r0,#0
 000008  f7fffffe          BL       SEGGER_RTT_printf
-;;;742    
-;;;743        
-;;;744    
-;;;745        /* ==== 1. 检查是否需要发送 31 服务的肯定响应 ==== */
-;;;746        {
-;;;747            stc_uds_shared_t _st;
-;;;748            UdsShared_Read(&_st);
+;;;678    
+;;;679        
+;;;680    
+;;;681        /* ==== 1. 检查是否需要发送 31 服务的肯定响应 ==== */
+;;;682        {
+;;;683            stc_uds_shared_t _st;
+;;;684            UdsShared_Read(&_st);
 00000c  a805              ADD      r0,sp,#0x14
 00000e  f7fffffe          BL       UdsShared_Read
-;;;749            if (_st.magic == UDS_SHARED_MAGIC && _st.pending_sid == 0x31) {
+;;;685            if (_st.magic == UDS_SHARED_MAGIC && _st.pending_sid == 0x31) {
 000012  4965              LDR      r1,|L13.424|
 000014  9805              LDR      r0,[sp,#0x14]
 000016  4288              CMP      r0,r1
@@ -1478,67 +1479,67 @@
 00001a  980b              LDR      r0,[sp,#0x2c]
 00001c  2831              CMP      r0,#0x31
 00001e  d113              BNE      |L13.72|
-;;;750                uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
+;;;686                uint8_t au8Data[4] = {0x71, 0x01, 0xFF, 0x00};
 000020  a062              ADR      r0,|L13.428|
 000022  6800              LDR      r0,[r0,#0]
 000024  9004              STR      r0,[sp,#0x10]
-;;;751                isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
+;;;687                isotp_send_message(0, 0x18DAF103UL, au8Data, 4);
 000026  2304              MOVS     r3,#4
 000028  aa04              ADD      r2,sp,#0x10
 00002a  4961              LDR      r1,|L13.432|
 00002c  2000              MOVS     r0,#0
 00002e  f7fffffe          BL       isotp_send_message
-;;;752                MAIN_D("  Sent deferred 31 ACK (71 01 FF 00) via ISOTP\r\n");
+;;;688                MAIN_D("  Sent deferred 31 ACK (71 01 FF 00) via ISOTP\r\n");
 000032  a24d              ADR      r2,|L13.360|
 000034  495f              LDR      r1,|L13.436|
 000036  2000              MOVS     r0,#0
 000038  f7fffffe          BL       SEGGER_RTT_printf
-;;;753                _st.pending_sid = 0;
+;;;689                _st.pending_sid = 0;
 00003c  2000              MOVS     r0,#0
 00003e  900b              STR      r0,[sp,#0x2c]
-;;;754                UdsShared_Write(&_st);
+;;;690                UdsShared_Write(&_st);
 000040  a805              ADD      r0,sp,#0x14
 000042  f7fffffe          BL       UdsShared_Write
-;;;755            } else {
+;;;691            } else {
 000046  e005              B        |L13.84|
                   |L13.72|
-;;;756                MAIN_D("  No pending 31 ACK (pending_sid=0x%02X), skip\r\n", (unsigned int)_st.pending_sid);
+;;;692                MAIN_D("  No pending 31 ACK (pending_sid=0x%02X), skip\r\n", (unsigned int)_st.pending_sid);
 000048  a247              ADR      r2,|L13.360|
 00004a  495b              LDR      r1,|L13.440|
 00004c  2000              MOVS     r0,#0
 00004e  9b0b              LDR      r3,[sp,#0x2c]
 000050  f7fffffe          BL       SEGGER_RTT_printf
                   |L13.84|
-;;;757            }
-;;;758        }
-;;;759    
-;;;760        /* ==== 2. 初始化固件下载模块 ==== */
-;;;761        MEM_ZERO_STRUCT(stcFwConfig);
+;;;693            }
+;;;694        }
+;;;695    
+;;;696        /* ==== 2. 初始化固件下载模块 ==== */
+;;;697        MEM_ZERO_STRUCT(stcFwConfig);
 000054  2114              MOVS     r1,#0x14
 000056  a813              ADD      r0,sp,#0x4c
 000058  f7fffffe          BL       __aeabi_memclr4
-;;;762        stcFwConfig.max_firmware_size     = FW_MAX_FIRMWARE_SIZE;
+;;;698        stcFwConfig.max_firmware_size     = FW_MAX_FIRMWARE_SIZE;
 00005c  f44f3028          MOV      r0,#0x2a000
 000060  9013              STR      r0,[sp,#0x4c]
-;;;763        stcFwConfig.flash_sector_size    = FLASH_SECTOR_SIZE;
+;;;699        stcFwConfig.flash_sector_size    = FLASH_SECTOR_SIZE;
 000062  f44f5000          MOV      r0,#0x2000
 000066  9014              STR      r0,[sp,#0x50]
-;;;764        stcFwConfig.user_start_addr      = UDS_TARGET_FLASH_ADDR;
+;;;700        stcFwConfig.user_start_addr      = UDS_TARGET_FLASH_ADDR;
 000068  f44f2088          MOV      r0,#0x44000
 00006c  9015              STR      r0,[sp,#0x54]
-;;;765        stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE;
+;;;701        stcFwConfig.user_end_addr        = UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE;
 00006e  f44f20dc          MOV      r0,#0x6e000
 000072  9016              STR      r0,[sp,#0x58]
-;;;766        stcFwConfig.verify_enabled       = 1U;
+;;;702        stcFwConfig.verify_enabled       = 1U;
 000074  2001              MOVS     r0,#1
 000076  f88d005c          STRB     r0,[sp,#0x5c]
-;;;767        stcFwConfig.auto_reset_on_complete = 0U;
+;;;703        stcFwConfig.auto_reset_on_complete = 0U;
 00007a  2000              MOVS     r0,#0
 00007c  f88d005d          STRB     r0,[sp,#0x5d]
-;;;768        FlashDownload_Init(&stcFwConfig);
+;;;704        FlashDownload_Init(&stcFwConfig);
 000080  a813              ADD      r0,sp,#0x4c
 000082  f7fffffe          BL       FlashDownload_Init
-;;;769        MAIN_D("  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n",
+;;;705        MAIN_D("  FlashDownload init done (APP2: 0x%08X-0x%08X)\r\n",
 000086  f44f20dc          MOV      r0,#0x6e000
 00008a  f44f2388          MOV      r3,#0x44000
 00008e  a236              ADR      r2,|L13.360|
@@ -1546,62 +1547,62 @@
 000092  9000              STR      r0,[sp,#0]
 000094  2000              MOVS     r0,#0
 000096  f7fffffe          BL       SEGGER_RTT_printf
-;;;770               UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE);
-;;;771    
-;;;772        /* ==== 3. 注册固件下载接口到 UDS ==== */
-;;;773        uds_dl_init_fw();
+;;;706               UDS_TARGET_FLASH_ADDR, UDS_TARGET_FLASH_ADDR + APP_MAX_SIZE);
+;;;707    
+;;;708        /* ==== 3. 注册固件下载接口到 UDS ==== */
+;;;709        uds_dl_init_fw();
 00009a  f7fffffe          BL       uds_dl_init_fw
-;;;774    
-;;;775        /* ==== 4. 初始化 UDS 诊断服务 ==== */
-;;;776        uds_init();
+;;;710    
+;;;711        /* ==== 4. 初始化 UDS 诊断服务 ==== */
+;;;712        uds_init();
 00009e  f7fffffe          BL       uds_init
-;;;777        MAIN_D("  UDS init done\r\n");
+;;;713        MAIN_D("  UDS init done\r\n");
 0000a2  a231              ADR      r2,|L13.360|
 0000a4  a146              ADR      r1,|L13.448|
 0000a6  2000              MOVS     r0,#0
 0000a8  f7fffffe          BL       SEGGER_RTT_printf
-;;;778    
-;;;779        /* ==== 5. 主循环 ==== */
-;;;780        MAIN_D("  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n");
+;;;714    
+;;;715        /* ==== 5. 主循环 ==== */
+;;;716        MAIN_D("  Entering UDS main loop (CAN poll + ISOTP/UDS + FlashDownload + WDT)\r\n");
 0000ac  a22e              ADR      r2,|L13.360|
 0000ae  494d              LDR      r1,|L13.484|
 0000b0  2000              MOVS     r0,#0
 0000b2  f7fffffe          BL       SEGGER_RTT_printf
-;;;781        last_wdt_feed = tickTimer_GetCount();
+;;;717        last_wdt_feed = tickTimer_GetCount();
 0000b6  f7fffffe          BL       tickTimer_GetCount
 0000ba  4604              MOV      r4,r0
 0000bc  460d              MOV      r5,r1
-;;;782    
-;;;783        static uint8_t s_uds_shared_written = 0;
-;;;784    
-;;;785        while (1) {
+;;;718    
+;;;719        static uint8_t s_uds_shared_written = 0;
+;;;720    
+;;;721        while (1) {
 0000be  e051              B        |L13.356|
                   |L13.192|
-;;;786            uint64_t tick = tickTimer_GetCount();
+;;;722            uint64_t tick = tickTimer_GetCount();
 0000c0  f7fffffe          BL       tickTimer_GetCount
 0000c4  4606              MOV      r6,r0
 0000c6  460f              MOV      r7,r1
-;;;787    
-;;;788            /* 500ms WDT 喂狗 */
-;;;789            if ((tick - last_wdt_feed) >= 500) {
+;;;723    
+;;;724            /* 500ms WDT 喂狗 */
+;;;725            if ((tick - last_wdt_feed) >= 500) {
 0000c8  1b31              SUBS     r1,r6,r4
 0000ca  eb670005          SBC      r0,r7,r5
 0000ce  f44f73fa          MOV      r3,#0x1f4
 0000d2  1ac9              SUBS     r1,r1,r3
 0000d4  f1700000          SBCS     r0,r0,#0
 0000d8  d303              BCC      |L13.226|
-;;;790                SWDT_FeedDog();
+;;;726                SWDT_FeedDog();
 0000da  f7fffffe          BL       SWDT_FeedDog
-;;;791                last_wdt_feed = tick;
+;;;727                last_wdt_feed = tick;
 0000de  4634              MOV      r4,r6
 0000e0  463d              MOV      r5,r7
                   |L13.226|
-;;;792            }
-;;;793    
-;;;794            UdsOta_Poll();
+;;;728            }
+;;;729    
+;;;730            UdsOta_Poll();
 0000e2  f7fffffe          BL       UdsOta_Poll
-;;;795    
-;;;796            if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
+;;;731    
+;;;732            if (!s_uds_shared_written && FlashDownload_GetState() == FW_UPDATE_COMPLETE) {
 0000e6  4840              LDR      r0,|L13.488|
 0000e8  7800              LDRB     r0,[r0,#0]  ; s_uds_shared_written
 0000ea  2800              CMP      r0,#0
@@ -1609,85 +1610,85 @@
 0000ee  f7fffffe          BL       FlashDownload_GetState
 0000f2  2805              CMP      r0,#5
 0000f4  d135              BNE      |L13.354|
-;;;797                stc_uds_shared_t state;
-;;;798                FlashDownloadProgress_t stcProg;
-;;;799                UdsShared_Read(&state);
+;;;733                stc_uds_shared_t state;
+;;;734                FlashDownloadProgress_t stcProg;
+;;;735                UdsShared_Read(&state);
 0000f6  a805              ADD      r0,sp,#0x14
 0000f8  f7fffffe          BL       UdsShared_Read
-;;;800                FlashDownload_GetProgress(&stcProg);
+;;;736                FlashDownload_GetProgress(&stcProg);
 0000fc  a801              ADD      r0,sp,#4
 0000fe  f7fffffe          BL       FlashDownload_GetProgress
-;;;801    
-;;;802                state.phase = UDS_PHASE_PROGRAMMING_DONE;
+;;;737    
+;;;738                state.phase = UDS_PHASE_PROGRAMMING_DONE;
 000102  2002              MOVS     r0,#2
 000104  9006              STR      r0,[sp,#0x18]
-;;;803                state.result = 1;
+;;;739                state.result = 1;
 000106  2001              MOVS     r0,#1
 000108  900a              STR      r0,[sp,#0x28]
-;;;804                /* 实际下载目标槽（由 0x34 地址映射决定: APP1/APP2） */
-;;;805                if (stcProg.target_address == APP2_START_ADDR) {
+;;;740                /* 实际下载目标槽（由 0x34 地址映射决定: APP1/APP2） */
+;;;741                if (stcProg.target_address == APP2_START_ADDR) {
 00010a  9803              LDR      r0,[sp,#0xc]
 00010c  f5b02f88          CMP      r0,#0x44000
 000110  d103              BNE      |L13.282|
-;;;806                    state.target_slot = SLOT_APP2;
+;;;742                    state.target_slot = SLOT_APP2;
 000112  f04f30a5          MOV      r0,#0xa5a5a5a5
 000116  9007              STR      r0,[sp,#0x1c]
 000118  e002              B        |L13.288|
                   |L13.282|
-;;;807                } else {
-;;;808                    state.target_slot = SLOT_APP1;
+;;;743                } else {
+;;;744                    state.target_slot = SLOT_APP1;
 00011a  f04f305a          MOV      r0,#0x5a5a5a5a
 00011e  9007              STR      r0,[sp,#0x1c]
                   |L13.288|
-;;;809                }
-;;;810                UdsShared_Write(&state);
+;;;745                }
+;;;746                UdsShared_Write(&state);
 000120  a805              ADD      r0,sp,#0x14
 000122  f7fffffe          BL       UdsShared_Write
-;;;811                s_uds_shared_written = 1;
+;;;747                s_uds_shared_written = 1;
 000126  2001              MOVS     r0,#1
 000128  492f              LDR      r1,|L13.488|
 00012a  7008              STRB     r0,[r1,#0]
-;;;812                /* 清除实际下载槽的 WDT 故障计数 */
-;;;813                ClearAppStateBySlot(state.target_slot);
+;;;748                /* 清除实际下载槽的 WDT 故障计数 */
+;;;749                ClearAppStateBySlot(state.target_slot);
 00012c  9807              LDR      r0,[sp,#0x1c]
 00012e  f7fffffe          BL       ClearAppStateBySlot
-;;;814    #if (BOOT_OTA_MODE_DEBUG == 0U)
-;;;815                /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
-;;;816                if (stcProg.target_address == APP2_START_ADDR) {
+;;;750    #if (BOOT_OTA_MODE_DEBUG == 0U)
+;;;751                /* 正式模式: 烧到哪里，就设置跳转到哪里（按实际下载目标地址设置跳转槽） */
+;;;752                if (stcProg.target_address == APP2_START_ADDR) {
 000132  9803              LDR      r0,[sp,#0xc]
 000134  f5b02f88          CMP      r0,#0x44000
 000138  d104              BNE      |L13.324|
-;;;817                    Boot_SetRunSlotToAddr(APP2_START_ADDR);
+;;;753                    Boot_SetRunSlotToAddr(APP2_START_ADDR);
 00013a  f44f2088          MOV      r0,#0x44000
 00013e  f7fffffe          BL       Boot_SetRunSlotToAddr
 000142  e007              B        |L13.340|
                   |L13.324|
-;;;818                } else if (stcProg.target_address == APP1_START_ADDR) {
+;;;754                } else if (stcProg.target_address == APP1_START_ADDR) {
 000144  9803              LDR      r0,[sp,#0xc]
 000146  f5b03fd0          CMP      r0,#0x1a000
 00014a  d103              BNE      |L13.340|
-;;;819                    Boot_SetRunSlotToAddr(APP1_START_ADDR);
+;;;755                    Boot_SetRunSlotToAddr(APP1_START_ADDR);
 00014c  f44f30d0          MOV      r0,#0x1a000
 000150  f7fffffe          BL       Boot_SetRunSlotToAddr
                   |L13.340|
-;;;820                }
-;;;821    #endif
-;;;822                MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n",
+;;;756                }
+;;;757    #endif
+;;;758                MAIN_D("  UDS shared updated: phase=PROGRAMMING_DONE, target=0x%08X WDT cleared\r\n",
 000154  a204              ADR      r2,|L13.360|
 000156  4925              LDR      r1,|L13.492|
 000158  2000              MOVS     r0,#0
 00015a  9b03              LDR      r3,[sp,#0xc]
 00015c  f7fffffe          BL       SEGGER_RTT_printf
-;;;823                       (unsigned int)stcProg.target_address);
-;;;824            }
+;;;759                       (unsigned int)stcProg.target_address);
+;;;760            }
 000160  bf00              NOP      
                   |L13.354|
-;;;825        }
+;;;761        }
 000162  bf00              NOP      
                   |L13.356|
 000164  e7ac              B        |L13.192|
-;;;826    }
-;;;827    
+;;;762    }
+;;;763    
                           ENDP
 
 000166  0000              DCW      0x0000
@@ -1747,10 +1748,10 @@
                           AREA ||i.CheckAndClearAppState||, CODE, READONLY, ALIGN=2
 
                   CheckAndClearAppState PROC
-;;;631    }
-;;;632    static void CheckAndClearAppState(void) {
+;;;567    }
+;;;568    static void CheckAndClearAppState(void) {
 000000  b510              PUSH     {r4,lr}
-;;;633        if (g_u32Debug_ClearAppState == 1) ClearAppStateBySlot(SLOT_APP1);
+;;;569        if (g_u32Debug_ClearAppState == 1) ClearAppStateBySlot(SLOT_APP1);
 000002  480f              LDR      r0,|L14.64|
 000004  6800              LDR      r0,[r0,#0]  ; g_u32Debug_ClearAppState
 000006  2801              CMP      r0,#1
@@ -1759,7 +1760,7 @@
 00000e  f7fffffe          BL       ClearAppStateBySlot
 000012  e014              B        |L14.62|
                   |L14.20|
-;;;634        else if (g_u32Debug_ClearAppState == 2) ClearAppStateBySlot(SLOT_APP2);
+;;;570        else if (g_u32Debug_ClearAppState == 2) ClearAppStateBySlot(SLOT_APP2);
 000014  480a              LDR      r0,|L14.64|
 000016  6800              LDR      r0,[r0,#0]  ; g_u32Debug_ClearAppState
 000018  2802              CMP      r0,#2
@@ -1768,7 +1769,7 @@
 000020  f7fffffe          BL       ClearAppStateBySlot
 000024  e00b              B        |L14.62|
                   |L14.38|
-;;;635        else if (g_u32Debug_ClearAppState == 3) { ClearAppStateBySlot(SLOT_APP1); ClearAppStateBySlot(SLOT_APP2); }
+;;;571        else if (g_u32Debug_ClearAppState == 3) { ClearAppStateBySlot(SLOT_APP1); ClearAppStateBySlot(SLOT_APP2); }
 000026  4806              LDR      r0,|L14.64|
 000028  6800              LDR      r0,[r0,#0]  ; g_u32Debug_ClearAppState
 00002a  2803              CMP      r0,#3
@@ -1778,9 +1779,9 @@
 000036  f04f30a5          MOV      r0,#0xa5a5a5a5
 00003a  f7fffffe          BL       ClearAppStateBySlot
                   |L14.62|
-;;;636    }
+;;;572    }
 00003e  bd10              POP      {r4,pc}
-;;;637    
+;;;573    
                           ENDP
 
                   |L14.64|
@@ -1789,67 +1790,67 @@
                           AREA ||i.ClearAllRAM||, CODE, READONLY, ALIGN=2
 
                   ClearAllRAM PROC
-;;;312    // RAM��պ������ؼ�ʵ�֣�
-;;;313    void ClearAllRAM(void)
+;;;263    // RAM��պ������ؼ�ʵ�֣�
+;;;264    void ClearAllRAM(void)
 000000  b510              PUSH     {r4,lr}
-;;;314    {
-;;;315        volatile uint32_t *ram_addr = (volatile uint32_t *)RAM_START_ADDR;
+;;;265    {
+;;;266        volatile uint32_t *ram_addr = (volatile uint32_t *)RAM_START_ADDR;
 000002  4b10              LDR      r3,|L15.68|
-;;;316        register uint32_t current_msp __asm("msp");
-;;;317        uint32_t clear_end;
-;;;318        uint32_t ram_word_count;
-;;;319    
-;;;320        /* 保留当前栈及以下区域：Stack(0x9000) + Heap(0x4000) + 余量(0x2000) = 0xF000 */
-;;;321        if (current_msp > RAM_START_ADDR + 0xF000U) {
+;;;267        register uint32_t current_msp __asm("msp");
+;;;268        uint32_t clear_end;
+;;;269        uint32_t ram_word_count;
+;;;270    
+;;;271        /* 保留当前栈及以下区域：Stack(0x9000) + Heap(0x4000) + 余量(0x2000) = 0xF000 */
+;;;272        if (current_msp > RAM_START_ADDR + 0xF000U) {
 000004  f3ef8108          MRS      r1,MSP
 000008  4c0f              LDR      r4,|L15.72|
 00000a  42a1              CMP      r1,r4
 00000c  d904              BLS      |L15.24|
-;;;322            clear_end = current_msp - 0xF000U;
+;;;273            clear_end = current_msp - 0xF000U;
 00000e  f3ef8108          MRS      r1,MSP
 000012  f5a14070          SUB      r0,r1,#0xf000
 000016  e000              B        |L15.26|
                   |L15.24|
-;;;323        } else {
-;;;324            clear_end = RAM_START_ADDR;
+;;;274        } else {
+;;;275            clear_end = RAM_START_ADDR;
 000018  480a              LDR      r0,|L15.68|
                   |L15.26|
-;;;325        }
-;;;326        if (clear_end > RAM_START_ADDR + RAM_SIZE) {
+;;;276        }
+;;;277        if (clear_end > RAM_START_ADDR + RAM_SIZE) {
 00001a  490c              LDR      r1,|L15.76|
 00001c  4288              CMP      r0,r1
 00001e  d900              BLS      |L15.34|
-;;;327            clear_end = RAM_START_ADDR + RAM_SIZE;
+;;;278            clear_end = RAM_START_ADDR + RAM_SIZE;
 000020  4608              MOV      r0,r1
                   |L15.34|
-;;;328        }
-;;;329    
-;;;330        ram_word_count = (clear_end - RAM_START_ADDR) / 4U;
+;;;279        }
+;;;280    
+;;;281        ram_word_count = (clear_end - RAM_START_ADDR) / 4U;
 000022  4908              LDR      r1,|L15.68|
 000024  1a41              SUBS     r1,r0,r1
 000026  088a              LSRS     r2,r1,#2
-;;;331    
-;;;332        for (uint32_t i = 0; i < ram_word_count; i++)
+;;;282    
+;;;283        for (uint32_t i = 0; i < ram_word_count; i++)
 000028  2100              MOVS     r1,#0
 00002a  e003              B        |L15.52|
                   |L15.44|
-;;;333        {
-;;;334            ram_addr[i] = 0;
+;;;284        {
+;;;285            ram_addr[i] = 0;
 00002c  2400              MOVS     r4,#0
 00002e  f8434021          STR      r4,[r3,r1,LSL #2]
-000032  1c49              ADDS     r1,r1,#1              ;332
+000032  1c49              ADDS     r1,r1,#1              ;283
                   |L15.52|
-000034  4291              CMP      r1,r2                 ;332
+000034  4291              CMP      r1,r2                 ;283
 000036  d3f9              BCC      |L15.44|
-;;;335        }
-;;;336    
-;;;337        __DSB();
+;;;286        }
+;;;287    
+;;;288        __DSB();
 000038  f3bf8f4f          DSB      
-;;;338        __ISB();
+;;;289        __ISB();
 00003c  f3bf8f6f          ISB      
-;;;339    }
+;;;290    }
 000040  bd10              POP      {r4,pc}
-;;;340    
+;;;291    
                           ENDP
 
 000042  0000              DCW      0x0000
@@ -1860,193 +1861,64 @@
                   |L15.76|
                           DCD      0x20027000
 
-                          AREA ||i.ClearAppStateBySlot||, CODE, READONLY, ALIGN=2
+                          AREA ||i.ClearAppStateBySlot||, CODE, READONLY, ALIGN=1
 
                   ClearAppStateBySlot PROC
-;;;237    
-;;;238    void ClearAppStateBySlot(en_slot_type_t eSlot)
-000000  e92d41f0          PUSH     {r4-r8,lr}
-;;;239    {
-000004  4605              MOV      r5,r0
-;;;240        uint32_t u32SectorBase, u32CountAddr, u32FeedAddr, u32Feed;
-;;;241    
-;;;242        if (eSlot == SLOT_APP1) {
-000006  f1b53f5a          CMP      r5,#0x5a5a5a5a
-00000a  d104              BNE      |L16.22|
-;;;243            u32SectorBase = APP1_STATE_SECTOR_BASE;
-00000c  f44f36b0          MOV      r6,#0x16000
-;;;244            u32CountAddr = WDT_COUNT_APP1_ADDR;
-000010  4f18              LDR      r7,|L16.116|
-;;;245            u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-000012  46b0              MOV      r8,r6
-000014  e009              B        |L16.42|
-                  |L16.22|
-;;;246        } else if (eSlot == SLOT_APP2) {
-000016  f1b53fa5          CMP      r5,#0xa5a5a5a5
-00001a  d104              BNE      |L16.38|
-;;;247            u32SectorBase = APP2_STATE_SECTOR_BASE;
-00001c  f44f36c0          MOV      r6,#0x18000
-;;;248            u32CountAddr = WDT_COUNT_APP2_ADDR;
-000020  4f15              LDR      r7,|L16.120|
-;;;249            u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-000022  46b0              MOV      r8,r6
-000024  e001              B        |L16.42|
-                  |L16.38|
-;;;250        } else return;
-;;;251    
-;;;252        u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-;;;253        u32Feed = (u32Feed == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Feed;
-;;;254    
-;;;255        EFM_REG_Unlock();
-;;;256        EFM_FWMC_Cmd(ENABLE);
-;;;257        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-;;;258        EFM_SectorErase(u32SectorBase);
-;;;259        EFM_ProgramWord(u32FeedAddr, u32Feed);
-;;;260        EFM_ProgramWord(u32CountAddr, 0);
-;;;261        EFM_REG_Lock();
-;;;262    }
-000026  e8bd81f0          POP      {r4-r8,pc}
-                  |L16.42|
-00002a  4640              MOV      r0,r8                 ;252
-00002c  f7fffffe          BL       READ_FLASH_DIRECT
-000030  4604              MOV      r4,r0                 ;252
-000032  1c60              ADDS     r0,r4,#1              ;253
-000034  b908              CBNZ     r0,|L16.58|
-000036  2000              MOVS     r0,#0                 ;253
-000038  e000              B        |L16.60|
-                  |L16.58|
-00003a  4620              MOV      r0,r4                 ;253
-                  |L16.60|
-00003c  4604              MOV      r4,r0                 ;253
-00003e  f7fffffe          BL       EFM_REG_Unlock
-000042  2001              MOVS     r0,#1                 ;256
-000044  f7fffffe          BL       EFM_FWMC_Cmd
-000048  bf00              NOP                            ;257
-                  |L16.74|
-00004a  f44f7080          MOV      r0,#0x100             ;257
-00004e  f7fffffe          BL       EFM_GetStatus
-000052  2801              CMP      r0,#1                 ;257
-000054  d1f9              BNE      |L16.74|
-000056  4630              MOV      r0,r6                 ;258
-000058  f7fffffe          BL       EFM_SectorErase
-00005c  4621              MOV      r1,r4                 ;259
-00005e  4640              MOV      r0,r8                 ;259
-000060  f7fffffe          BL       EFM_ProgramWord
-000064  2100              MOVS     r1,#0                 ;260
-000066  4638              MOV      r0,r7                 ;260
-000068  f7fffffe          BL       EFM_ProgramWord
-00006c  f7fffffe          BL       EFM_REG_Lock
-000070  bf00              NOP      
-000072  e7d8              B        |L16.38|
-;;;263    
+;;;208    
+;;;209    void ClearAppStateBySlot(en_slot_type_t eSlot)
+000000  b510              PUSH     {r4,lr}
+;;;210    {
+000002  4604              MOV      r4,r0
+;;;211        if (eSlot == SLOT_APP1)      Rmu_ClearSlotFault(RMU_SLOT_APP1);
+000004  f1b43f5a          CMP      r4,#0x5a5a5a5a
+000008  d103              BNE      |L16.18|
+00000a  2000              MOVS     r0,#0
+00000c  f7fffffe          BL       Rmu_ClearSlotFault
+000010  e005              B        |L16.30|
+                  |L16.18|
+;;;212        else if (eSlot == SLOT_APP2) Rmu_ClearSlotFault(RMU_SLOT_APP2);
+000012  f1b43fa5          CMP      r4,#0xa5a5a5a5
+000016  d102              BNE      |L16.30|
+000018  2001              MOVS     r0,#1
+00001a  f7fffffe          BL       Rmu_ClearSlotFault
+                  |L16.30|
+;;;213    }
+00001e  bd10              POP      {r4,pc}
+;;;214    
                           ENDP
 
-                  |L16.116|
-                          DCD      0x00016008
-                  |L16.120|
-                          DCD      0x00018008
 
                           AREA ||i.ClearWdtResetCount||, CODE, READONLY, ALIGN=2
 
                   ClearWdtResetCount PROC
-;;;171    
-;;;172    void ClearWdtResetCount(uint32_t u32Addr)
-000000  e92d47f0          PUSH     {r4-r10,lr}
-;;;173    {
-000004  4605              MOV      r5,r0
-;;;174        uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-;;;175        uint32_t u32Count, u32Feed;
-;;;176    
-;;;177        if (u32Addr == WDT_COUNT_APP1_ADDR) {
-000006  4821              LDR      r0,|L17.140|
-000008  4285              CMP      r5,r0
-00000a  d104              BNE      |L17.22|
-;;;178            u32SectorBase = APP1_STATE_SECTOR_BASE;
-00000c  f44f36b0          MOV      r6,#0x16000
-;;;179            u32CountAddr = WDT_COUNT_APP1_ADDR;
-000010  4607              MOV      r7,r0
-;;;180            u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-000012  46b0              MOV      r8,r6
-000014  e009              B        |L17.42|
-                  |L17.22|
-;;;181        } else if (u32Addr == WDT_COUNT_APP2_ADDR) {
-000016  481e              LDR      r0,|L17.144|
-000018  4285              CMP      r5,r0
-00001a  d104              BNE      |L17.38|
-;;;182            u32SectorBase = APP2_STATE_SECTOR_BASE;
-00001c  f44f36c0          MOV      r6,#0x18000
-;;;183            u32CountAddr = WDT_COUNT_APP2_ADDR;
-000020  4607              MOV      r7,r0
-;;;184            u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-000022  46b0              MOV      r8,r6
-000024  e001              B        |L17.42|
-                  |L17.38|
-;;;185        } else return;
-;;;186    
-;;;187        u32Count = READ_FLASH_DIRECT(u32CountAddr);
-;;;188        u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-;;;189        u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-;;;190        u32Feed = (u32Feed == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Feed;
-;;;191    
-;;;192        EFM_REG_Unlock();
-;;;193        EFM_FWMC_Cmd(ENABLE);
-;;;194        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-;;;195        EFM_SectorErase(u32SectorBase);
-;;;196        EFM_ProgramWord(u32FeedAddr, u32Feed);
-;;;197        EFM_ProgramWord(u32CountAddr, 0);
-;;;198        EFM_REG_Lock();
-;;;199    }
-000026  e8bd87f0          POP      {r4-r10,pc}
-                  |L17.42|
-00002a  4638              MOV      r0,r7                 ;187
-00002c  f7fffffe          BL       READ_FLASH_DIRECT
-000030  4681              MOV      r9,r0                 ;187
-000032  4640              MOV      r0,r8                 ;188
-000034  f7fffffe          BL       READ_FLASH_DIRECT
-000038  4604              MOV      r4,r0                 ;188
-00003a  f1090001          ADD      r0,r9,#1              ;189
-00003e  b908              CBNZ     r0,|L17.68|
-000040  2000              MOVS     r0,#0                 ;189
-000042  e000              B        |L17.70|
-                  |L17.68|
-000044  4648              MOV      r0,r9                 ;189
-                  |L17.70|
-000046  4681              MOV      r9,r0                 ;189
-000048  1c60              ADDS     r0,r4,#1              ;190
-00004a  b908              CBNZ     r0,|L17.80|
-00004c  2000              MOVS     r0,#0                 ;190
-00004e  e000              B        |L17.82|
-                  |L17.80|
-000050  4620              MOV      r0,r4                 ;190
-                  |L17.82|
-000052  4604              MOV      r4,r0                 ;190
-000054  f7fffffe          BL       EFM_REG_Unlock
-000058  2001              MOVS     r0,#1                 ;193
-00005a  f7fffffe          BL       EFM_FWMC_Cmd
-00005e  bf00              NOP                            ;194
-                  |L17.96|
-000060  f44f7080          MOV      r0,#0x100             ;194
-000064  f7fffffe          BL       EFM_GetStatus
-000068  2801              CMP      r0,#1                 ;194
-00006a  d1f9              BNE      |L17.96|
-00006c  4630              MOV      r0,r6                 ;195
-00006e  f7fffffe          BL       EFM_SectorErase
-000072  4621              MOV      r1,r4                 ;196
-000074  4640              MOV      r0,r8                 ;196
-000076  f7fffffe          BL       EFM_ProgramWord
-00007a  2100              MOVS     r1,#0                 ;197
-00007c  4638              MOV      r0,r7                 ;197
-00007e  f7fffffe          BL       EFM_ProgramWord
-000082  f7fffffe          BL       EFM_REG_Lock
-000086  bf00              NOP      
-000088  e7cd              B        |L17.38|
-;;;200    
+;;;166    
+;;;167    void ClearWdtResetCount(uint32_t u32Addr)
+000000  b510              PUSH     {r4,lr}
+;;;168    {
+000002  4604              MOV      r4,r0
+;;;169        if (u32Addr == WDT_COUNT_APP1_ADDR)      Rmu_ClearSlotFault(RMU_SLOT_APP1);
+000004  4806              LDR      r0,|L17.32|
+000006  4284              CMP      r4,r0
+000008  d103              BNE      |L17.18|
+00000a  2000              MOVS     r0,#0
+00000c  f7fffffe          BL       Rmu_ClearSlotFault
+000010  e005              B        |L17.30|
+                  |L17.18|
+;;;170        else if (u32Addr == WDT_COUNT_APP2_ADDR) Rmu_ClearSlotFault(RMU_SLOT_APP2);
+000012  4804              LDR      r0,|L17.36|
+000014  4284              CMP      r4,r0
+000016  d102              BNE      |L17.30|
+000018  2001              MOVS     r0,#1
+00001a  f7fffffe          BL       Rmu_ClearSlotFault
+                  |L17.30|
+;;;171    }
+00001e  bd10              POP      {r4,pc}
+;;;172    
                           ENDP
 
-00008a  0000              DCW      0x0000
-                  |L17.140|
+                  |L17.32|
                           DCD      0x00016008
-                  |L17.144|
+                  |L17.36|
                           DCD      0x00018008
 
                           AREA ||i.DisableAllNVICInterrupts||, CODE, READONLY, ALIGN=2
@@ -2148,298 +2020,156 @@
                           AREA ||i.GetCurrentSlot||, CODE, READONLY, ALIGN=1
 
                   GetCurrentSlot PROC
-;;;559    
-;;;560    static en_slot_type_t GetCurrentSlot(void) {
+;;;499    // ###########################################################################
+;;;500    static en_slot_type_t GetCurrentSlot(void) {
 000000  b510              PUSH     {r4,lr}
-;;;561        uint32_t s = READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR);
+;;;501        uint32_t s = READ_FLASH_DIRECT(APP_RUN_SLOT_ADDR);
 000002  f44f20f8          MOV      r0,#0x7c000
 000006  f7fffffe          BL       READ_FLASH_DIRECT
 00000a  4604              MOV      r4,r0
-;;;562        if (s == SLOT_A_MAGIC) return SLOT_APP1;
+;;;502        if (s == SLOT_A_MAGIC) return SLOT_APP1;
 00000c  f1b43f5a          CMP      r4,#0x5a5a5a5a
 000010  d102              BNE      |L21.24|
 000012  f04f305a          MOV      r0,#0x5a5a5a5a
                   |L21.22|
-;;;563        if (s == SLOT_B_MAGIC) return SLOT_APP2;
-;;;564        return SLOT_NONE;
-;;;565    }
+;;;503        if (s == SLOT_B_MAGIC) return SLOT_APP2;
+;;;504        return SLOT_NONE;
+;;;505    }
 000016  bd10              POP      {r4,pc}
                   |L21.24|
-000018  f1b43fa5          CMP      r4,#0xa5a5a5a5        ;563
+000018  f1b43fa5          CMP      r4,#0xa5a5a5a5        ;503
 00001c  d102              BNE      |L21.36|
-00001e  f04f30a5          MOV      r0,#0xa5a5a5a5        ;563
+00001e  f04f30a5          MOV      r0,#0xa5a5a5a5        ;503
 000022  e7f8              B        |L21.22|
                   |L21.36|
-000024  2000              MOVS     r0,#0                 ;564
+000024  2000              MOVS     r0,#0                 ;504
 000026  e7f6              B        |L21.22|
-;;;566    
+;;;506    
                           ENDP
 
 
                           AREA ||i.GetWdtFeedControl||, CODE, READONLY, ALIGN=1
 
                   GetWdtFeedControl PROC
-;;;231    
-;;;232    uint32_t GetWdtFeedControl(uint32_t u32Addr)
+;;;195    
+;;;196    uint32_t GetWdtFeedControl(uint32_t u32Addr)
 000000  b530              PUSH     {r4,r5,lr}
-;;;233    {
-000002  4604              MOV      r4,r0
-;;;234        uint32_t u32Value = READ_FLASH_DIRECT(u32Addr);
-000004  4620              MOV      r0,r4
-000006  f7fffffe          BL       READ_FLASH_DIRECT
-00000a  4605              MOV      r5,r0
-;;;235        return (u32Value == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Value;
-00000c  1c68              ADDS     r0,r5,#1
-00000e  b908              CBNZ     r0,|L22.20|
-000010  2000              MOVS     r0,#0
-                  |L22.18|
-;;;236    }
-000012  bd30              POP      {r4,r5,pc}
-                  |L22.20|
-000014  4628              MOV      r0,r5                 ;235
-000016  e7fc              B        |L22.18|
-;;;237    
+;;;197    {
+000002  b095              SUB      sp,sp,#0x54
+000004  4604              MOV      r4,r0
+;;;198        stc_rmu_slot_record_t stcRec;
+;;;199        en_rmu_slot_t eSlot;
+;;;200    
+;;;201        if (u32Addr == WDT_FEED_CONTROL_APP1_ADDR)      eSlot = RMU_SLOT_APP1;
+000006  f5b43fb0          CMP      r4,#0x16000
+00000a  d101              BNE      |L22.16|
+00000c  2500              MOVS     r5,#0
+00000e  e007              B        |L22.32|
+                  |L22.16|
+;;;202        else if (u32Addr == WDT_FEED_CONTROL_APP2_ADDR) eSlot = RMU_SLOT_APP2;
+000010  f5b43fc0          CMP      r4,#0x18000
+000014  d101              BNE      |L22.26|
+000016  2501              MOVS     r5,#1
+000018  e002              B        |L22.32|
+                  |L22.26|
+;;;203        else return WDT_FEED_ENABLE;
+00001a  2000              MOVS     r0,#0
+                  |L22.28|
+;;;204    
+;;;205        if (Rmu_LoadSlotRecord(eSlot, &stcRec) != 0) return WDT_FEED_ENABLE;
+;;;206        return (stcRec.u32FeedCtrl == 0xFFFFFFFFUL) ? WDT_FEED_ENABLE : stcRec.u32FeedCtrl;
+;;;207    }
+00001c  b015              ADD      sp,sp,#0x54
+00001e  bd30              POP      {r4,r5,pc}
+                  |L22.32|
+000020  4669              MOV      r1,sp                 ;205
+000022  4628              MOV      r0,r5                 ;205
+000024  f7fffffe          BL       Rmu_LoadSlotRecord
+000028  b108              CBZ      r0,|L22.46|
+00002a  2000              MOVS     r0,#0                 ;205
+00002c  e7f6              B        |L22.28|
+                  |L22.46|
+00002e  9800              LDR      r0,[sp,#0]            ;206
+000030  1c40              ADDS     r0,r0,#1              ;206
+000032  b908              CBNZ     r0,|L22.56|
+000034  2000              MOVS     r0,#0                 ;206
+000036  e7f1              B        |L22.28|
+                  |L22.56|
+000038  9800              LDR      r0,[sp,#0]            ;206
+00003a  e7ef              B        |L22.28|
+;;;208    
                           ENDP
 
 
-                          AREA ||i.GetWdtResetCount||, CODE, READONLY, ALIGN=1
+                          AREA ||i.GetWdtResetCount||, CODE, READONLY, ALIGN=2
 
                   GetWdtResetCount PROC
 ;;;134    // ###########################################################################
 ;;;135    uint32_t GetWdtResetCount(uint32_t u32Addr)
-000000  b530              PUSH     {r4,r5,lr}
+000000  b510              PUSH     {r4,lr}
 ;;;136    {
 000002  4604              MOV      r4,r0
-;;;137        uint32_t u32Count = READ_FLASH_DIRECT(u32Addr);
-000004  4620              MOV      r0,r4
-000006  f7fffffe          BL       READ_FLASH_DIRECT
-00000a  4605              MOV      r5,r0
-;;;138        return (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-00000c  1c68              ADDS     r0,r5,#1
-00000e  b908              CBNZ     r0,|L23.20|
-000010  2000              MOVS     r0,#0
+;;;137        if (u32Addr == WDT_COUNT_APP1_ADDR) return Rmu_GetFaultCount(RMU_SLOT_APP1);
+000004  4807              LDR      r0,|L23.36|
+000006  4284              CMP      r4,r0
+000008  d103              BNE      |L23.18|
+00000a  2000              MOVS     r0,#0
+00000c  f7fffffe          BL       Rmu_GetFaultCount
+                  |L23.16|
+;;;138        if (u32Addr == WDT_COUNT_APP2_ADDR) return Rmu_GetFaultCount(RMU_SLOT_APP2);
+;;;139        return 0U;
+;;;140    }
+000010  bd10              POP      {r4,pc}
                   |L23.18|
-;;;139    }
-000012  bd30              POP      {r4,r5,pc}
-                  |L23.20|
-000014  4628              MOV      r0,r5                 ;138
-000016  e7fc              B        |L23.18|
-;;;140    
+000012  4805              LDR      r0,|L23.40|
+000014  4284              CMP      r4,r0                 ;138
+000016  d103              BNE      |L23.32|
+000018  2001              MOVS     r0,#1                 ;138
+00001a  f7fffffe          BL       Rmu_GetFaultCount
+00001e  e7f7              B        |L23.16|
+                  |L23.32|
+000020  2000              MOVS     r0,#0                 ;139
+000022  e7f5              B        |L23.16|
+;;;141    
                           ENDP
 
-
-                          AREA ||i.GetWdtResetType||, CODE, READONLY, ALIGN=2
-
-                  GetWdtResetType PROC
-;;;541    // ###########################################################################
-;;;542    static en_wdt_reset_type_t GetWdtResetType(void)
-000000  e92d41f0          PUSH     {r4-r8,lr}
-;;;543    {
-;;;544        en_wdt_reset_type_t enType = WDT_RESET_NONE;
-000004  2400              MOVS     r4,#0
-;;;545        bool bSwdt = (SET == RMU_GetStatus(RMU_FLAG_SWDT));
-000006  2040              MOVS     r0,#0x40
-000008  f7fffffe          BL       RMU_GetStatus
-00000c  2801              CMP      r0,#1
-00000e  d100              BNE      |L24.18|
-000010  e000              B        |L24.20|
-                  |L24.18|
-000012  2000              MOVS     r0,#0
-                  |L24.20|
-000014  4605              MOV      r5,r0
-;;;546        bool bWdt  = (SET == RMU_GetStatus(RMU_FLAG_WDT));
-000016  2020              MOVS     r0,#0x20
-000018  f7fffffe          BL       RMU_GetStatus
-00001c  2801              CMP      r0,#1
-00001e  d100              BNE      |L24.34|
-000020  e000              B        |L24.36|
-                  |L24.34|
-000022  2000              MOVS     r0,#0
-                  |L24.36|
-000024  4606              MOV      r6,r0
-;;;547        bool bMpu  = (SET == RMU_GetStatus(RMU_FLAG_MPU_ERR));
-000026  f44f7000          MOV      r0,#0x200
-00002a  f7fffffe          BL       RMU_GetStatus
-00002e  2801              CMP      r0,#1
-000030  d100              BNE      |L24.52|
-000032  e000              B        |L24.54|
-                  |L24.52|
-000034  2000              MOVS     r0,#0
-                  |L24.54|
-000036  4607              MOV      r7,r0
-;;;548    
-;;;549        /* 读取后立即清除 RMU 粘性复位标志 (RSTF0)，防止残留导致下次误判；RSTF0 受 PWC 保护，先解锁再清 */
-;;;550        PWC_REG_Unlock(PWC_UNLOCK_CODE1);
-000038  f24a5002          MOV      r0,#0xa502
-00003c  490f              LDR      r1,|L24.124|
-00003e  8809              LDRH     r1,[r1,#0]
-000040  4301              ORRS     r1,r1,r0
-000042  4a0f              LDR      r2,|L24.128|
-000044  f8a213fe          STRH     r1,[r2,#0x3fe]
-000048  bf00              NOP      
-;;;551        RMU_ClearStatus();
-00004a  f7fffffe          BL       RMU_ClearStatus
-;;;552        PWC_REG_Lock(PWC_UNLOCK_CODE1);
-00004e  f24a5002          MOV      r0,#0xa502
-000052  490a              LDR      r1,|L24.124|
-000054  8809              LDRH     r1,[r1,#0]
-000056  4381              BICS     r1,r1,r0
-000058  f4414125          ORR      r1,r1,#0xa500
-00005c  4a08              LDR      r2,|L24.128|
-00005e  f8a213fe          STRH     r1,[r2,#0x3fe]
-000062  bf00              NOP      
-;;;553    
-;;;554        if (bSwdt)      enType = WDT_RESET_SWDT;
-000064  b10d              CBZ      r5,|L24.106|
-000066  2401              MOVS     r4,#1
-000068  e004              B        |L24.116|
-                  |L24.106|
-;;;555        else if (bWdt)  enType = WDT_RESET_WDT;
-00006a  b10e              CBZ      r6,|L24.112|
-00006c  2402              MOVS     r4,#2
-00006e  e001              B        |L24.116|
-                  |L24.112|
-;;;556        else if (bMpu)  enType = WDT_RESET_MPU_ERR;
-000070  b107              CBZ      r7,|L24.116|
-000072  2403              MOVS     r4,#3
-                  |L24.116|
-;;;557        return enType;
-000074  4620              MOV      r0,r4
-;;;558    }
-000076  e8bd81f0          POP      {r4-r8,pc}
-;;;559    
-                          ENDP
-
-00007a  0000              DCW      0x0000
-                  |L24.124|
-                          DCD      0x400543fe
-                  |L24.128|
-                          DCD      0x40054000
-
-                          AREA ||i.HandleWatchdogReset||, CODE, READONLY, ALIGN=2
-
-                  HandleWatchdogReset PROC
-;;;585    
-;;;586    static void HandleWatchdogReset(stc_boot_context_t *pstcCtx) {
-000000  b570              PUSH     {r4-r6,lr}
-000002  4604              MOV      r4,r0
-;;;587        if (pstcCtx->eWdtResetType == WDT_RESET_NONE) return;
-000004  7820              LDRB     r0,[r4,#0]
-000006  b900              CBNZ     r0,|L25.10|
-                  |L25.8|
-;;;588        stc_app_info_t *app = NULL;
-;;;589        uint32_t addr = 0;
-;;;590    
-;;;591        if (pstcCtx->eCurrentSlot == SLOT_APP1) {
-;;;592            app = &pstcCtx->stcApp1; addr = WDT_COUNT_APP1_ADDR;
-;;;593        } else if (pstcCtx->eCurrentSlot == SLOT_APP2) {
-;;;594            app = &pstcCtx->stcApp2; addr = WDT_COUNT_APP2_ADDR;
-;;;595        } else return;
-;;;596    
-;;;597        if (app->eState == APP_STATE_AVAILABLE) {
-;;;598            UpdateWdtResetCount(addr, 0);
-;;;599            app->u32WdtCount = (app->eSlot == SLOT_APP1) ? GetWdtResetCount(WDT_COUNT_APP1_ADDR) : GetWdtResetCount(WDT_COUNT_APP2_ADDR);
-;;;600            if (app->u32WdtCount >= MAX_WDT_RESET_COUNT) app->eState = APP_STATE_DISABLED;
-;;;601        }
-;;;602    }
-000008  bd70              POP      {r4-r6,pc}
-                  |L25.10|
-00000a  2500              MOVS     r5,#0                 ;588
-00000c  2600              MOVS     r6,#0                 ;589
-00000e  6860              LDR      r0,[r4,#4]            ;591
-000010  f1b03f5a          CMP      r0,#0x5a5a5a5a        ;591
-000014  d103              BNE      |L25.30|
-000016  f104050c          ADD      r5,r4,#0xc            ;592
-00001a  4e12              LDR      r6,|L25.100|
-00001c  e008              B        |L25.48|
-                  |L25.30|
-00001e  6860              LDR      r0,[r4,#4]            ;593
-000020  f1b03fa5          CMP      r0,#0xa5a5a5a5        ;593
-000024  d103              BNE      |L25.46|
-000026  f104051c          ADD      r5,r4,#0x1c           ;594
-00002a  4e0f              LDR      r6,|L25.104|
-00002c  e000              B        |L25.48|
-                  |L25.46|
-00002e  e7eb              B        |L25.8|
-                  |L25.48|
-000030  7a28              LDRB     r0,[r5,#8]            ;597
-000032  b9a0              CBNZ     r0,|L25.94|
-000034  2100              MOVS     r1,#0                 ;598
-000036  4630              MOV      r0,r6                 ;598
-000038  f7fffffe          BL       UpdateWdtResetCount
-00003c  6828              LDR      r0,[r5,#0]            ;599
-00003e  f1b03f5a          CMP      r0,#0x5a5a5a5a        ;599
-000042  d103              BNE      |L25.76|
-000044  4807              LDR      r0,|L25.100|
-000046  f7fffffe          BL       GetWdtResetCount
-00004a  e002              B        |L25.82|
-                  |L25.76|
-00004c  4806              LDR      r0,|L25.104|
-00004e  f7fffffe          BL       GetWdtResetCount
-                  |L25.82|
-000052  6068              STR      r0,[r5,#4]            ;599
-000054  6868              LDR      r0,[r5,#4]            ;600
-000056  2803              CMP      r0,#3                 ;600
-000058  d301              BCC      |L25.94|
-00005a  2001              MOVS     r0,#1                 ;600
-00005c  7228              STRB     r0,[r5,#8]            ;600
-                  |L25.94|
-00005e  bf00              NOP      
-000060  e7d2              B        |L25.8|
-;;;603    
-                          ENDP
-
-000062  0000              DCW      0x0000
-                  |L25.100|
+                  |L23.36|
                           DCD      0x00016008
-                  |L25.104|
+                  |L23.40|
                           DCD      0x00018008
 
-                          AREA ||i.InitAppInfo||, CODE, READONLY, ALIGN=2
+                          AREA ||i.InitAppInfo||, CODE, READONLY, ALIGN=1
 
                   InitAppInfo PROC
-;;;573    
-;;;574    static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr) {
-000000  b5f0              PUSH     {r4-r7,lr}
+;;;513    
+;;;514    static void InitAppInfo(stc_app_info_t *pstcApp, en_slot_type_t eSlot, uint32_t u32Addr) {
+000000  b570              PUSH     {r4-r6,lr}
 000002  4604              MOV      r4,r0
 000004  460d              MOV      r5,r1
 000006  4616              MOV      r6,r2
-;;;575        pstcApp->eSlot = eSlot;
+;;;515        pstcApp->eSlot = eSlot;
 000008  6025              STR      r5,[r4,#0]
-;;;576        pstcApp->u32StartAddr = u32Addr;
+;;;516        pstcApp->u32StartAddr = u32Addr;
 00000a  60e6              STR      r6,[r4,#0xc]
-;;;577        uint32_t cnt = (eSlot == SLOT_APP1) ? READ_FLASH_DIRECT(WDT_COUNT_APP1_ADDR) : READ_FLASH_DIRECT(WDT_COUNT_APP2_ADDR);
+;;;517        pstcApp->u32WdtCount = Rmu_GetFaultCount((eSlot == SLOT_APP1) ? RMU_SLOT_APP1 : RMU_SLOT_APP2);
 00000c  f1b53f5a          CMP      r5,#0x5a5a5a5a
-000010  d103              BNE      |L26.26|
-000012  4808              LDR      r0,|L26.52|
-000014  f7fffffe          BL       READ_FLASH_DIRECT
-000018  e002              B        |L26.32|
-                  |L26.26|
-00001a  4807              LDR      r0,|L26.56|
-00001c  f7fffffe          BL       READ_FLASH_DIRECT
-                  |L26.32|
-000020  4607              MOV      r7,r0
-;;;578        pstcApp->u32WdtCount = (cnt == 0xFFFFFFFF) ? 0 : cnt;
-000022  1c78              ADDS     r0,r7,#1
-000024  b908              CBNZ     r0,|L26.42|
-000026  2000              MOVS     r0,#0
-000028  e000              B        |L26.44|
-                  |L26.42|
-00002a  4638              MOV      r0,r7
-                  |L26.44|
-00002c  6060              STR      r0,[r4,#4]
-;;;579        pstcApp->eState = APP_STATE_AVAILABLE;
-00002e  2000              MOVS     r0,#0
-000030  7220              STRB     r0,[r4,#8]
-;;;580    }
-000032  bdf0              POP      {r4-r7,pc}
-;;;581    
+000010  d001              BEQ      |L24.22|
+000012  2101              MOVS     r1,#1
+000014  e000              B        |L24.24|
+                  |L24.22|
+000016  2100              MOVS     r1,#0
+                  |L24.24|
+000018  4608              MOV      r0,r1
+00001a  f7fffffe          BL       Rmu_GetFaultCount
+00001e  6060              STR      r0,[r4,#4]
+;;;518        pstcApp->eState = APP_STATE_AVAILABLE;
+000020  2000              MOVS     r0,#0
+000022  7220              STRB     r0,[r4,#8]
+;;;519    }
+000024  bd70              POP      {r4-r6,pc}
+;;;520    
                           ENDP
 
-                  |L26.52|
-                          DCD      0x00016008
-                  |L26.56|
-                          DCD      0x00018008
 
                           AREA ||i.InitSharedCtrl||, CODE, READONLY, ALIGN=2
 
@@ -2447,18 +2177,18 @@
 ;;;104    // ###########################################################################
 ;;;105    void InitSharedCtrl(void)
 000000  bf00              NOP      
-000002  490b              LDR      r1,|L27.48|
+000002  490b              LDR      r1,|L25.48|
 ;;;106    {
 ;;;107        stc_shared_ctrl_t *pCtrl = GetSharedCtrl();
 000004  4608              MOV      r0,r1
 ;;;108        if (pCtrl->app1_feed_ctrl != WDT_FEED_ENABLE &&
 000006  6801              LDR      r1,[r0,#0]
-000008  b189              CBZ      r1,|L27.46|
+000008  b189              CBZ      r1,|L25.46|
 ;;;109            pCtrl->app1_feed_ctrl != WDT_FEED_DISABLE)
 00000a  6801              LDR      r1,[r0,#0]
-00000c  4a09              LDR      r2,|L27.52|
+00000c  4a09              LDR      r2,|L25.52|
 00000e  4291              CMP      r1,r2
-000010  d00d              BEQ      |L27.46|
+000010  d00d              BEQ      |L25.46|
 ;;;110        {
 ;;;111            pCtrl->app1_feed_ctrl = WDT_FEED_ENABLE;
 000012  2100              MOVS     r1,#0
@@ -2469,26 +2199,81 @@
 000018  6081              STR      r1,[r0,#8]
 ;;;114            for (int i = 0; i < 5; i++) pCtrl->reserved[i] = 0;
 00001a  bf00              NOP      
-00001c  e005              B        |L27.42|
-                  |L27.30|
+00001c  e005              B        |L25.42|
+                  |L25.30|
 00001e  2300              MOVS     r3,#0
 000020  f100020c          ADD      r2,r0,#0xc
 000024  f8423021          STR      r3,[r2,r1,LSL #2]
 000028  1c49              ADDS     r1,r1,#1
-                  |L27.42|
+                  |L25.42|
 00002a  2905              CMP      r1,#5
-00002c  dbf7              BLT      |L27.30|
-                  |L27.46|
+00002c  dbf7              BLT      |L25.30|
+                  |L25.46|
 ;;;115        }
 ;;;116    }
 00002e  4770              BX       lr
 ;;;117    
                           ENDP
 
-                  |L27.48|
+                  |L25.48|
                           DCD      0x20026f00
-                  |L27.52|
+                  |L25.52|
                           DCD      0xdeadbeef
+
+                          AREA ||i.IsAppFirmwareValid||, CODE, READONLY, ALIGN=2
+
+                  IsAppFirmwareValid PROC
+;;;529     * 完整校验由 OTA 下载阶段的 0x37 CRC 负责。 */
+;;;530    static bool IsAppFirmwareValid(uint32_t u32AppAddr) {
+000000  b570              PUSH     {r4-r6,lr}
+000002  4606              MOV      r6,r0
+;;;531        uint32_t u32Sp = READ_FLASH_DIRECT(u32AppAddr);
+000004  4630              MOV      r0,r6
+000006  f7fffffe          BL       READ_FLASH_DIRECT
+00000a  4605              MOV      r5,r0
+;;;532        uint32_t u32ResetVec = READ_FLASH_DIRECT(u32AppAddr + 4U);
+00000c  1d30              ADDS     r0,r6,#4
+00000e  f7fffffe          BL       READ_FLASH_DIRECT
+000012  4604              MOV      r4,r0
+;;;533    
+;;;534        if (u32Sp < RAM_START_ADDR || u32Sp > RAM_END_ADDR) return false;
+000014  480a              LDR      r0,|L26.64|
+000016  4285              CMP      r5,r0
+000018  d302              BCC      |L26.32|
+00001a  480a              LDR      r0,|L26.68|
+00001c  4285              CMP      r5,r0
+00001e  d901              BLS      |L26.36|
+                  |L26.32|
+000020  2000              MOVS     r0,#0
+                  |L26.34|
+;;;535        if (u32ResetVec == 0xFFFFFFFFUL) return false;
+;;;536        if (u32ResetVec < APP1_START_ADDR || u32ResetVec > APP2_END_ADDR) return false;
+;;;537        return true;
+;;;538    }
+000022  bd70              POP      {r4-r6,pc}
+                  |L26.36|
+000024  1c60              ADDS     r0,r4,#1              ;535
+000026  b908              CBNZ     r0,|L26.44|
+000028  2000              MOVS     r0,#0                 ;535
+00002a  e7fa              B        |L26.34|
+                  |L26.44|
+00002c  f5b43fd0          CMP      r4,#0x1a000           ;536
+000030  d302              BCC      |L26.56|
+000032  f5b42fdc          CMP      r4,#0x6e000           ;536
+000036  d901              BLS      |L26.60|
+                  |L26.56|
+000038  2000              MOVS     r0,#0                 ;536
+00003a  e7f2              B        |L26.34|
+                  |L26.60|
+00003c  2001              MOVS     r0,#1                 ;537
+00003e  e7f0              B        |L26.34|
+;;;539    
+                          ENDP
+
+                  |L26.64|
+                          DCD      0x1fff8000
+                  |L26.68|
+                          DCD      0x20027000
 
                           AREA ||i.READ_FLASH_DIRECT||, CODE, READONLY, ALIGN=2
 
@@ -2502,11 +2287,11 @@
 ;;;73         uint32_t u32FrmcState;
 ;;;74     
 ;;;75         u32FrmcState = CM_EFM->FRMC;
-000004  4b06              LDR      r3,|L28.32|
+000004  4b06              LDR      r3,|L27.32|
 000006  681a              LDR      r2,[r3,#0]
 ;;;76         CM_EFM->FRMC = (u32FrmcState & ~EFM_FRMC_CACHE);
 000008  f4223380          BIC      r3,r2,#0x10000
-00000c  4c04              LDR      r4,|L28.32|
+00000c  4c04              LDR      r4,|L27.32|
 00000e  6023              STR      r3,[r4,#0]
 ;;;77         __DSB();
 000010  f3bf8f4f          DSB      
@@ -2524,560 +2309,541 @@
 ;;;84     void Bootloader_Delay(uint32_t u32Count)
                           ENDP
 
-                  |L28.32|
+                  |L27.32|
                           DCD      0x40010408
 
                           AREA ||i.RunBootloaderForever||, CODE, READONLY, ALIGN=2
 
                   RunBootloaderForever PROC
-;;;625    
-;;;626    static void RunBootloaderForever(void) {
-000000  a204              ADR      r2,|L29.20|
-;;;627        MAIN_D("  Both APPs disabled, entering UDS programming mode for recovery\r\n");
-000002  4906              LDR      r1,|L29.28|
+;;;561    
+;;;562    static void RunBootloaderForever(void) {
+000000  a204              ADR      r2,|L28.20|
+;;;563        MAIN_D("  Both APPs disabled, entering UDS programming mode for recovery\r\n");
+000002  4906              LDR      r1,|L28.28|
 000004  2000              MOVS     r0,#0
 000006  f7fffffe          BL       SEGGER_RTT_printf
-;;;628        UdsOta_Bootloader_Enter();
+;;;564        UdsOta_Bootloader_Enter();
 00000a  f7fffffe          BL       UdsOta_Bootloader_Enter
-;;;629        /* UdsOta_Bootloader_Enter never returns */
-;;;630        while(1) { __nop(); }
-00000e  e000              B        |L29.18|
-                  |L29.16|
+;;;565        /* UdsOta_Bootloader_Enter never returns */
+;;;566        while(1) { __nop(); }
+00000e  e000              B        |L28.18|
+                  |L28.16|
 000010  bf00              NOP      
-                  |L29.18|
-000012  e7fd              B        |L29.16|
-;;;631    }
-;;;632    static void CheckAndClearAppState(void) {
+                  |L28.18|
+000012  e7fd              B        |L28.16|
+;;;567    }
+;;;568    static void CheckAndClearAppState(void) {
                           ENDP
 
-                  |L29.20|
+                  |L28.20|
 000014  4d41494e          DCB      "MAIN",0
 000018  00      
 000019  00                DCB      0
 00001a  00                DCB      0
 00001b  00                DCB      0
-                  |L29.28|
+                  |L28.28|
                           DCD      ||.conststring||+0xa4
 
                           AREA ||i.SelectTargetSlot||, CODE, READONLY, ALIGN=1
 
                   SelectTargetSlot PROC
-;;;603    
-;;;604    static void SelectTargetSlot(stc_boot_context_t *pstcCtx) {
+;;;539    
+;;;540    static void SelectTargetSlot(stc_boot_context_t *pstcCtx) {
 000000  7d03              LDRB     r3,[r0,#0x14]
-;;;605        uint8_t aok = (pstcCtx->stcApp1.eState == APP_STATE_AVAILABLE);
-000002  b90b              CBNZ     r3,|L30.8|
+;;;541        uint8_t aok = (pstcCtx->stcApp1.eState == APP_STATE_AVAILABLE);
+000002  b90b              CBNZ     r3,|L29.8|
 000004  2301              MOVS     r3,#1
-000006  e000              B        |L30.10|
-                  |L30.8|
+000006  e000              B        |L29.10|
+                  |L29.8|
 000008  2300              MOVS     r3,#0
-                  |L30.10|
+                  |L29.10|
 00000a  4619              MOV      r1,r3
-;;;606        uint8_t bok = (pstcCtx->stcApp2.eState == APP_STATE_AVAILABLE);
+;;;542        uint8_t bok = (pstcCtx->stcApp2.eState == APP_STATE_AVAILABLE);
 00000c  2324              MOVS     r3,#0x24
 00000e  5c1b              LDRB     r3,[r3,r0]
-000010  b90b              CBNZ     r3,|L30.22|
+000010  b90b              CBNZ     r3,|L29.22|
 000012  2301              MOVS     r3,#1
-000014  e000              B        |L30.24|
-                  |L30.22|
+000014  e000              B        |L29.24|
+                  |L29.22|
 000016  2300              MOVS     r3,#0
-                  |L30.24|
+                  |L29.24|
 000018  461a              MOV      r2,r3
-;;;607    
-;;;608        if (pstcCtx->eCurrentSlot == SLOT_APP1 && aok) pstcCtx->eTargetSlot = SLOT_APP1;
+;;;543    
+;;;544        if (pstcCtx->eCurrentSlot == SLOT_APP1 && aok) pstcCtx->eTargetSlot = SLOT_APP1;
 00001a  6843              LDR      r3,[r0,#4]
 00001c  f1b33f5a          CMP      r3,#0x5a5a5a5a
-000020  d104              BNE      |L30.44|
-000022  b119              CBZ      r1,|L30.44|
+000020  d104              BNE      |L29.44|
+000022  b119              CBZ      r1,|L29.44|
 000024  f04f335a          MOV      r3,#0x5a5a5a5a
 000028  6083              STR      r3,[r0,#8]
-00002a  e01a              B        |L30.98|
-                  |L30.44|
-;;;609        else if (pstcCtx->eCurrentSlot == SLOT_APP2 && bok) pstcCtx->eTargetSlot = SLOT_APP2;
+00002a  e01a              B        |L29.98|
+                  |L29.44|
+;;;545        else if (pstcCtx->eCurrentSlot == SLOT_APP2 && bok) pstcCtx->eTargetSlot = SLOT_APP2;
 00002c  6843              LDR      r3,[r0,#4]
 00002e  f1b33fa5          CMP      r3,#0xa5a5a5a5
-000032  d104              BNE      |L30.62|
-000034  b11a              CBZ      r2,|L30.62|
+000032  d104              BNE      |L29.62|
+000034  b11a              CBZ      r2,|L29.62|
 000036  f04f33a5          MOV      r3,#0xa5a5a5a5
 00003a  6083              STR      r3,[r0,#8]
-00003c  e011              B        |L30.98|
-                  |L30.62|
-;;;610        else if (bok) { pstcCtx->eTargetSlot = SLOT_APP2; pstcCtx->u8NeedUpdateSlotFlag = 1; }
-00003e  b132              CBZ      r2,|L30.78|
+00003c  e011              B        |L29.98|
+                  |L29.62|
+;;;546        else if (bok) { pstcCtx->eTargetSlot = SLOT_APP2; pstcCtx->u8NeedUpdateSlotFlag = 1; }
+00003e  b132              CBZ      r2,|L29.78|
 000040  f04f33a5          MOV      r3,#0xa5a5a5a5
 000044  6083              STR      r3,[r0,#8]
 000046  2301              MOVS     r3,#1
 000048  f880302c          STRB     r3,[r0,#0x2c]
-00004c  e009              B        |L30.98|
-                  |L30.78|
-;;;611        else if (aok) { pstcCtx->eTargetSlot = SLOT_APP1; pstcCtx->u8NeedUpdateSlotFlag = 1; }
-00004e  b131              CBZ      r1,|L30.94|
+00004c  e009              B        |L29.98|
+                  |L29.78|
+;;;547        else if (aok) { pstcCtx->eTargetSlot = SLOT_APP1; pstcCtx->u8NeedUpdateSlotFlag = 1; }
+00004e  b131              CBZ      r1,|L29.94|
 000050  f04f335a          MOV      r3,#0x5a5a5a5a
 000054  6083              STR      r3,[r0,#8]
 000056  2301              MOVS     r3,#1
 000058  f880302c          STRB     r3,[r0,#0x2c]
-00005c  e001              B        |L30.98|
-                  |L30.94|
-;;;612        else pstcCtx->eTargetSlot = SLOT_NONE;
+00005c  e001              B        |L29.98|
+                  |L29.94|
+;;;548        else pstcCtx->eTargetSlot = SLOT_NONE;
 00005e  2300              MOVS     r3,#0
 000060  6083              STR      r3,[r0,#8]
-                  |L30.98|
-;;;613    }
+                  |L29.98|
+;;;549    }
 000062  4770              BX       lr
-;;;614    
+;;;550    
                           ENDP
 
 
                           AREA ||i.SetWdtFeedControl||, CODE, READONLY, ALIGN=2
 
                   SetWdtFeedControl PROC
-;;;200    
-;;;201    void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value)
-000000  e92d47f0          PUSH     {r4-r10,lr}
-;;;202    {
+;;;172    
+;;;173    void SetWdtFeedControl(uint32_t u32Addr, uint32_t u32Value)
+000000  b570              PUSH     {r4-r6,lr}
+;;;174    {
+000002  b096              SUB      sp,sp,#0x58
 000004  4605              MOV      r5,r0
 000006  460c              MOV      r4,r1
-;;;203        uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-;;;204        uint32_t u32Count, u32Feed;
-;;;205    
-;;;206        if (u32Value != WDT_FEED_ENABLE && u32Value != WDT_FEED_DISABLE) return;
-000008  b124              CBZ      r4,|L31.20|
-00000a  4820              LDR      r0,|L31.140|
+;;;175        stc_rmu_slot_record_t stcRec;
+;;;176        en_rmu_slot_t eSlot;
+;;;177    
+;;;178        if (u32Value != WDT_FEED_ENABLE && u32Value != WDT_FEED_DISABLE) return;
+000008  b124              CBZ      r4,|L30.20|
+00000a  4818              LDR      r0,|L30.108|
 00000c  4284              CMP      r4,r0
-00000e  d001              BEQ      |L31.20|
-                  |L31.16|
-;;;207    
-;;;208        if (u32Addr == WDT_FEED_CONTROL_APP1_ADDR) {
-;;;209            u32SectorBase = APP1_STATE_SECTOR_BASE;
-;;;210            u32CountAddr = WDT_COUNT_APP1_ADDR;
-;;;211            u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-;;;212        } else if (u32Addr == WDT_FEED_CONTROL_APP2_ADDR) {
-;;;213            u32SectorBase = APP2_STATE_SECTOR_BASE;
-;;;214            u32CountAddr = WDT_COUNT_APP2_ADDR;
-;;;215            u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-;;;216        } else return;
-;;;217    
-;;;218        u32Count = READ_FLASH_DIRECT(u32CountAddr);
-;;;219        u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-;;;220        u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-;;;221        u32Feed = u32Value;
-;;;222    
-;;;223        EFM_REG_Unlock();
-;;;224        EFM_FWMC_Cmd(ENABLE);
-;;;225        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-;;;226        EFM_SectorErase(u32SectorBase);
-;;;227        EFM_ProgramWord(u32FeedAddr, u32Feed);
-;;;228        EFM_ProgramWord(u32CountAddr, u32Count);
-;;;229        EFM_REG_Lock();
-;;;230    }
-000010  e8bd87f0          POP      {r4-r10,pc}
-                  |L31.20|
-000014  f5b53fb0          CMP      r5,#0x16000           ;208
-000018  d104              BNE      |L31.36|
-00001a  f44f36b0          MOV      r6,#0x16000           ;209
-00001e  4f1c              LDR      r7,|L31.144|
-000020  46b0              MOV      r8,r6                 ;211
-000022  e008              B        |L31.54|
-                  |L31.36|
-000024  f5b53fc0          CMP      r5,#0x18000           ;212
-000028  d104              BNE      |L31.52|
-00002a  f44f36c0          MOV      r6,#0x18000           ;213
-00002e  4f19              LDR      r7,|L31.148|
-000030  46b0              MOV      r8,r6                 ;215
-000032  e000              B        |L31.54|
-                  |L31.52|
-000034  e7ec              B        |L31.16|
-                  |L31.54|
-000036  4638              MOV      r0,r7                 ;218
-000038  f7fffffe          BL       READ_FLASH_DIRECT
-00003c  4682              MOV      r10,r0                ;218
-00003e  4640              MOV      r0,r8                 ;219
-000040  f7fffffe          BL       READ_FLASH_DIRECT
-000044  4681              MOV      r9,r0                 ;219
-000046  f10a0001          ADD      r0,r10,#1             ;220
-00004a  b908              CBNZ     r0,|L31.80|
-00004c  2000              MOVS     r0,#0                 ;220
-00004e  e000              B        |L31.82|
-                  |L31.80|
-000050  4650              MOV      r0,r10                ;220
-                  |L31.82|
-000052  4682              MOV      r10,r0                ;220
-000054  46a1              MOV      r9,r4                 ;221
-000056  f7fffffe          BL       EFM_REG_Unlock
-00005a  2001              MOVS     r0,#1                 ;224
-00005c  f7fffffe          BL       EFM_FWMC_Cmd
-000060  bf00              NOP                            ;225
-                  |L31.98|
-000062  f44f7080          MOV      r0,#0x100             ;225
-000066  f7fffffe          BL       EFM_GetStatus
-00006a  2801              CMP      r0,#1                 ;225
-00006c  d1f9              BNE      |L31.98|
-00006e  4630              MOV      r0,r6                 ;226
-000070  f7fffffe          BL       EFM_SectorErase
-000074  4649              MOV      r1,r9                 ;227
-000076  4640              MOV      r0,r8                 ;227
-000078  f7fffffe          BL       EFM_ProgramWord
-00007c  4651              MOV      r1,r10                ;228
-00007e  4638              MOV      r0,r7                 ;228
-000080  f7fffffe          BL       EFM_ProgramWord
-000084  f7fffffe          BL       EFM_REG_Lock
-000088  bf00              NOP      
-00008a  e7c1              B        |L31.16|
-;;;231    
+00000e  d001              BEQ      |L30.20|
+                  |L30.16|
+;;;179        if (u32Addr == WDT_FEED_CONTROL_APP1_ADDR)      eSlot = RMU_SLOT_APP1;
+;;;180        else if (u32Addr == WDT_FEED_CONTROL_APP2_ADDR) eSlot = RMU_SLOT_APP2;
+;;;181        else return;
+;;;182    
+;;;183        if (Rmu_LoadSlotRecord(eSlot, &stcRec) != 0) return;
+;;;184        if (stcRec.u32Magic != RMU_RECORD_MAGIC) {
+;;;185            stcRec.u32Magic = RMU_RECORD_MAGIC;
+;;;186            stcRec.u32LastResetCause = 0U;
+;;;187            stcRec.u32LastFaultCause = 0U;
+;;;188            stcRec.u32NonFaultCount = 0U;
+;;;189        }
+;;;190        if (stcRec.u32FaultCount == 0xFFFFFFFFUL)    stcRec.u32FaultCount = 0U;
+;;;191        if (stcRec.u32NonFaultCount == 0xFFFFFFFFUL) stcRec.u32NonFaultCount = 0U;
+;;;192        stcRec.u32FeedCtrl = u32Value;
+;;;193        Rmu_SaveSlotRecord(eSlot, &stcRec);
+;;;194    }
+000010  b016              ADD      sp,sp,#0x58
+000012  bd70              POP      {r4-r6,pc}
+                  |L30.20|
+000014  f5b53fb0          CMP      r5,#0x16000           ;179
+000018  d101              BNE      |L30.30|
+00001a  2600              MOVS     r6,#0                 ;179
+00001c  e005              B        |L30.42|
+                  |L30.30|
+00001e  f5b53fc0          CMP      r5,#0x18000           ;180
+000022  d101              BNE      |L30.40|
+000024  2601              MOVS     r6,#1                 ;180
+000026  e000              B        |L30.42|
+                  |L30.40|
+000028  e7f2              B        |L30.16|
+                  |L30.42|
+00002a  a901              ADD      r1,sp,#4              ;183
+00002c  4630              MOV      r0,r6                 ;183
+00002e  f7fffffe          BL       Rmu_LoadSlotRecord
+000032  b100              CBZ      r0,|L30.54|
+000034  e7ec              B        |L30.16|
+                  |L30.54|
+000036  490e              LDR      r1,|L30.112|
+000038  9802              LDR      r0,[sp,#8]            ;184
+00003a  4288              CMP      r0,r1                 ;184
+00003c  d005              BEQ      |L30.74|
+00003e  4608              MOV      r0,r1                 ;185
+000040  9002              STR      r0,[sp,#8]            ;185
+000042  2000              MOVS     r0,#0                 ;186
+000044  9004              STR      r0,[sp,#0x10]         ;186
+000046  9005              STR      r0,[sp,#0x14]         ;187
+000048  9006              STR      r0,[sp,#0x18]         ;188
+                  |L30.74|
+00004a  9803              LDR      r0,[sp,#0xc]          ;190
+00004c  1c40              ADDS     r0,r0,#1              ;190
+00004e  b908              CBNZ     r0,|L30.84|
+000050  2000              MOVS     r0,#0                 ;190
+000052  9003              STR      r0,[sp,#0xc]          ;190
+                  |L30.84|
+000054  9806              LDR      r0,[sp,#0x18]         ;191
+000056  1c40              ADDS     r0,r0,#1              ;191
+000058  b908              CBNZ     r0,|L30.94|
+00005a  2000              MOVS     r0,#0                 ;191
+00005c  9006              STR      r0,[sp,#0x18]         ;191
+                  |L30.94|
+00005e  9401              STR      r4,[sp,#4]            ;192
+000060  a901              ADD      r1,sp,#4              ;193
+000062  4630              MOV      r0,r6                 ;193
+000064  f7fffffe          BL       Rmu_SaveSlotRecord
+000068  bf00              NOP      
+00006a  e7d1              B        |L30.16|
+;;;195    
                           ENDP
 
-                  |L31.140|
+                  |L30.108|
                           DCD      0xdeadbeef
-                  |L31.144|
-                          DCD      0x00016008
-                  |L31.148|
-                          DCD      0x00018008
+                  |L30.112|
+                          DCD      0x524d5532
 
                           AREA ||i.UdsShared_Clear||, CODE, READONLY, ALIGN=1
 
                   UdsShared_Clear PROC
-;;;670    
-;;;671    void UdsShared_Clear(void)
+;;;606    
+;;;607    void UdsShared_Clear(void)
 000000  b510              PUSH     {r4,lr}
-;;;672    {
-;;;673        Bootloader_FlashEraseSector(UDS_SHARED_SECTOR_BASE);
+;;;608    {
+;;;609        Bootloader_FlashEraseSector(UDS_SHARED_SECTOR_BASE);
 000002  f44f3080          MOV      r0,#0x10000
 000006  f7fffffe          BL       Bootloader_FlashEraseSector
-;;;674    }
+;;;610    }
 00000a  bd10              POP      {r4,pc}
-;;;675    
+;;;611    
                           ENDP
 
 
                           AREA ||i.UdsShared_Read||, CODE, READONLY, ALIGN=1
 
                   UdsShared_Read PROC
-;;;641    
-;;;642    void UdsShared_Read(stc_uds_shared_t *pState)
+;;;577    
+;;;578    void UdsShared_Read(stc_uds_shared_t *pState)
 000000  e92d41f0          PUSH     {r4-r8,lr}
-;;;643    {
+;;;579    {
 000004  4605              MOV      r5,r0
-;;;644        uint32_t *pSrc = (uint32_t *)UDS_SHARED_SECTOR_BASE;
+;;;580        uint32_t *pSrc = (uint32_t *)UDS_SHARED_SECTOR_BASE;
 000006  f44f3680          MOV      r6,#0x10000
-;;;645        uint32_t *pDst = (uint32_t *)pState;
+;;;581        uint32_t *pDst = (uint32_t *)pState;
 00000a  462f              MOV      r7,r5
-;;;646        uint32_t count = sizeof(stc_uds_shared_t) / 4;
+;;;582        uint32_t count = sizeof(stc_uds_shared_t) / 4;
 00000c  f04f080e          MOV      r8,#0xe
-;;;647        uint32_t i;
-;;;648        for (i = 0; i < count; i++) {
+;;;583        uint32_t i;
+;;;584        for (i = 0; i < count; i++) {
 000010  2400              MOVS     r4,#0
-000012  e006              B        |L33.34|
-                  |L33.20|
-;;;649            pDst[i] = READ_FLASH_DIRECT((uint32_t)(uintptr_t)(pSrc + i));
+000012  e006              B        |L32.34|
+                  |L32.20|
+;;;585            pDst[i] = READ_FLASH_DIRECT((uint32_t)(uintptr_t)(pSrc + i));
 000014  eb060084          ADD      r0,r6,r4,LSL #2
 000018  f7fffffe          BL       READ_FLASH_DIRECT
 00001c  f8470024          STR      r0,[r7,r4,LSL #2]
-000020  1c64              ADDS     r4,r4,#1              ;648
-                  |L33.34|
-000022  4544              CMP      r4,r8                 ;648
-000024  d3f6              BCC      |L33.20|
-;;;650        }
-;;;651    }
+000020  1c64              ADDS     r4,r4,#1              ;584
+                  |L32.34|
+000022  4544              CMP      r4,r8                 ;584
+000024  d3f6              BCC      |L32.20|
+;;;586        }
+;;;587    }
 000026  e8bd81f0          POP      {r4-r8,pc}
-;;;652    
+;;;588    
                           ENDP
 
 
                           AREA ||i.UdsShared_SetPhase||, CODE, READONLY, ALIGN=2
 
                   UdsShared_SetPhase PROC
-;;;675    
-;;;676    void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot)
+;;;611    
+;;;612    void UdsShared_SetPhase(uint32_t phase, uint32_t target_slot)
 000000  b530              PUSH     {r4,r5,lr}
-;;;677    {
+;;;613    {
 000002  b08f              SUB      sp,sp,#0x3c
 000004  4605              MOV      r5,r0
 000006  460c              MOV      r4,r1
-;;;678        stc_uds_shared_t state;
-;;;679        MEM_ZERO_STRUCT(state);
+;;;614        stc_uds_shared_t state;
+;;;615        MEM_ZERO_STRUCT(state);
 000008  2138              MOVS     r1,#0x38
 00000a  a801              ADD      r0,sp,#4
 00000c  f7fffffe          BL       __aeabi_memclr4
-;;;680        state.magic       = UDS_SHARED_MAGIC;
-000010  4805              LDR      r0,|L34.40|
+;;;616        state.magic       = UDS_SHARED_MAGIC;
+000010  4805              LDR      r0,|L33.40|
 000012  9001              STR      r0,[sp,#4]
-;;;681        state.phase       = phase;
+;;;617        state.phase       = phase;
 000014  9502              STR      r5,[sp,#8]
-;;;682        state.target_slot = target_slot;
+;;;618        state.target_slot = target_slot;
 000016  9403              STR      r4,[sp,#0xc]
-;;;683        state.result      = 0;
+;;;619        state.result      = 0;
 000018  2000              MOVS     r0,#0
 00001a  9006              STR      r0,[sp,#0x18]
-;;;684        UdsShared_Write(&state);
+;;;620        UdsShared_Write(&state);
 00001c  a801              ADD      r0,sp,#4
 00001e  f7fffffe          BL       UdsShared_Write
-;;;685    }
+;;;621    }
 000022  b00f              ADD      sp,sp,#0x3c
 000024  bd30              POP      {r4,r5,pc}
-;;;686    
+;;;622    
                           ENDP
 
 000026  0000              DCW      0x0000
-                  |L34.40|
+                  |L33.40|
                           DCD      0x55445300
 
                           AREA ||i.UdsShared_Write||, CODE, READONLY, ALIGN=1
 
                   UdsShared_Write PROC
-;;;652    
-;;;653    void UdsShared_Write(const stc_uds_shared_t *pState)
+;;;588    
+;;;589    void UdsShared_Write(const stc_uds_shared_t *pState)
 000000  e92d41f0          PUSH     {r4-r8,lr}
-;;;654    {
+;;;590    {
 000004  4605              MOV      r5,r0
-;;;655        uint32_t u32SectorBase = UDS_SHARED_SECTOR_BASE;
+;;;591        uint32_t u32SectorBase = UDS_SHARED_SECTOR_BASE;
 000006  f44f3680          MOV      r6,#0x10000
-;;;656        const uint32_t *pSrc = (const uint32_t *)pState;
+;;;592        const uint32_t *pSrc = (const uint32_t *)pState;
 00000a  462f              MOV      r7,r5
-;;;657        uint32_t count = sizeof(stc_uds_shared_t) / 4;
+;;;593        uint32_t count = sizeof(stc_uds_shared_t) / 4;
 00000c  f04f080e          MOV      r8,#0xe
-;;;658        uint32_t i;
-;;;659    
-;;;660        EFM_REG_Unlock();
+;;;594        uint32_t i;
+;;;595    
+;;;596        EFM_REG_Unlock();
 000010  f7fffffe          BL       EFM_REG_Unlock
-;;;661        EFM_FWMC_Cmd(ENABLE);
+;;;597        EFM_FWMC_Cmd(ENABLE);
 000014  2001              MOVS     r0,#1
 000016  f7fffffe          BL       EFM_FWMC_Cmd
-;;;662        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
+;;;598        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
 00001a  bf00              NOP      
-                  |L35.28|
+                  |L34.28|
 00001c  f44f7080          MOV      r0,#0x100
 000020  f7fffffe          BL       EFM_GetStatus
 000024  2801              CMP      r0,#1
-000026  d1f9              BNE      |L35.28|
-;;;663        EFM_SectorErase(u32SectorBase);
+000026  d1f9              BNE      |L34.28|
+;;;599        EFM_SectorErase(u32SectorBase);
 000028  4630              MOV      r0,r6
 00002a  f7fffffe          BL       EFM_SectorErase
-;;;664    
-;;;665        for (i = 0; i < count; i++) {
+;;;600    
+;;;601        for (i = 0; i < count; i++) {
 00002e  2400              MOVS     r4,#0
-000030  e006              B        |L35.64|
-                  |L35.50|
-;;;666            EFM_ProgramWord(u32SectorBase + i * 4, pSrc[i]);
+000030  e006              B        |L34.64|
+                  |L34.50|
+;;;602            EFM_ProgramWord(u32SectorBase + i * 4, pSrc[i]);
 000032  f8571024          LDR      r1,[r7,r4,LSL #2]
 000036  eb060084          ADD      r0,r6,r4,LSL #2
 00003a  f7fffffe          BL       EFM_ProgramWord
-00003e  1c64              ADDS     r4,r4,#1              ;665
-                  |L35.64|
-000040  4544              CMP      r4,r8                 ;665
-000042  d3f6              BCC      |L35.50|
-;;;667        }
-;;;668        EFM_REG_Lock();
+00003e  1c64              ADDS     r4,r4,#1              ;601
+                  |L34.64|
+000040  4544              CMP      r4,r8                 ;601
+000042  d3f6              BCC      |L34.50|
+;;;603        }
+;;;604        EFM_REG_Lock();
 000044  f7fffffe          BL       EFM_REG_Lock
-;;;669    }
+;;;605    }
 000048  e8bd81f0          POP      {r4-r8,pc}
-;;;670    
+;;;606    
                           ENDP
 
 
                           AREA ||i.UpdateAppState||, CODE, READONLY, ALIGN=1
 
                   UpdateAppState PROC
-;;;581    
-;;;582    static void UpdateAppState(stc_app_info_t *pstcApp) {
-000000  6841              LDR      r1,[r0,#4]
-;;;583        pstcApp->eState = (pstcApp->u32WdtCount >= MAX_WDT_RESET_COUNT) ? APP_STATE_DISABLED : APP_STATE_AVAILABLE;
-000002  2903              CMP      r1,#3
-000004  d301              BCC      |L36.10|
-000006  2101              MOVS     r1,#1
-000008  e000              B        |L36.12|
-                  |L36.10|
-00000a  2100              MOVS     r1,#0
-                  |L36.12|
-00000c  7201              STRB     r1,[r0,#8]
-;;;584    }
-00000e  4770              BX       lr
-;;;585    
+;;;520    
+;;;521    static void UpdateAppState(stc_app_info_t *pstcApp) {
+000000  b510              PUSH     {r4,lr}
+000002  4604              MOV      r4,r0
+;;;522        pstcApp->eState = ((pstcApp->u32WdtCount < MAX_WDT_RESET_COUNT) &&
+000004  6860              LDR      r0,[r4,#4]
+000006  2803              CMP      r0,#3
+000008  d203              BCS      |L35.18|
+00000a  68e0              LDR      r0,[r4,#0xc]
+00000c  f7fffffe          BL       IsAppFirmwareValid
+000010  b908              CBNZ     r0,|L35.22|
+                  |L35.18|
+;;;523                           IsAppFirmwareValid(pstcApp->u32StartAddr))
+;;;524                          ? APP_STATE_AVAILABLE : APP_STATE_DISABLED;
+000012  2001              MOVS     r0,#1
+000014  e000              B        |L35.24|
+                  |L35.22|
+000016  2000              MOVS     r0,#0
+                  |L35.24|
+000018  7220              STRB     r0,[r4,#8]
+;;;525    }
+00001a  bd10              POP      {r4,pc}
+;;;526    
                           ENDP
 
 
                           AREA ||i.UpdateSlotFlagToFlash||, CODE, READONLY, ALIGN=1
 
                   UpdateSlotFlagToFlash PROC
-;;;614    
-;;;615    static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx) {
+;;;550    
+;;;551    static void UpdateSlotFlagToFlash(stc_boot_context_t *pstcCtx) {
 000000  b570              PUSH     {r4-r6,lr}
 000002  4604              MOV      r4,r0
-;;;616        if (!pstcCtx->u8NeedUpdateSlotFlag || pstcCtx->eTargetSlot == SLOT_NONE) return;
+;;;552        if (!pstcCtx->u8NeedUpdateSlotFlag || pstcCtx->eTargetSlot == SLOT_NONE) return;
 000004  f894002c          LDRB     r0,[r4,#0x2c]
-000008  b108              CBZ      r0,|L37.14|
+000008  b108              CBZ      r0,|L36.14|
 00000a  68a0              LDR      r0,[r4,#8]
-00000c  b900              CBNZ     r0,|L37.16|
-                  |L37.14|
-;;;617        uint32_t val = (pstcCtx->eTargetSlot == SLOT_APP1) ? SLOT_A_MAGIC : SLOT_B_MAGIC;
-;;;618    
-;;;619        EFM_REG_Unlock(); EFM_FWMC_Cmd(ENABLE); while(!EFM_GetStatus(EFM_FLAG_RDY));
-;;;620        EFM_SectorErase(APP_RUN_SLOT_ADDR);
-;;;621        EFM_ProgramWord(APP_RUN_SLOT_ADDR, val);
-;;;622        EFM_REG_Lock();
-;;;623        pstcCtx->u8NeedUpdateSlotFlag = 0;
-;;;624    }
+00000c  b900              CBNZ     r0,|L36.16|
+                  |L36.14|
+;;;553        uint32_t val = (pstcCtx->eTargetSlot == SLOT_APP1) ? SLOT_A_MAGIC : SLOT_B_MAGIC;
+;;;554    
+;;;555        EFM_REG_Unlock(); EFM_FWMC_Cmd(ENABLE); while(!EFM_GetStatus(EFM_FLAG_RDY));
+;;;556        EFM_SectorErase(APP_RUN_SLOT_ADDR);
+;;;557        EFM_ProgramWord(APP_RUN_SLOT_ADDR, val);
+;;;558        EFM_REG_Lock();
+;;;559        pstcCtx->u8NeedUpdateSlotFlag = 0;
+;;;560    }
 00000e  bd70              POP      {r4-r6,pc}
-                  |L37.16|
-000010  68a0              LDR      r0,[r4,#8]            ;617
-000012  f1b03f5a          CMP      r0,#0x5a5a5a5a        ;617
-000016  d102              BNE      |L37.30|
-000018  f04f305a          MOV      r0,#0x5a5a5a5a        ;617
-00001c  e001              B        |L37.34|
-                  |L37.30|
-00001e  f04f30a5          MOV      r0,#0xa5a5a5a5        ;617
-                  |L37.34|
-000022  4605              MOV      r5,r0                 ;617
+                  |L36.16|
+000010  68a0              LDR      r0,[r4,#8]            ;553
+000012  f1b03f5a          CMP      r0,#0x5a5a5a5a        ;553
+000016  d102              BNE      |L36.30|
+000018  f04f305a          MOV      r0,#0x5a5a5a5a        ;553
+00001c  e001              B        |L36.34|
+                  |L36.30|
+00001e  f04f30a5          MOV      r0,#0xa5a5a5a5        ;553
+                  |L36.34|
+000022  4605              MOV      r5,r0                 ;553
 000024  f7fffffe          BL       EFM_REG_Unlock
-000028  2001              MOVS     r0,#1                 ;619
+000028  2001              MOVS     r0,#1                 ;555
 00002a  f7fffffe          BL       EFM_FWMC_Cmd
-00002e  bf00              NOP                            ;619
-                  |L37.48|
-000030  f44f7080          MOV      r0,#0x100             ;619
+00002e  bf00              NOP                            ;555
+                  |L36.48|
+000030  f44f7080          MOV      r0,#0x100             ;555
 000034  f7fffffe          BL       EFM_GetStatus
-000038  2800              CMP      r0,#0                 ;619
-00003a  d0f9              BEQ      |L37.48|
-00003c  f44f20f8          MOV      r0,#0x7c000           ;620
+000038  2800              CMP      r0,#0                 ;555
+00003a  d0f9              BEQ      |L36.48|
+00003c  f44f20f8          MOV      r0,#0x7c000           ;556
 000040  f7fffffe          BL       EFM_SectorErase
-000044  4629              MOV      r1,r5                 ;621
-000046  f44f20f8          MOV      r0,#0x7c000           ;621
+000044  4629              MOV      r1,r5                 ;557
+000046  f44f20f8          MOV      r0,#0x7c000           ;557
 00004a  f7fffffe          BL       EFM_ProgramWord
 00004e  f7fffffe          BL       EFM_REG_Lock
-000052  2000              MOVS     r0,#0                 ;623
-000054  f884002c          STRB     r0,[r4,#0x2c]         ;623
+000052  2000              MOVS     r0,#0                 ;559
+000054  f884002c          STRB     r0,[r4,#0x2c]         ;559
 000058  bf00              NOP      
-00005a  e7d8              B        |L37.14|
-;;;625    
+00005a  e7d8              B        |L36.14|
+;;;561    
                           ENDP
 
 
                           AREA ||i.UpdateWdtResetCount||, CODE, READONLY, ALIGN=2
 
                   UpdateWdtResetCount PROC
-;;;140    
-;;;141    void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount)
-000000  e92d47f0          PUSH     {r4-r10,lr}
-;;;142    {
-000004  4606              MOV      r6,r0
-000006  468a              MOV      r10,r1
-;;;143        uint32_t u32SectorBase, u32CountAddr, u32FeedAddr;
-;;;144        uint32_t u32Count, u32Feed;
-;;;145    
-;;;146        if (u32Addr == WDT_COUNT_APP1_ADDR) {
-000008  4821              LDR      r0,|L38.144|
-00000a  4286              CMP      r6,r0
-00000c  d104              BNE      |L38.24|
-;;;147            u32SectorBase = APP1_STATE_SECTOR_BASE;
-00000e  f44f37b0          MOV      r7,#0x16000
-;;;148            u32CountAddr = WDT_COUNT_APP1_ADDR;
-000012  4680              MOV      r8,r0
-;;;149            u32FeedAddr = WDT_FEED_CONTROL_APP1_ADDR;
-000014  46b9              MOV      r9,r7
-000016  e009              B        |L38.44|
-                  |L38.24|
-;;;150        } else if (u32Addr == WDT_COUNT_APP2_ADDR) {
-000018  481e              LDR      r0,|L38.148|
-00001a  4286              CMP      r6,r0
-00001c  d104              BNE      |L38.40|
-;;;151            u32SectorBase = APP2_STATE_SECTOR_BASE;
-00001e  f44f37c0          MOV      r7,#0x18000
-;;;152            u32CountAddr = WDT_COUNT_APP2_ADDR;
-000022  4680              MOV      r8,r0
-;;;153            u32FeedAddr = WDT_FEED_CONTROL_APP2_ADDR;
-000024  46b9              MOV      r9,r7
-000026  e001              B        |L38.44|
-                  |L38.40|
-;;;154        } else return;
-;;;155    
-;;;156        u32Count = READ_FLASH_DIRECT(u32CountAddr);
-;;;157        u32Feed = READ_FLASH_DIRECT(u32FeedAddr);
-;;;158        u32Count = (u32Count == 0xFFFFFFFF) ? 0 : u32Count;
-;;;159        u32Feed = (u32Feed == 0xFFFFFFFF) ? WDT_FEED_ENABLE : u32Feed;
-;;;160    
-;;;161        if (u32Count < MAX_WDT_RESET_COUNT) u32Count++;
-;;;162    
-;;;163        EFM_REG_Unlock();
-;;;164        EFM_FWMC_Cmd(ENABLE);
-;;;165        while(SET != EFM_GetStatus(EFM_FLAG_RDY));
-;;;166        EFM_SectorErase(u32SectorBase);
-;;;167        EFM_ProgramWord(u32FeedAddr, u32Feed);
-;;;168        EFM_ProgramWord(u32CountAddr, u32Count);
-;;;169        EFM_REG_Lock();
-;;;170    }
-000028  e8bd87f0          POP      {r4-r10,pc}
-                  |L38.44|
-00002c  4640              MOV      r0,r8                 ;156
-00002e  f7fffffe          BL       READ_FLASH_DIRECT
-000032  4604              MOV      r4,r0                 ;156
-000034  4648              MOV      r0,r9                 ;157
-000036  f7fffffe          BL       READ_FLASH_DIRECT
-00003a  4605              MOV      r5,r0                 ;157
-00003c  1c60              ADDS     r0,r4,#1              ;158
-00003e  b908              CBNZ     r0,|L38.68|
-000040  2000              MOVS     r0,#0                 ;158
-000042  e000              B        |L38.70|
-                  |L38.68|
-000044  4620              MOV      r0,r4                 ;158
-                  |L38.70|
-000046  4604              MOV      r4,r0                 ;158
-000048  1c68              ADDS     r0,r5,#1              ;159
-00004a  b908              CBNZ     r0,|L38.80|
-00004c  2000              MOVS     r0,#0                 ;159
-00004e  e000              B        |L38.82|
-                  |L38.80|
-000050  4628              MOV      r0,r5                 ;159
-                  |L38.82|
-000052  4605              MOV      r5,r0                 ;159
-000054  2c03              CMP      r4,#3                 ;161
-000056  d200              BCS      |L38.90|
-000058  1c64              ADDS     r4,r4,#1              ;161
-                  |L38.90|
-00005a  f7fffffe          BL       EFM_REG_Unlock
-00005e  2001              MOVS     r0,#1                 ;164
-000060  f7fffffe          BL       EFM_FWMC_Cmd
-000064  bf00              NOP                            ;165
-                  |L38.102|
-000066  f44f7080          MOV      r0,#0x100             ;165
-00006a  f7fffffe          BL       EFM_GetStatus
-00006e  2801              CMP      r0,#1                 ;165
-000070  d1f9              BNE      |L38.102|
-000072  4638              MOV      r0,r7                 ;166
-000074  f7fffffe          BL       EFM_SectorErase
-000078  4629              MOV      r1,r5                 ;167
-00007a  4648              MOV      r0,r9                 ;167
-00007c  f7fffffe          BL       EFM_ProgramWord
-000080  4621              MOV      r1,r4                 ;168
-000082  4640              MOV      r0,r8                 ;168
-000084  f7fffffe          BL       EFM_ProgramWord
-000088  f7fffffe          BL       EFM_REG_Lock
-00008c  bf00              NOP      
-00008e  e7cb              B        |L38.40|
-;;;171    
+;;;141    
+;;;142    void UpdateWdtResetCount(uint32_t u32Addr, uint32_t u32CurrentCount)
+000000  b5f0              PUSH     {r4-r7,lr}
+;;;143    {
+000002  b095              SUB      sp,sp,#0x54
+000004  4604              MOV      r4,r0
+000006  460f              MOV      r7,r1
+;;;144        stc_rmu_slot_record_t stcRec;
+;;;145        en_rmu_slot_t eSlot;
+;;;146        uint32_t u32Count;
+;;;147    
+;;;148        (void)u32CurrentCount;
+;;;149        if (u32Addr == WDT_COUNT_APP1_ADDR)      eSlot = RMU_SLOT_APP1;
+000008  4816              LDR      r0,|L37.100|
+00000a  4284              CMP      r4,r0
+00000c  d101              BNE      |L37.18|
+00000e  2500              MOVS     r5,#0
+000010  e006              B        |L37.32|
+                  |L37.18|
+;;;150        else if (u32Addr == WDT_COUNT_APP2_ADDR) eSlot = RMU_SLOT_APP2;
+000012  4815              LDR      r0,|L37.104|
+000014  4284              CMP      r4,r0
+000016  d101              BNE      |L37.28|
+000018  2501              MOVS     r5,#1
+00001a  e001              B        |L37.32|
+                  |L37.28|
+;;;151        else return;
+;;;152    
+;;;153        if (Rmu_LoadSlotRecord(eSlot, &stcRec) != 0) return;
+;;;154        if (stcRec.u32Magic != RMU_RECORD_MAGIC) {
+;;;155            stcRec.u32Magic = RMU_RECORD_MAGIC;
+;;;156            stcRec.u32LastResetCause = 0U;
+;;;157            stcRec.u32LastFaultCause = 0U;
+;;;158            stcRec.u32NonFaultCount = 0U;
+;;;159        }
+;;;160        u32Count = (stcRec.u32FaultCount == 0xFFFFFFFFUL) ? 0U : stcRec.u32FaultCount;
+;;;161        if (u32Count < MAX_WDT_RESET_COUNT) {
+;;;162            stcRec.u32FaultCount = u32Count + 1U;
+;;;163            Rmu_SaveSlotRecord(eSlot, &stcRec);
+;;;164        }
+;;;165    }
+00001c  b015              ADD      sp,sp,#0x54
+00001e  bdf0              POP      {r4-r7,pc}
+                  |L37.32|
+000020  4669              MOV      r1,sp                 ;153
+000022  4628              MOV      r0,r5                 ;153
+000024  f7fffffe          BL       Rmu_LoadSlotRecord
+000028  b100              CBZ      r0,|L37.44|
+00002a  e7f7              B        |L37.28|
+                  |L37.44|
+00002c  490f              LDR      r1,|L37.108|
+00002e  9801              LDR      r0,[sp,#4]            ;154
+000030  4288              CMP      r0,r1                 ;154
+000032  d005              BEQ      |L37.64|
+000034  4608              MOV      r0,r1                 ;155
+000036  9001              STR      r0,[sp,#4]            ;155
+000038  2000              MOVS     r0,#0                 ;156
+00003a  9003              STR      r0,[sp,#0xc]          ;156
+00003c  9004              STR      r0,[sp,#0x10]         ;157
+00003e  9005              STR      r0,[sp,#0x14]         ;158
+                  |L37.64|
+000040  9802              LDR      r0,[sp,#8]            ;160
+000042  1c40              ADDS     r0,r0,#1              ;160
+000044  b908              CBNZ     r0,|L37.74|
+000046  2000              MOVS     r0,#0                 ;160
+000048  e000              B        |L37.76|
+                  |L37.74|
+00004a  9802              LDR      r0,[sp,#8]            ;160
+                  |L37.76|
+00004c  4606              MOV      r6,r0                 ;160
+00004e  2e03              CMP      r6,#3                 ;161
+000050  d205              BCS      |L37.94|
+000052  1c70              ADDS     r0,r6,#1              ;162
+000054  9002              STR      r0,[sp,#8]            ;162
+000056  4669              MOV      r1,sp                 ;163
+000058  4628              MOV      r0,r5                 ;163
+00005a  f7fffffe          BL       Rmu_SaveSlotRecord
+                  |L37.94|
+00005e  bf00              NOP      
+000060  e7dc              B        |L37.28|
+;;;166    
                           ENDP
 
-                  |L38.144|
+000062  0000              DCW      0x0000
+                  |L37.100|
                           DCD      0x00016008
-                  |L38.148|
+                  |L37.104|
                           DCD      0x00018008
+                  |L37.108|
+                          DCD      0x524d5532
 
                           AREA ||i.ValidateSlotFlag||, CODE, READONLY, ALIGN=1
 
                   ValidateSlotFlag PROC
-;;;566    
-;;;567    static void ValidateSlotFlag(stc_boot_context_t *pstcCtx) {
+;;;506    
+;;;507    static void ValidateSlotFlag(stc_boot_context_t *pstcCtx) {
 000000  6841              LDR      r1,[r0,#4]
-;;;568        if (pstcCtx->eCurrentSlot == SLOT_NONE) {
-000002  b929              CBNZ     r1,|L39.16|
-;;;569            pstcCtx->eCurrentSlot = SLOT_APP1;
+;;;508        if (pstcCtx->eCurrentSlot == SLOT_NONE) {
+000002  b929              CBNZ     r1,|L38.16|
+;;;509            pstcCtx->eCurrentSlot = SLOT_APP1;
 000004  f04f315a          MOV      r1,#0x5a5a5a5a
 000008  6041              STR      r1,[r0,#4]
-;;;570            pstcCtx->u8NeedUpdateSlotFlag = 1;
+;;;510            pstcCtx->u8NeedUpdateSlotFlag = 1;
 00000a  2101              MOVS     r1,#1
 00000c  f880102c          STRB     r1,[r0,#0x2c]
-                  |L39.16|
-;;;571        }
-;;;572    }
+                  |L38.16|
+;;;511        }
+;;;512    }
 000010  4770              BX       lr
-;;;573    
+;;;513    
                           ENDP
 
 
@@ -3091,13 +2857,13 @@
 ;;;1940     __DSB();                                                          /* Ensure all outstanding memory accesses included
 ;;;1941                                                                          buffered write are completed before reset */
 ;;;1942     SCB->AIRCR  = (uint32_t)((0x5FAUL << SCB_AIRCR_VECTKEY_Pos)    |
-000004  4806              LDR      r0,|L40.32|
+000004  4806              LDR      r0,|L39.32|
 000006  6800              LDR      r0,[r0,#0]
 000008  f40060e0          AND      r0,r0,#0x700
-00000c  4905              LDR      r1,|L40.36|
+00000c  4905              LDR      r1,|L39.36|
 00000e  4308              ORRS     r0,r0,r1
 000010  1d00              ADDS     r0,r0,#4
-000012  4903              LDR      r1,|L40.32|
+000012  4903              LDR      r1,|L39.32|
 000014  6008              STR      r0,[r1,#0]
 ;;;1943                              (SCB->AIRCR & SCB_AIRCR_PRIGROUP_Msk) |
 ;;;1944                               SCB_AIRCR_SYSRESETREQ_Msk    );         /* Keep priority group unchanged */
@@ -3106,19 +2872,19 @@
 ;;;1946   
 ;;;1947     for(;;)                                                           /* wait until reset */
 00001a  bf00              NOP      
-                  |L40.28|
+                  |L39.28|
 ;;;1948     {
 ;;;1949       __NOP();
 00001c  bf00              NOP      
-00001e  e7fd              B        |L40.28|
+00001e  e7fd              B        |L39.28|
 ;;;1950     }
 ;;;1951   }
 ;;;1952   
                           ENDP
 
-                  |L40.32|
+                  |L39.32|
                           DCD      0xe000ed0c
-                  |L40.36|
+                  |L39.36|
                           DCD      0x05fa0000
 
                           AREA ||.bss||, DATA, NOINIT, ALIGN=0

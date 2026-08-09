@@ -878,6 +878,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\Utils\Params.c</FilePath>
             </File>
+            <File>
+              <FileName>rmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Utils\rmu.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1798,6 +1803,11 @@
               <FileName>Params.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Utils\Params.c</FilePath>
+            </File>
+            <File>
+              <FileName>rmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Utils\rmu.c</FilePath>
             </File>
           </Files>
         </Group>

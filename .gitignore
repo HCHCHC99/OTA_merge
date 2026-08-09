@@ -19,6 +19,7 @@ JLinkLog.txt
 *.lst
 *.map
 *.d
+*.i
 *.crf
 *.htm
 *.lnp
