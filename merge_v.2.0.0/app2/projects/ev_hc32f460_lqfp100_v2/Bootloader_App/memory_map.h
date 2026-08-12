@@ -52,8 +52,8 @@
 #define APP_RUN_SLOT_ADDR           0x0007C000UL    /* 扇区 62 */
 
 /* ========== TBOX 槽位标签（客户协议固定，仅表示烧录到哪个槽，不校验区间） ========== */
-#define TBOX_ADDR_APP1              0x08018000UL    /* 标签：烧录到 APP1（0x1A000） */
-#define TBOX_ADDR_APP2              0x08004000UL    /* 标签：烧录到 APP2（0x44000） */
+#define TBOX_ADDR_APP1              0x88010000UL    /* 标签：烧录到 APP1（0x1A000） */
+#define TBOX_ADDR_APP2              0x48000000UL    /* 标签：烧录到 APP2（0x44000） */
 
 #define MAP_TBOX_ADDR_TO_FLASH(addr) \
     (((addr) == TBOX_ADDR_APP1) ? APP1_START_ADDR : \
