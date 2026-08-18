@@ -120,7 +120,6 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>€呂</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -152,9 +151,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>348</LineNumber>
+          <LineNumber>496</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>2334</Address>
+          <Address>3014</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -163,26 +162,10 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\..\Bootloader_App\Bootloader_App.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\boot\../../Bootloader_App/Bootloader_App.c\348</Expression>
+          <Expression>\\boot\../../Bootloader_App/Bootloader_App.c\496</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>273</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>33720</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>..\..\Utils\rmu.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\boot\../../Utils/rmu.c\273</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
           <Type>0</Type>
           <LineNumber>232</LineNumber>
           <EnabledFlag>1</EnabledFlag>
@@ -377,12 +360,12 @@
         <Ww>
           <count>35</count>
           <WinNumber>1</WinNumber>
-          <ItemText>g_stcRmuLastCause</ItemText>
+          <ItemText>g_stcRmuReasonCountApp1</ItemText>
         </Ww>
         <Ww>
           <count>36</count>
           <WinNumber>1</WinNumber>
-          <ItemText>g_stcRmuReasonCount</ItemText>
+          <ItemText>g_stcRmuReasonCountApp2</ItemText>
         </Ww>
         <Ww>
           <count>37</count>
@@ -394,7 +377,7 @@
         <Mm>
           <WinNumber>1</WinNumber>
           <SubType>0</SubType>
-          <ItemText>0x44000</ItemText>
+          <ItemText>0x16000+8</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
@@ -402,7 +385,7 @@
         <Mm>
           <WinNumber>2</WinNumber>
           <SubType>0</SubType>
-          <ItemText>0x16008</ItemText>
+          <ItemText>0x18000+8</ItemText>
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow2>
