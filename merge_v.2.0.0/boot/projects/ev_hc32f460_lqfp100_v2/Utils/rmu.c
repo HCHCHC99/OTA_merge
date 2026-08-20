@@ -17,24 +17,12 @@ static uint32_t Rmu_SlotToSectorBase(en_rmu_slot_t eSlot)
     return (eSlot == RMU_SLOT_APP1) ? APP1_STATE_SECTOR_BASE : APP2_STATE_SECTOR_BASE;
 }
 
-/* 按优先级给“主原因”累计 +1（MULTIRF 不算主原因，仅作标志） */
+/* 仅统计故障主原因（SWDT/WDT/MPU_ERR）；正常原因不再累计/持久化，保护 FLASH 寿命 */
 static void Rmu_CountCause(stc_rmu_reason_count_t *pstcCount, uint32_t u32Raw)
 {
     if (u32Raw & RMU_FLAG_SWDT)             { pstcCount->u32Swdt++; return; }
     if (u32Raw & RMU_FLAG_WDT)              { pstcCount->u32Wdt++; return; }
     if (u32Raw & RMU_FLAG_MPU_ERR)          { pstcCount->u32Mpu++; return; }
-    if (u32Raw & RMU_FLAG_PWR_ON)           { pstcCount->u32Por++; return; }
-    if (u32Raw & RMU_FLAG_PIN)              { pstcCount->u32Pin++; return; }
-    if (u32Raw & RMU_FLAG_BROWN_OUT)        { pstcCount->u32Bor++; return; }
-    if (u32Raw & RMU_FLAG_PVD1)             { pstcCount->u32Pvd1++; return; }
-    if (u32Raw & RMU_FLAG_PVD2)             { pstcCount->u32Pvd2++; return; }
-    if (u32Raw & RMU_FLAG_PWR_DOWN)         { pstcCount->u32PowerDown++; return; }
-    if (u32Raw & RMU_FLAG_SW)               { pstcCount->u32Sw++; return; }
-    if (u32Raw & RMU_FLAG_RAM_PARITY_ERR)   { pstcCount->u32RamParity++; return; }
-    if (u32Raw & RMU_FLAG_RAM_ECC)          { pstcCount->u32RamEcc++; return; }
-    if (u32Raw & RMU_FLAG_CLK_ERR)          { pstcCount->u32ClkErr++; return; }
-    if (u32Raw & RMU_FLAG_XTAL_ERR)         { pstcCount->u32XtalErr++; return; }
-    if (u32Raw & RMU_FLAG_MX)               { pstcCount->u32Multi++; }
 }
 
 /* 填充“上次复位原因”可读性视图：每个字段 0/1 */
@@ -199,6 +187,7 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
     bool bFault;
     stc_rmu_slot_record_t stcRec;
     uint32_t u32FaultCount;
+    bool bNeedInitWrite = false;   /* 首次建立记录时需要写一次 FLASH */
 
     if (eCurrentSlot != RMU_SLOT_APP1 && eCurrentSlot != RMU_SLOT_APP2) {
         eCurrentSlot = RMU_SLOT_APP1;   /* 安全兜底 */
@@ -221,6 +210,7 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
     if (stcRec.u32Magic != RMU_RECORD_MAGIC) {
         /* 保留旧 feed_ctrl / fault_count，初始化新字段 */
         stcRec.u32Magic = RMU_RECORD_MAGIC;
+        bNeedInitWrite = true;
         stcRec.u32LastResetCause = 0U;
         stcRec.u32LastFaultCause = 0U;
         stcRec.u32NonFaultCount = 0U;
@@ -243,16 +233,16 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
             stcRec.u32LastFaultCause = (u32Raw & RMU_FAULT_MASK);
         }
     } else {
-        /* ?????POR/??/???/??????????????? */
-        stcRec.u32NonFaultCount += 1U;
+        /* 非故障（POR/掉电/软复位等）：不再累计/持久化，仅在 RAM 视图显示本次原因 */
     }
 
-    /* 7. 各复位原因累计计数 +1（按主原因，故障/正常都计） */
-    Rmu_CountCause(&stcRec.stcReasonCount, u32Raw);
+    /* 7. 仅故障时累计故障原因计数（SWDT/WDT/MPU） */
+    if (bFault) {
+        Rmu_CountCause(&stcRec.stcReasonCount, u32Raw);
+    }
 
     /* 8. 更新调试用 RAM 镜像（Keil Watch 分别看 APP1/APP2 四个全局变量）
-     *    当前槽用本次刚处理的数据；另一槽从 flash 重新加载填充，
-     *    保证两个视图始终与各自 flash 记录一致。 */
+     *    当前槽显示本次复位原因（含正常原因，仅 RAM）；另一槽从 flash 记录填充。 */
     {
         stc_rmu_last_cause_t stcLastView;
         stc_rmu_last_cause_t stcOtherView;
@@ -287,13 +277,15 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
         }
     }
 
-    /* 9. 写回 FLASH（每次上电都写；后续可优化为“仅故障/原因变化时写”） */
-    Rmu_SaveSlotRecord(eCurrentSlot, &stcRec);
+    /* 9. 写回 FLASH：仅首次建立记录或故障复位时写，正常上电不擦写（保护 FLASH 寿命） */
+    if (bNeedInitWrite || bFault) {
+        Rmu_SaveSlotRecord(eCurrentSlot, &stcRec);
+    }
 
     /* 10. RTT 诊断 */
-    MAIN_D("[RMU] raw=0x%04X cause=%s slot=%d fault=%d normal=%d%s\r\n",
+    MAIN_D("[RMU] raw=0x%04X cause=%s slot=%d fault=%d%s\r\n",
            (unsigned int)u32Raw, Rmu_CauseName(u32Raw), (int)eCurrentSlot,
-           (unsigned int)stcRec.u32FaultCount, (unsigned int)stcRec.u32NonFaultCount,
+           (unsigned int)stcRec.u32FaultCount,
            bFault ? " (fault)" : "");
 
     /* 打印取当前槽镜像（Watch 中请查看 g_stcRmuLastCauseApp1/2、g_stcRmuReasonCountApp1/2） */
@@ -320,22 +312,10 @@ void Rmu_ProcessPowerUp(en_rmu_slot_t eCurrentSlot)
            (unsigned int)stcLastPrint.bClkErr,
            (unsigned int)stcLastPrint.bXtalErr,
            (unsigned int)stcLastPrint.bMulti);
-    /* 12. 可读性视图：各复位原因累计计数 */
-    MAIN_D("[RMU] cnt : POR=%u PIN=%u BOR=%u PVD1=%u PVD2=%u WDT=%u SWDT=%u PWRDN=%u SW=%u MPU=%u RAMP=%u RAMECC=%u CLK=%u XTAL=%u MULTI=%u\r\n",
-           (unsigned int)stcCntPrint.u32Por,
-           (unsigned int)stcCntPrint.u32Pin,
-           (unsigned int)stcCntPrint.u32Bor,
-           (unsigned int)stcCntPrint.u32Pvd1,
-           (unsigned int)stcCntPrint.u32Pvd2,
+    /* 12. 可读性视图：故障原因累计计数（仅故障类持久化；正常项恒 0） */
+    MAIN_D("[RMU] cnt : WDT=%u SWDT=%u MPU=%u\r\n",
            (unsigned int)stcCntPrint.u32Wdt,
            (unsigned int)stcCntPrint.u32Swdt,
-           (unsigned int)stcCntPrint.u32PowerDown,
-           (unsigned int)stcCntPrint.u32Sw,
-           (unsigned int)stcCntPrint.u32Mpu,
-           (unsigned int)stcCntPrint.u32RamParity,
-           (unsigned int)stcCntPrint.u32RamEcc,
-           (unsigned int)stcCntPrint.u32ClkErr,
-           (unsigned int)stcCntPrint.u32XtalErr,
-           (unsigned int)stcCntPrint.u32Multi);
+           (unsigned int)stcCntPrint.u32Mpu);
     }
 }

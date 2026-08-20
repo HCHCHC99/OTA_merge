@@ -12,8 +12,9 @@
  *       分类（故障/正常）、清除粘性标志、更新并写回 FLASH 记录。
  * 记录位置：每个 APP 的状态扇区（APP1=0x16000 / APP2=0x18000）。
  *           +0x000 / +0x008 偏移与原有 WDT_FEED_CONTROL / WDT_COUNT 保持一致。
- * 故障类（SWDT/WDT/MPU_ERR）进 APP 故障计数；其他正常原因（POR/掉电/复位脚/
- * 软件复位等）只记录，不计故障。
+ * 故障类（SWDT/WDT/MPU_ERR）进 APP 故障计数并持久化；
+ * 正常原因（POR/掉电/软件复位等）仅在 RAM 视图显示本次原因，
+ * 不再累计/写 FLASH（保护 FLASH 擦写寿命）。
  * ========================================================================== */
 
 #define RMU_RECORD_MAGIC        0x524D5532UL   /* "RMU2" */
@@ -44,7 +45,7 @@ typedef struct {
     uint32_t bMulti;        /* 多重复位原因 MULTIRF */
 } stc_rmu_last_cause_t;
 
-/* 各复位原因累计计数（持久化到 FLASH，Keil Watch 可直接展开） */
+/* 复位原因累计计数（仅故障类 WDT/SWDT/MPU 持久化；正常项恒 0，Keil Watch 可直接展开） */
 typedef struct {
     uint32_t u32Por;        /* 上电复位 */
     uint32_t u32Pin;        /* 复位脚复位 */
@@ -67,9 +68,9 @@ typedef struct {
     uint32_t u32FeedCtrl;         /* +0x000 兼容原 WDT_FEED_CONTROL_APPx_ADDR */
     uint32_t u32Magic;            /* +0x004 记录有效标志 */
     uint32_t u32FaultCount;       /* +0x008 兼容原 WDT_COUNT_APPx_ADDR */
-    uint32_t u32LastResetCause;   /* +0x00C 最近一次上电原始 RSTF0（含正常原因） */
+    uint32_t u32LastResetCause;   /* +0x00C 最近一次故障复位原始 RSTF0（正常上电不更新/不写） */
     uint32_t u32LastFaultCause;   /* +0x010 最近一次故障原因，0=无 */
-    uint32_t u32NonFaultCount;    /* +0x014 普通复位/掉电累计次数 */
+    uint32_t u32NonFaultCount;    /* +0x014 兼容字段，不再累计（正常上电不写 FLASH） */
     stc_rmu_reason_count_t stcReasonCount;  /* +0x018 各复位原因累计计数 */
 } stc_rmu_slot_record_t;
 
