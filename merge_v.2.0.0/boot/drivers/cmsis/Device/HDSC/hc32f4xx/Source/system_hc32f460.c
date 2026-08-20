@@ -92,7 +92,17 @@ __NO_INIT uint32_t HRC_VALUE;
  * @retval None
  */
 void SystemInit(void)
-{
+{            // --- 新增：关闭 JTDI ---
+    // 1. 解锁 PSPCR
+    CM_GPIO->PWPR = 0xA500;      // 先写入 0xA500
+    CM_GPIO->PWPR = 0xA501;      // 再写入 0xA501 设置 WE=1
+
+    // 2. 关闭 JTDI (PSPCR.SPFE[3] = 0)
+    CM_GPIO->PSPCR &= ~0x08U;    // 清零 bit3
+
+    // 3. 重新锁定（可选）
+    CM_GPIO->PWPR = 0x0000U;
+        // --- 新增：关闭 JTDI  END ---
     /* FPU settings */
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
     SCB->CPACR |= ((3UL << 20) | (3UL << 22)); /* set CP10 and CP11 Full Access */
