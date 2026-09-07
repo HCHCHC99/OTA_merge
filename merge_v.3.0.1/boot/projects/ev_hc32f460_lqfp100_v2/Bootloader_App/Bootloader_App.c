@@ -8,6 +8,7 @@
 #include "main.h"
 #include "uds_ota.h"
 #include "rmu.h"
+#include "Led_Boot.h"
 /* ===== 阶段2/3: 上电强制指令检测 (CAN ID 0x18FF5858) ===== */
 static volatile uint8_t s_force_cmd = 0U;
 static volatile uint8_t s_force_window_active = 0U;
@@ -256,11 +257,14 @@ void Bootloader_JumpToApp(uint32_t u32AppAddr)
     DisableAllNVICInterrupts();
     
     // 4. ����ж�ʹ�ܺ͹���Ĵ���
-    for (uint8_t i = 0; i < 8; i++) 
+    for (uint8_t i = 0; i < 8; i++)
     {
         NVIC->ICER[i] = 0xFFFFFFFF;
         NVIC->ICPR[i] = 0xFFFFFFFF;
     }
+
+    // 4.5 Shutdown LEDs before jump (both orange LEDs off, state machine stopped)
+    Led_Boot_Shutdown();
 
     // 5. ����ջָ���������
     __set_MSP(*(uint32_t *)u32AppAddr);
