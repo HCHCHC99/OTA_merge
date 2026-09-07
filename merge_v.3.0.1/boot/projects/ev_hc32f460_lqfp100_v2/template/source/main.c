@@ -15,6 +15,7 @@
   #include "rtt_manager.h"
   #include "Pwm.h"
   #include "hc32_ll_utility.h"
+  #include "Led_Boot.h"
 #if UDS_CAN_ENABLE
   #include "uds_ota.h"
 #endif
@@ -115,7 +116,10 @@ int main(void)
 {
     Hardware_Init();
     MAIN_D("===== main(): BOOTLOADER PATH =====\r\n");
-    
+
+    /* 双橙色 LED 初始化: 上电即开始 1s 慢闪 */
+    Led_Boot_Init();
+
     /* PB6 phase indicator moved to UDS phase handlers (Phase1/2/3) */
 
 #if UDS_CAN_ENABLE

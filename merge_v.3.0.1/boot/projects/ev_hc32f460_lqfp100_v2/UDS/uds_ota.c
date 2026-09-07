@@ -15,6 +15,7 @@
 #include "TickTimer.h"
 #include "main.h"
 #include "Bootloader_App.h"
+#include "Led_Boot.h"
 
 /***************************** 前向声明 ***********************************/
 extern void uds_dl_init_fw(void);
@@ -114,6 +115,9 @@ void UdsOta_Poll(void)
         isotp_ms_update();
         uds_ms_update();
         isotp_tx_process();
+
+        /* LED 指示状态机: 上电1s慢闪 / 刷写50ms快闪 / 完成500ms闪 / 失败PC13慢闪+PH2灭 */
+        Led_Boot_Task();
     }
 
     FlashDownload_Task();
